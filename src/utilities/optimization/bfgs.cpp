@@ -74,6 +74,7 @@ namespace utilities
             unsigned int iter = 0;
             double alpha = 0.0;
             double prevLoss = EvaluateLoss(x);
+            EvaluateGradients(grad, x);
             while((VectorL2(grad) > gradTol) && (iter < maxIter))
             {
                 SymmetricMatrixVectorMultiply(m_searchDir, -1.0, m_Binv, grad);

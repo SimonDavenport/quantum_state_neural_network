@@ -51,7 +51,8 @@ namespace utilities
             public:
             BFGS();
             void AllocateWork(const unsigned int N);
-            void Optimize(dvec& x, dvec& grad, std::function<double(const dvec&)> EvaluateLoss,
+            void Optimize(dvec& x, dvec& grad, 
+                          std::function<double(const dvec&)> EvaluateLoss,
                           std::function<void(const dvec&, const dvec&)> EvaluateGradients,
                           const unsigned int maxIter, const double gradTol);
         };

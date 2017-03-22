@@ -47,11 +47,14 @@ namespace ann
     //!
     struct LossFunctionWeights
     {
+        bool usingResiduals;    //!<    Flag set if using weighted residuals
         dvec residuals;         //!<    Weights for squared residuals of each sample
         double l1Alpha;         //!<    L1 constraint weight on alphas
         double l1Beta;          //!<    L1 constraint on betas
         double l2Alpha;         //!<    L2 constraint on alphas
         double l2Beta;          //!<    L2 constraint on betas
+        LossFunctionWeights();
+        void SetResidualWeights(const dvec& residuals);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +78,8 @@ namespace ann
         unsigned int m_P;                   //!<    Number of features
         unsigned int m_H;                   //!<    Number of hidden nodes
         unsigned int m_N;                   //!<    Number of samples
-        bool m_workAllocated;               //!<    Flag indicating whether work space is allocated
+        LossFunctionWeights m_lfWeights;    //!<    Instance of the loss function weights struct
+        unsigned int m_workAllocated;       //!<    Flag work space allocated
         utilities::matrix<double> m_alphaGradient;
                                             //!<    Working space for alpha weights gradient
         dvec m_betaGradient;                //!<    Working space for beta weights gradient
@@ -97,18 +101,22 @@ namespace ann
                                             //!<    Output function implementation
         std::function<double(const double& z)> m_OutputFunctionDerivImpl;
                                             //!<    Output function derivative implementation
-        void ActivationFunction(utilities::matrix<double>& Z, utilities::matrix<double>& X);
-        void ActivationFunctionDeriv(utilities::matrix<double>& Z, utilities::matrix<double>& X);
+        void ActivationFunction(utilities::matrix<double>& Z, 
+                                utilities::matrix<double>& X);
+        void ActivationFunctionDeriv(utilities::matrix<double>& Z, 
+                                     utilities::matrix<double>& X);
         void OutputFunction(dvec& Y, utilities::matrix<double>& Z);
         void OutputFunctionDeriv(dvec& Y, utilities::matrix<double>& Z);
         bool CheckDimensions(dvec& Y, utilities::matrix<double>& X);
         public:
         SingleLayerPerceptron();
+        SingleLayerPerceptron::SingleLayerPerceptron(const unsigned int H, 
+                                                     const unsigned int P);
         ~SingleLayerPerceptron();
-        void RandomizeWeights(const unsigned int H, const unsigned int P, const double scale, 
-                              const unsigned int seed);
-        void SetWeights(const dvec& alpha, 
-                        const utilities::matrix<double>& beta);
+        void AllocateWork(unsigned int N);
+        void RandomizeWeights(const double scale, const unsigned int seed);
+        void SetLossFunctionWeights(const LossFunctionWeights& lfWeights);
+        void SetWeights(const dvec& alpha, const utilities::matrix<double>& beta);
         void GetWeights(dvec& alpha, utilities::matrix<double>& beta) const;
         void SetZeros(const std::vector<bool>& zeros);
         void GetZeros(std::vector<bool>& zeros) const;
@@ -117,20 +125,16 @@ namespace ann
         void UpdateNzWeights(const dvec& nzWeights);
         void ExtractNzWeights(dvec& nzWeights) const;
         void ExtractNzGradients(dvec& nzGradients) const;
-        void AllocateWork(unsigned int N);
         void Evaluate(dvec& Y, utilities::matrix<double>& X) const;
         double EvaluateSquaredLoss(const const dvec& nzWeights, const dvec& Y, 
-                                   const utilities::matrix<double>& X,   
-                                   const LossFunctionWeights& lfWeights);
-        double EvaluateSquaredLoss(const dvec& Y, const utilities::matrix<double>& X,   
-                                   const LossFunctionWeights& lfWeights) const;
+                                   const utilities::matrix<double>& X);
+        double EvaluateSquaredLoss(const dvec& Y, const utilities::matrix<double>& X) const;
         void EvaluateSquaredLossGradient(dvec& nzGradients, const dvec& nzWeights, 
-                                         const dvec& Y, const utilities::matrix<double>& X,
-                                         const LossFunctionWeights& lfWeights);
-        void EvaluateSquaredLossGradient(const dvec& Y, const utilities::matrix<double>& X,
-                                         const LossFunctionWeights& lfWeights);
-        void Train(const dvec& Y, const utilities::matrix<double>& X,  
-                   const LossFunctionWeights& lfWeights);
+                                         const dvec& Y, const utilities::matrix<double>& X);
+        void EvaluateSquaredLossGradient(const dvec& Y, const utilities::matrix<double>& X);
+        void Train(const dvec& Y, const utilities::matrix<double>& X);
+        void Train(const dvec& Y, const utilities::matrix<double>& X,
+                   const unsigned int maxIter, const double gradTol);
     };
 }   //  End namespace ann
 #endif

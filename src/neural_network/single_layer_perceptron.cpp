@@ -59,6 +59,28 @@ namespace neural_network
     {
         return 1.0;
     }
+    
+    //!
+    //! Default constructor for loss function weights
+    //!
+    LossFunctionWeights::LossFunctionWeights()
+        :
+        usingResiduals = false,
+        l1Alpha = 0.0,
+        l1Beta = 0.0,
+        l2Alpha = 0.0,
+        l2Beta = 0.0
+    {}
+    
+    //!
+    //! Set the residuals weights
+    //!
+    void LossFunctionWeights::SetResidualWeights(
+        const dvec& residuals)
+    {
+        this->residuals = residuals;
+        this->usingResiduals = true;
+    }
 
     //!
     //! Implementation of activation function, mapping N inputs X of size P to 
@@ -142,6 +164,20 @@ namespace neural_network
         m_OutputFunctionDerivImpl = UnitDeriv
     {}
     
+    //!
+    //! Constructor for a certian number of features and hidden nodes
+    //!
+    SingleLayerPerceptron::SingleLayerPerceptron(
+        const unsigned int H,       //!<    Number of hidden nodes in layer
+        const unsigned int P)       //!<    Number of features
+        :
+        m_H = H,
+        m_P = P
+    {
+        m_alpha.resize(m_H, m_P);
+        m_beta.resize(m_H);
+    }
+    
     //! 
     //! Destructor
     //!
@@ -149,21 +185,44 @@ namespace neural_network
     {}
     
     //!
-    //! Function to initialize the network with a H hidden nodes and P features.
-    //! Random weights are assigned.
+    //! Allocate working space
+    //!
+    void SingleLayerPerceptron::AllocateWork(
+        unsigned int N)     //!<    Working space to allocate for
+    {
+        m_N = N;
+        Z.resize(m_H, m_N);
+        outputDeriv.resize(m_N);
+        output.resize(m_N);
+        residual.resize(m_N);
+        delta.resize(m_N);
+        activationDeriv.resize(m_H, m_N);
+        S.resize(m_H, m_N);
+        alphaGradient.resize(m_H, m_P);
+        betaGradient.resize(m_H);
+        sgnAlpha.resize(m_H, m_P);
+        sgnBeta.resize(m_H);
+        m_workAllocated = true;
+    }
+    
+    //!
+    //! Function to set the current weights to be random.
     //!
     void SingleLayerPerceptron::RandomizeWeights(
-        const unsigned int H,       //!<    Number of hidden nodes in layer
-        const unsigned int P,       //!<    Number of features
         const double scale,         //!<    Scale of the initial random weights
         const unsigned int seed)    //!<    Random seed
     {
-        m_H = H;
-        m_P = P;
-        m_alpha.resize(m_H, m_P);
-        m_beta.resize(m_H);
         utilities::SetToRandomVector(m_alpha, seed);
         utilities::SetToRandomMatrix(m_beta, seed);
+    }
+    
+    //!
+    //! Set the loss function weights
+    //!
+    void SinglePayerPerceptron::SetLossFunctionWeights(
+        const LossFunctionWeights& lfWeights)
+    {
+        m_lfWeights = lfWeights;
     }
     
     //!
@@ -265,27 +324,6 @@ namespace neural_network
     }
     
     //!
-    //! Allocate working space
-    //!
-    void SingleLayerPerceptron::AllocateWork(
-        unsigned int N)     //!<    Working space to allocate for
-    {
-        m_N = N;
-        Z.resize(m_H, m_N);
-        outputDeriv.resize(m_N);
-        output.resize(m_N);
-        residual.resize(m_N);
-        delta.resize(m_N);
-        activationDeriv.resize(m_H, m_N);
-        S.resize(m_H, m_N);
-        alphaGradient.resize(m_H, m_P);
-        betaGradient.resize(m_H);
-        sgnAlpha.resize(m_H, m_P);
-        sgnBeta.resize(m_H);
-        m_workAllocated = true;
-    }
-    
-    //!
     //! Evalute the current output of the neural network for given inputs X,
     //! where X contains N inputs of size P features in a P by N matrix, and write
     //! it to the vector Y.
@@ -295,7 +333,7 @@ namespace neural_network
         const utilities::matrix<double>& X)     //!<    P by N array of inputs
         const
     {
-        if(!m_workAllocated)
+        if(!m_workAllocated || (Y.size() != m_N))
         {
             unsigned int N = Y.size();
             m_Z.resize(m_H, N);
@@ -311,11 +349,10 @@ namespace neural_network
     double SingleLayerPerceptron::EvaluateSquaredLoss(
         const dvec& nzWeights,                  //!<    Non-zero network weights
         const dvec& Y,                          //!<    Vector of N training outputs
-        const utilities::matrix<double>& X,     //!<    P by N array of training inputs    
-        const LossFunctionWeights& lfWeights)   //!<    Constraint weights in the loss function
+        const utilities::matrix<double>& X)     //!<    P by N array of training inputs
     {
         this->UpdateNzWeights(nzWeights);
-        return this->EvaluateSquaredLoss(Y, X, lfWeights);
+        return this->EvaluateSquaredLoss(Y, X, m_lfWeights);
     }
     
     //!
@@ -327,11 +364,10 @@ namespace neural_network
     //!
     double SingleLayerPerceptron::EvaluateSquaredLoss(
         const dvec& Y,                          //!<    Vector of N training outputs
-        const utilities::matrix<double>& X,     //!<    P by N array of training inputs    
-        const LossFunctionWeights& lfWeights)   //!<    Constraint weights in the loss function
+        const utilities::matrix<double>& X)     //!<    P by N array of training inputs
         const
     {
-        if(!m_workAllocated)
+        if(!m_workAllocated || (Y.size() != m_N))
         {
             unsigned int N = Y.size();
             m_Z.resize(m_H, N);
@@ -342,12 +378,15 @@ namespace neural_network
         this->Evaluate(m_output, m_Z, X);
         utilities::VectorDiff(m_residual, Y, m_output);
         utilities::VectorHadamard(m_sqResidual, 1.0, m_residual, m_residual);
-        double lossFunction = 0.0
-        lossFunction += utilities::VectorDot(lfWeights.residuals, m_sqResidual);
-        lossFunction += lfWeights.l1Alpha*utilities::MatrixL1(m_alpha);
-        lossFunction += lfWeights.l1Beta*utilities::VectorL1(m_beta);
-        lossFunction += lfWeights.l2Alpha*utilities::MatrixL2(m_alpha, m_alpha);
-        lossFunction += lfWeights.l2Beta*utilities::VectorL2(m_beta, m_beta);
+        double lossFunction = 0.0;
+        if(m_lfWeights.usingResiduals)
+        {
+            lossFunction += utilities::VectorDot(m_lfWeights.residuals, m_sqResidual);
+        }
+        lossFunction += m_lfWeights.l1Alpha*utilities::MatrixL1(m_alpha);
+        lossFunction += m_lfWeights.l1Beta*utilities::VectorL1(m_beta);
+        lossFunction += m_lfWeights.l2Alpha*utilities::MatrixL2(m_alpha, m_alpha);
+        lossFunction += m_lfWeights.l2Beta*utilities::VectorL2(m_beta, m_beta);
         return lossFunction;
     }
     
@@ -360,11 +399,10 @@ namespace neural_network
         dvec& nzGradients,                      //!<    Non-zero network gradients
         const dvec& nzWeights,                  //!<    Non-zero network weights
         const dvec& Y,                          //!<    Vector of N training outputs
-        const utilities::matrix<double>& X,     //!<    P by N array of inputs
-        const LossFunctionWeights& lfWeights)   //!<    Constraint weights in the loss function
+        const utilities::matrix<double>& X)     //!<    P by N array of inputs
     {
         this->UpdateNzWeights(nzWeights);
-        this->EvaluateSquaredLossGradient(Y, X, lfWeights);
+        this->EvaluateSquaredLossGradient(Y, X, m_lfWeights);
         this->ExtractNzGradients(nzGradients);
     }
     
@@ -373,10 +411,9 @@ namespace neural_network
     //!
     void SingleLayerPerceptron::EvaluateSquaredLossGradient(
         const dvec& Y,                          //!<    Vector of N training outputs
-        const utilities::matrix<double>& X,     //!<    P by N array of inputs
-        const LossFunctionWeights& lfWeights)   //!<    Constraint weights in the loss function
+        const utilities::matrix<double>& X)     //!<    P by N array of inputs
     {
-        if(!m_workAllocated)
+        if(!m_workAllocated || (Y.size() != m_N))
         {
             unsigned int N = Y.size();
             m_Z.resize(m_H, N);
@@ -396,7 +433,10 @@ namespace neural_network
         this->OutputFunctionDeriv(m_outputDeriv, m_Z);
         utilities::VectorDiff(m_residual, Y, m_output);
         utilities::VectorHadamard(m_delta, 1.0, m_residual, m_outputDeriv);
-        utilities::VectorHadamard(m_delta, -2.0, m_delta, lfWeights.residuals);
+        if(m_lfWeights.usingResiduals)
+        {
+            utilities::VectorHadamard(m_delta, -2.0, m_delta, m_lfWeights.residuals);
+        }
         //  Compute S = activationDeriv*OuterProduct(beta, delta)
         this->ActivationFunctionDeriv(m_activationDeriv, X);
         utilities::SetToConstantMatrix(m_S, 0.0);
@@ -404,26 +444,38 @@ namespace neural_network
         utilities::MatrixHadamard(m_S, 1.0, m_activationDeriv, m_S);
         //  Compute alpha_gradient = S.X^T + 2*l2*alpha + l1*sgn(alpha)
         utilities::MatrixMatrixMultiply(m_alphaGradient, m_S, X, "NT");
-        utilities::MatrixIncrement(m_alphaGradient, 2*lfWeights.l2Alpha, m_alpha);
-        utilities::MatrixSgn(m_sgnAlpha, lfWeights.l1Alpha, m_alpha);
-        utilities::MatrixIncrement(m_alphaGradient, lfWeights.l1Alpha, m_sgnAlpha);
+        utilities::MatrixIncrement(m_alphaGradient, 2*m_lfWeights.l2Alpha, m_alpha);
+        utilities::MatrixSgn(m_sgnAlpha, m_lfWeights.l1Alpha, m_alpha);
+        utilities::MatrixIncrement(m_alphaGradient, m_lfWeights.l1Alpha, m_sgnAlpha);
         //  Compute beta_gradient = Z.delta + 2*l2*beta + l1*sgn(beta)
         utilities::MatrixVectorMultiply(m_betaGradient, 1.0, m_Z, m_delta);
-        utilities::VectorIncrement(m_betaGradient, 2*lfWeights.l2Beta, m_beta);
+        utilities::VectorIncrement(m_betaGradient, 2*m_lfWeights.l2Beta, m_beta);
         utilities::VectorSgn(m_sgnBeta, m_beta);
-        utilities::VectorIncrement(m_betaGradient, lfWeights.l1Beta, m_sgnBeta);
+        utilities::VectorIncrement(m_betaGradient, m_lfWeights.l1Beta, m_sgnBeta);
     }
 
     //!
-    //! Train the network using a quasi-Newton method to optimize the non-zero weights
+    //! Train the network using a quasi-Newton method to optimize the non-zero weights.
+    //! This is the default implementation.
+    //!
+    void SingleLayerPerceptron::Train(
+        dvec& Y,                                //!<    Vector of N training outputs
+        utilities::matrix<double>& X)           //!<    P by N array of training inputs
+    {
+        static const unsigned int maxIter = 50;
+        static const double gradtol = 1e(-5);
+        this->Train(Y, X, maxIter, gradTol);
+    }
+    
+    //!
+    //! Train the network using a quasi-Newton method to optimize the non-zero weights.
     //!
     void SingleLayerPerceptron::Train(
         dvec& Y,                                //!<    Vector of N training outputs
         utilities::matrix<double>& X,           //!<    P by N array of training inputs
-        const LossFunctionWeights& lfWeights,   //!<    Constraint weights in the loss function
-        unsigned int maxIter,                   //!<    Maximum number of allowed iteractions of
+        const unsigned int maxIter,             //!<    Maximum number of allowed iteractions of
                                                 //!     optimization
-        double tol)                             //!<    Termination tolerance of optimization
+        const double gradTol)                   //!<    Gradient tolerance for terminating bfgs
     {
         if(this->CheckDimensions(Y, X))
         {
@@ -434,10 +486,10 @@ namespace neural_network
         this->ExtractNzWeights(x);
         this->ExtractNzGradients(grad);
         utilities::optimize::bfgs(x, grad, 
-            std::bind(this->EvaluateSquaredLoss, std::placeholders::1_, Y, X, lfWeights),
+            std::bind(this->EvaluateSquaredLoss, std::placeholders::1_, Y, X),
             std::bind(this->EvaluateSquaredLossGradient, std::placeholders::1_, 
-                      std::placeholders::2_, Y, X, lfWeights), 
-            maxIter, tol);                          
+                      std::placeholders::2_, Y, X), 
+            maxIter, gradTol);                          
         this->UpdateNzWeights(x);
     }
 }   //  End namespace ann
