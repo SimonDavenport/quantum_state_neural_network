@@ -459,7 +459,8 @@ namespace ann
     void EvaluateSquaredLossGradient(
         dvec& nzGradients,                      //!<    Non-zero network gradients
         const dvec& nzWeights,                  //!<    Non-zero network weights
-        SingleLayerPerceptron& slp,             //!<    Single layer perceptron to be trained
+        SingleLayerPerceptron& slp,             //!<    Single layer perceptron 
+                                                //!     to be trained
         const dvec& Y,                          //!<    Vector of N training outputs
         const utilities::matrix<double>& X)     //!<    P by N array of inputs
     {
@@ -472,23 +473,25 @@ namespace ann
     //! Train function using default optimization parameters
     //!
     void Train(
-        SingleLayerPerceptron& slp,             //!<    Single layer perceptron to be trained
+        SingleLayerPerceptron& slp,             //!<    Single layer perceptron 
+                                                //!     to be trained
         const dvec& Y,                          //!<    Vector of N training outputs
-        const utilities::matrix<double>& X)     //!<    P by N array of training inputs
+        const utilities::matrix<double>& X)     //!<    P by N training inputs
     {
         Train(slp, Y, X, 50, 1e-5);
     }
     
     //!
-    //! Train the network using a quasi-Newton method to optimize the non-zero weights.
+    //! Train the network using a quasi-Newton method to optimize 
+    //! the non-zero weights.
     //!
     void Train(
-        SingleLayerPerceptron& slp,             //!<    Single layer perceptron to be trained
-        const dvec& Y,                          //!<    Vector of N training outputs
-        const utilities::matrix<double>& X,     //!<    P by N array of training inputs
-        const unsigned int maxIter,             //!<    Maximum number of allowed iteractions of
-                                                //!     optimization
-        const double gradTol)                   //!<    Gradient tolerance for terminating bfgs
+        SingleLayerPerceptron& slp,     //!<    Single layer perceptron to be trained
+        const dvec& Y,                  //!<    Vector of N training outputs
+        const utilities::matrix<double>& X,//!<    P by N array of training inputs
+        const unsigned int maxIter,     //!<    Maximum number of allowed iteractions
+                                        //!     of optimization
+        const double gradTol)           //!<    Gradient tol for terminating bfgs
     {
         unsigned int N = Y.size();
         slp.AllocateWork(N);

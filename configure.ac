@@ -34,6 +34,8 @@ AC_ARG_WITH([blas_lib],
                             [blas lib directory])],
             [LDFLAGS="-L$withval $LDFLAGS"])
 
+AC_DEFINE(_DEBUG_,0)
+
 # Remove the default CXXFLAGS.
 : ${CXXFLAGS=""}
 

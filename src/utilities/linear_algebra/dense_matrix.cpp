@@ -49,12 +49,13 @@ namespace utilities
     }
     
     //!
-    //! Set all matrix elements to an identity matrix
+    //! Set to an identity matrix
     //!
     void SetToIdentityMatrix(
         matrix<double>& mat)
     {
-        for(auto it = mat.m_data.begin(); it < mat.m_data.end(); it += mat.m_dLeading)
+        SetToConstantMatrix(mat, 0.0);
+        for(auto it = mat.m_data.begin(); it < mat.m_data.end(); it += mat.m_dLeading+1)
         {
             *it = 1.0;
         }
@@ -88,7 +89,7 @@ namespace utilities
         static const int one = 1;
         int N = x.size(); 
         double BETA = 0.0;
-        dsymv_("U", &N, &scale, a.data(), &N, x.data(), &one, &BETA, output.data(), &one);
+        dsymv_(&UPLO, &N, &scale, a.data(), &N, x.data(), &one, &BETA, output.data(), &one);
     }
     
     //!
@@ -138,7 +139,6 @@ namespace utilities
         const dvec& x)
     {
         static const int one = 1;
-        char UPLO = 'U';
         int N = x.size();
         dsyr_(&UPLO, &N, &scale, x.data(), &one, a.data(), &N);
     }
@@ -154,7 +154,6 @@ namespace utilities
         const dvec& y)
     {
         static const int one = 1;
-        char UPLO = 'U';
         int N = x.size();
         dsyr2_(&UPLO, &N, &scale, x.data(), &one, y.data(), &one, a.data(), &N);
     }

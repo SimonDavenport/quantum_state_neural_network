@@ -30,9 +30,15 @@
 #include "../general/dvec_def.hpp"
 #include "dense_vector.hpp"
 #include "blas.hpp"
+#if _DEBUG_
+#include "../general/debug.hpp"
+#endif
 
 namespace utilities
 {
+    //!
+    //! Simple container for a general dense matrix
+    //!
     template<typename T>
     struct matrix
     {
@@ -58,7 +64,7 @@ namespace utilities
         }
         
         //!
-        //! Resize the matrix
+        //! Resize the container
         //!
         void resize(const unsigned int dLeading, const unsigned int dSecond)
         {
@@ -84,6 +90,8 @@ namespace utilities
             return m_data.data();
         }
     };
+    
+    static const char UPLO = 'U';
     
     void SetToRandomMatrix(matrix<double>& mat, const double scale, const unsigned int seed);
     void SetToConstantMatrix(matrix<double>& mat, const double value);

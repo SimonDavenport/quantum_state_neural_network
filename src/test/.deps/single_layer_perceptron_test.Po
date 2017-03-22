@@ -147,12 +147,15 @@ test/single_layer_perceptron_test.o: \
  test/../neural_network/../utilities/linear_algebra/../general/dvec_def.hpp \
  test/../neural_network/../utilities/linear_algebra/dense_vector.hpp \
  test/../neural_network/../utilities/linear_algebra/blas.hpp \
+ test/../neural_network/../utilities/linear_algebra/../general/debug.hpp \
+ /usr/include/c++/4.8/bitset \
  test/../neural_network/../utilities/linear_algebra/dense_vector.hpp \
  test/../neural_network/../utilities/optimization/bfgs.hpp \
  test/../neural_network/../utilities/optimization/../general/dvec_def.hpp \
  test/../neural_network/../utilities/optimization/../linear_algebra/dense_matrix.hpp \
  test/../neural_network/../utilities/optimization/../linear_algebra/dense_vector.hpp \
  test/../neural_network/../utilities/optimization/line_search.hpp \
+ test/../neural_network/../utilities/optimization/../general/debug.hpp \
  test/../neural_network/../utilities/general/dvec_def.hpp \
  test/../utilities/general/dvec_def.hpp \
  test/../utilities/linear_algebra/dense_matrix.hpp
@@ -527,6 +530,10 @@ test/../neural_network/../utilities/linear_algebra/dense_vector.hpp:
 
 test/../neural_network/../utilities/linear_algebra/blas.hpp:
 
+test/../neural_network/../utilities/linear_algebra/../general/debug.hpp:
+
+/usr/include/c++/4.8/bitset:
+
 test/../neural_network/../utilities/linear_algebra/dense_vector.hpp:
 
 test/../neural_network/../utilities/optimization/bfgs.hpp:
@@ -538,6 +545,8 @@ test/../neural_network/../utilities/optimization/../linear_algebra/dense_matrix.
 test/../neural_network/../utilities/optimization/../linear_algebra/dense_vector.hpp:
 
 test/../neural_network/../utilities/optimization/line_search.hpp:
+
+test/../neural_network/../utilities/optimization/../general/debug.hpp:
 
 test/../neural_network/../utilities/general/dvec_def.hpp:
 

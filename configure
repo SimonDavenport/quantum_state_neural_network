@@ -2737,6 +2737,9 @@ if test "${with_blas_lib+set}" = set; then :
 fi
 
 
+$as_echo "#define _DEBUG_ 0" >>confdefs.h
+
+
 # Remove the default CXXFLAGS.
 : ${CXXFLAGS=""}
 

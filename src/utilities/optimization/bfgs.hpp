@@ -33,6 +33,9 @@
 #include "../linear_algebra/dense_matrix.hpp"
 #include "../linear_algebra/dense_vector.hpp"
 #include "line_search.hpp"
+#if _DEBUG_
+#include "../general/debug.hpp"
+#endif
 
 namespace utilities
 {
@@ -41,13 +44,13 @@ namespace utilities
         class BFGS
         {
             private:
-            dvec m_nextGrad;        //!<    Gradient at next iteration
-            matrix<double> m_Binv;  //!<    Approximant to Hessian inverse
-            dvec m_searchDir;       //!<    Conjugate vector
-            dvec m_deltaX;          //!<    Change in parameters at iteration
-            dvec m_deltaGrad;       //!<    Change in gradient at iteration
-            dvec m_work;            //!<    Working space
-            bool m_workAllocated;   //!<    Flag set when working memory allocated
+            dvec m_nextGrad;            //!<    Gradient at next iteration
+            matrix<double> m_Binv;      //!<    Approximant to Hessian inverse
+            dvec m_searchDir;           //!<    Conjugate vector
+            dvec m_deltaX;              //!<    Change in parameters at iteration
+            dvec m_deltaGrad;           //!<    Change in gradient at iteration
+            dvec m_work;                //!<    Working space
+            bool m_workAllocated;       //!<    Flag set when working memory allocated
             public:
             BFGS();
             void AllocateWork(const unsigned int N);

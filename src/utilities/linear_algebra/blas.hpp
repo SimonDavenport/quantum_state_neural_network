@@ -55,7 +55,7 @@ void dger_(const int* M, const int* N, const double* ALPHA,
            const double* X, const int* INCX, const double* Y,
            const int* INCY, double* A, const int* LDA);
 //!
-//! Increment by a symmetric outer product A:= ALPHA*X*X^T +A
+//! Increment by a symmetric outer product A:= ALPHA*X*X^T + A
 //!
 void dsyr_(const char* UPLO, const int* N, const double* ALPHA, 
            const double* X, const int* INCX, double* A, const int* LDA);

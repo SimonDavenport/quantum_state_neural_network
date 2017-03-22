@@ -178,7 +178,7 @@ CXXCPP = mpicxx -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = 
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"Quantum\ State\ Neutral\ Networks\" -DPACKAGE_TARNAME=\"quantum-state-neutral-networks\" -DPACKAGE_VERSION=\"1.0\" -DPACKAGE_STRING=\"Quantum\ State\ Neutral\ Networks\ 1.0\" -DPACKAGE_BUGREPORT=\"simon.davenport2@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"quantum-state-neutral-networks\" -DVERSION=\"1.0\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_BOOST_PROGRAM_OPTIONS_HPP=1
+DEFS = -DPACKAGE_NAME=\"Quantum\ State\ Neutral\ Networks\" -DPACKAGE_TARNAME=\"quantum-state-neutral-networks\" -DPACKAGE_VERSION=\"1.0\" -DPACKAGE_STRING=\"Quantum\ State\ Neutral\ Networks\ 1.0\" -DPACKAGE_BUGREPORT=\"simon.davenport2@gmail.com\" -DPACKAGE_URL=\"\" -DPACKAGE=\"quantum-state-neutral-networks\" -DVERSION=\"1.0\" -D_DEBUG_=0 -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_BOOST_PROGRAM_OPTIONS_HPP=1
 DEPDIR = .deps
 ECHO_C = 
 ECHO_N = -n
@@ -285,9 +285,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/Makefile
+	  $(AUTOMAKE) --foreign src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

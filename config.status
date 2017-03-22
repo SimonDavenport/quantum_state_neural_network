@@ -659,8 +659,8 @@ S["ECHO_N"]="-n"
 S["ECHO_C"]=""
 S["DEFS"]="-DPACKAGE_NAME=\\\"Quantum\\ State\\ Neutral\\ Networks\\\" -DPACKAGE_TARNAME=\\\"quantum-state-neutral-networks\\\" -DPACKAGE_VERSION=\\\"1.0\\\" -DPACKAGE_STRING"\
 "=\\\"Quantum\\ State\\ Neutral\\ Networks\\ 1.0\\\" -DPACKAGE_BUGREPORT=\\\"simon.davenport2@gmail.com\\\" -DPACKAGE_URL=\\\"\\\" -DPACKAGE=\\\"quantum-state-neutral-"\
-"networks\\\" -DVERSION=\\\"1.0\\\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_"\
-"STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_BOOST_PROGRAM_OPTIONS_HPP=1"
+"networks\\\" -DVERSION=\\\"1.0\\\" -D_DEBUG_=0 -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY"\
+"_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_BOOST_PROGRAM_OPTIONS_HPP=1"
 S["mandir"]="${datarootdir}/man"
 S["localedir"]="${datarootdir}/locale"
 S["libdir"]="${exec_prefix}/lib"

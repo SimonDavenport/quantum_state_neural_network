@@ -82,6 +82,7 @@ namespace utilities
                                           m_searchDir, x, grad, m_work, 
                                           EvaluateLoss, EvaluateGradients);
                 if(!success)    break;
+                prevLoss = EvaluateLoss(x);
                 //  Compute parameter and gradient increments
                 VectorScale(m_deltaX, alpha, m_searchDir);
                 VectorDiff(m_deltaGrad, m_nextGrad, grad);
@@ -89,14 +90,14 @@ namespace utilities
                 VectorIncrement(grad, 1.0, m_deltaGrad);
                 //  Update hessian inverse approximant via the
                 //  Sherman-Morrison formula:
-                //  Binv_{k+1} = Binv_k + (alpha + y^T.v) s.s^T / norm^2
+                //  Binv_{k+1} = Binv_k + (norm + y^T.v) s.s^T / norm^2
                 //  - v.s^T/norm - s.v^T/norm
-                double norm = std::max(VectorDot(m_deltaX, m_deltaGrad), 0.001);
-                SymmetricMatrixVectorMultiply(m_work, 1.0, m_Binv, m_searchDir);
+                //double norm = std::max(VectorDot(m_deltaX, m_deltaGrad), 0.00001);
+                double norm = VectorDot(m_deltaX, m_deltaGrad);
+                SymmetricMatrixVectorMultiply(m_work, 1.0, m_Binv, m_deltaGrad);
                 SymmetricOuterProductIncrement(m_Binv, (norm+VectorDot(m_deltaGrad, m_work))/
-                                               (norm*norm), m_deltaX);
+                                               (norm*norm), m_deltaX);                         
                 SymmetricOuterProductIncrement(m_Binv, -1.0/norm, m_work, m_deltaX);
-                prevLoss = EvaluateLoss(x);
                 ++iter;
             }
         }
