@@ -3,9 +3,8 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains an implementation of the BFGS quasi-Newton
-//!     optimization algorithm (Broyden-Fletcher-Goldfarb-Shanno). 
-//!     See Wikipedia article for nomenclature
+//!		This file contains an implementation some linear algebra functions for
+//!     dense vectors
 //!     
 //!                    Copyright (C) Simon C Davenport
 //!                                                                             
@@ -24,36 +23,34 @@
 //!                                                                             
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef _BFGS_HPP_INCLUDED_
-#define _BFGS_HPP_INCLUDED_
+#ifndef _DENSE_VECTOR_HPP_INCLUDED_
+#define _DENSE_VECTOR_HPP_INCLUDED_
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
-#include <function>
 #include "../general/dvec_def.hpp"
-#include "../linear_algebra/dense_matrix.hpp"
-#include "../linear_algebra/dense_vector.hpp"
-#include "line_search.hpp"
+#include <random>
+//#include <functional>
+#include <algorithm>
+#include "blas.hpp"
 
 namespace utilities
 {
-    namespace optimize
-    {
-        class BFGS
-        {
-            private:
-            dvec m_nextGrad;        //!<    Gradient at next iteration
-            matrix<double> m_Binv;  //!<    Approximant to Hessian inverse
-            dvec m_searchDir;       //!<    Conjugate vector
-            dvec m_deltaX;          //!<    Change in parameters at iteration
-            dvec m_deltaGrad;       //!<    Change in gradient at iteration
-            dvec m_work;            //!<    Working space
-            m_workAllocated;        //!<    Flag set when working memory allocated
-            public:
-            BFGS();
-            void AllocateWork(const unsigned int N);
-            void Optimize(dvec& x, dvec& grad, std::function<double(const dvec&)> EvaluateLoss,
-                          std::function<void(const dvec&, const dvec&)> EvaluateGradients,
-                          const unsigned int maxIter, const double gradTol);
-        };
-    }   //  End namespace optimize
+    static int one = 1;
+    void CopyVector(double* out, const double* in, unsigned int N);
+    void ToSubVector(dvec& sub, dvec& input, const unsigned int offset, 
+                     const std::vector<unsigned int>& zeros);
+    void ToSubVector(dvec& sub, dvec& input, const unsigned int offset);
+    void FromSubVector(const dvec& sub, dvec& output,  const unsigned int offset, 
+                       const std::vector<unsigned int>& zeros);
+    void FromSubVector(const dvec& sub, dvec& output, const unsigned int offset);
+    void SetToRandomVector(dvec& vec, const double scale, const unsigned int seed)
+    void VectorDiff(dvec& output, const dvec& a, const dvec& b);
+    void VectorIncrement(dvec& a, const double scale, const dvec& b);
+    void VectorSgn(dvec& sgnVec, const dvec& vec);
+    void VectorHadamard(dvec& output, const double scale, const dvec& a, const dvec& b);
+    double VectorDot(const dVec& a, const dvec& b);
+    double VectorL2(const dvec& a);
+    double VectorL1(const dvec& a);
+    void VectorScale(dvec& output, const double scale, const dvec& input);
 }   //  End namespace utilities
+#endif

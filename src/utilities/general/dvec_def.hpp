@@ -3,13 +3,7 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This program reads in a set of coefficieitns for Hamiltonain terms,
-//!     then attempts to fit these in terms of a certian neural network
-//!     model. This model has an equivalent representation in terms of
-//!     finite state machines, so the method allows for a compact
-//!     representation of the Hamiltonian in terms of an approximate
-//!     set of finte state machine terms. Such a representation is 
-//!     extremely useful for applications to matrix product operator states.
+//!		This file contains a typedef for vector doubles
 //!     
 //!                    Copyright (C) Simon C Davenport
 //!                                                                             
@@ -28,19 +22,8 @@
 //!                                                                             
 ////////////////////////////////////////////////////////////////////////////////
 
-///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
-#include "../neutral_network/single_layer_perceptron.hpp"
-
-int main(int argc, char *argv[])
-{
-    // Import test set of exact Hamiltonian terms
-    
-    // Generate a set of "features" used as inputs to the neutral network
-    
-    // Fit the neutral network using a certian optimization schedule. Real and
-    // imaginary parts of the terms can be fitted separately.
-    
-    // Plot some fitting error metrics
-    
-    return EXIT_SUCCESS;
-}
+#ifndef _DVEC_DEF_HPP_INCLUDED_
+#define _DVEC_DEF_HPP_INCLUDED_
+#include <vector>
+typedef std::vector<double> dvec;
+#endif
