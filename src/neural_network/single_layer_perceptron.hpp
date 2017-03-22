@@ -27,6 +27,7 @@
 #define _SINGLE_LAYER_PERCEPTRON_HPP_INCLUDED_
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
+#include <iostream>
 #include <functional>
 #include <algorithm>
 #include "../utilities/linear_algebra/dense_matrix.hpp"
@@ -55,7 +56,7 @@ namespace ann
         double l2Beta;          //!<    L2 constraint on betas
         LossFunctionWeights();
         void SetResidualWeights(const dvec& residuals);
-    }
+    };
 
     ////////////////////////////////////////////////////////////////////////////////
     //! \brief  Implementation of a single layer perceptron neural network
@@ -72,9 +73,9 @@ namespace ann
     class SingleLayerPerceptron
     {
         private:
-        utilities::matrix<double>& m_alpha; //!<    Set of H by P activation function weights
-        std::vector<unsigned int >& m_zeros;//!<    List of locations of zero alpha weights
-        dvec& m_beta;                       //!<    Set of H output function weights
+        utilities::matrix<double> m_alpha;  //!<    Set of H by P activation function weights
+        std::vector<unsigned int> m_zeros;  //!<    List of locations of zero alpha weights
+        dvec m_beta;                        //!<    Set of H output function weights
         unsigned int m_P;                   //!<    Number of features
         unsigned int m_H;                   //!<    Number of hidden nodes
         unsigned int m_N;                   //!<    Number of samples
@@ -83,10 +84,11 @@ namespace ann
         utilities::matrix<double> m_alphaGradient;
                                             //!<    Working space for alpha weights gradient
         dvec m_betaGradient;                //!<    Working space for beta weights gradient
-        utilities::matrix<double> Z;        //!<    Working space for hidden parameters
+        utilities::matrix<double> m_Z;      //!<    Working space for hidden parameters
         dvec m_output;                      //!<    Working space for network output
         dvec m_outputDeriv;                 //!<    Working space for network derivative output
         dvec m_residual;                    //!<    Working space for residual
+        dvec m_sqResidual;                  //!<    Working space for squared residuals
         dvec m_delta;                       //!<    Working space for delta
         utilities::matrix<double> m_activationDeriv;
                                             //!<    Working space for activation function derivative
@@ -102,39 +104,44 @@ namespace ann
         std::function<double(const double& z)> m_OutputFunctionDerivImpl;
                                             //!<    Output function derivative implementation
         void ActivationFunction(utilities::matrix<double>& Z, 
-                                utilities::matrix<double>& X);
+                                const utilities::matrix<double>& X);
         void ActivationFunctionDeriv(utilities::matrix<double>& Z, 
-                                     utilities::matrix<double>& X);
-        void OutputFunction(dvec& Y, utilities::matrix<double>& Z);
-        void OutputFunctionDeriv(dvec& Y, utilities::matrix<double>& Z);
-        bool CheckDimensions(dvec& Y, utilities::matrix<double>& X);
+                                     const utilities::matrix<double>& X);
+        void OutputFunction(dvec& Y, const utilities::matrix<double>& Z);
+        void OutputFunctionDeriv(dvec& Y, const utilities::matrix<double>& Z);
         public:
         SingleLayerPerceptron();
-        SingleLayerPerceptron::SingleLayerPerceptron(const unsigned int H, 
-                                                     const unsigned int P);
+        SingleLayerPerceptron(const unsigned int H, const unsigned int P);
         ~SingleLayerPerceptron();
         void AllocateWork(unsigned int N);
+        bool CheckDimensions(const dvec& Y, const utilities::matrix<double>& X);
         void RandomizeWeights(const double scale, const unsigned int seed);
         void SetLossFunctionWeights(const LossFunctionWeights& lfWeights);
-        void SetWeights(const dvec& alpha, const utilities::matrix<double>& beta);
-        void GetWeights(dvec& alpha, utilities::matrix<double>& beta) const;
-        void SetZeros(const std::vector<bool>& zeros);
-        void GetZeros(std::vector<bool>& zeros) const;
+        void SetWeights(const utilities::matrix<double>& alpha, const dvec& beta);
+        void GetWeights(utilities::matrix<double>& alpha, dvec& beta) const;
+        void SetZeros(const std::vector<unsigned int>& zeros);
+        void GetZeros(std::vector<unsigned int>& zeros) const;
         unsigned int nnzWeights() const;
         unsigned int nnzAlpha() const;
         void UpdateNzWeights(const dvec& nzWeights);
         void ExtractNzWeights(dvec& nzWeights) const;
         void ExtractNzGradients(dvec& nzGradients) const;
-        void Evaluate(dvec& Y, utilities::matrix<double>& X) const;
-        double EvaluateSquaredLoss(const const dvec& nzWeights, const dvec& Y, 
-                                   const utilities::matrix<double>& X);
-        double EvaluateSquaredLoss(const dvec& Y, const utilities::matrix<double>& X) const;
-        void EvaluateSquaredLossGradient(dvec& nzGradients, const dvec& nzWeights, 
-                                         const dvec& Y, const utilities::matrix<double>& X);
+        void Evaluate(dvec& Y, const utilities::matrix<double>& X);
+        double EvaluateSquaredLoss(const dvec& Y, const utilities::matrix<double>& X);
         void EvaluateSquaredLossGradient(const dvec& Y, const utilities::matrix<double>& X);
-        void Train(const dvec& Y, const utilities::matrix<double>& X);
-        void Train(const dvec& Y, const utilities::matrix<double>& X,
-                   const unsigned int maxIter, const double gradTol);
+        
     };
+    
+    //  Helper functions for training the network
+    double EvaluateSquaredLoss(const dvec& nzWeights, SingleLayerPerceptron& slp, 
+                               const dvec& Y, const utilities::matrix<double>& X);
+    void EvaluateNzSquaredLossGradient(dvec& nzGradients, const dvec& nzWeights,
+                                       SingleLayerPerceptron& slp, 
+                                       const dvec& Y, const utilities::matrix<double>& X);
+    void Train(SingleLayerPerceptron& slp, const dvec& Y, 
+        const utilities::matrix<double>& X);
+    void Train(SingleLayerPerceptron& slp, const dvec& Y, 
+        const utilities::matrix<double>& X, const unsigned int maxIter, 
+        const double gradTol);
 }   //  End namespace ann
 #endif

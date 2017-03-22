@@ -30,9 +30,10 @@ namespace utilities
     //!
     //! Copy part of a vector
     //!
-    void CopyVector(double* out, const double* in, unsigned int N)
+    void CopyVector(double* out, const double* in, const int N)
     {
-        ccopy_(&N, &in, &one, &out, &one);
+        static const int one = 1;
+        ccopy_(&N, in, &one, out, &one);
     }
 
     //!
@@ -45,16 +46,21 @@ namespace utilities
         const unsigned int offset, 
         const std::vector<unsigned int>& zeros)
     {
-        double* p_sub = sub.data();
-        double* p_input = input.data()+offset;
-        unsigned int nnzConsecutive = 0;
-        for(auto it_zeros = zeros.begin(); it_zeros < zeros.end(); ++it_zeros, ++p_sub)
+        int nnzConsecutive = 0;
+        int nnzCumulative = offset;
+        int nzStart = 0;
+        for(auto it_zeros = zeros.begin(); it_zeros < zeros.end(); ++it_zeros)
         {
-            nnzConsecutive = *it_zeros - nnzConsecutive;
-            CopyVector(p_sub, p_input, runSize);
+            nnzConsecutive = *it_zeros - nzStart;
+            if(nnzConsecutive)
+            {
+                CopyVector(&sub[nzStart], &input[nnzCumulative], nnzConsecutive);
+            }
+            nnzCumulative += nnzConsecutive;
+            nzStart = *it_zeros + 1;
         }
-        nnzConsecutive = sub.size() - nnzConsecutive;
-        CopyVector(p_sub, p_input, nnzConsecutive);
+        nnzConsecutive = sub.size() - nzStart;
+        CopyVector(&sub[nzStart], &input[nnzCumulative], nnzConsecutive);
     }
 
     //!
@@ -65,7 +71,8 @@ namespace utilities
         const dvec& input, 
         const unsigned int offset)
     {
-        CopyVector(pub.data(), input.data()+offset, sub.size());
+        int N = sub.size();
+        CopyVector(&sub[0], &input[offset], N);
     }
     
     //!
@@ -78,16 +85,21 @@ namespace utilities
         const unsigned int offset,
         const std::vector<unsigned int>& zeros)
     {
-        double* p_sub = sub.data();
-        double* p_output = output.data()+offset;
-        unsigned int runSize = 0;
-        for(auto it_zeros = zeros.begin(); it_zeros < zeros.end(); ++it_zeros, ++p_sub)
+        int nnzConsecutive = 0;
+        int nnzCumulative = offset;
+        int nzStart = 0;
+        for(auto it_zeros = zeros.begin(); it_zeros < zeros.end(); ++it_zeros)
         {
-            runSize = *it_zeros - runSize;
-            CopyVector(p_output, p_sub, runSize);
+            nnzConsecutive = *it_zeros - nzStart;
+            if(nnzConsecutive)
+            {
+                CopyVector(&output[nnzCumulative], &sub[nzStart], nnzConsecutive);
+            }
+            nnzCumulative += nnzConsecutive;
+            nzStart = *it_zeros + 1;
         }
-        runSize = sub.size() - runSize;
-        CopyVector(p_output, p_sub, runSize);
+        nnzConsecutive = sub.size() - nzStart;
+        CopyVector(&output[nnzCumulative], &sub[nzStart], nnzConsecutive);
     }
     
     //!
@@ -98,19 +110,20 @@ namespace utilities
         dvec& output, 
         const unsigned int offset)
     {
-        CopyVector(output.data()+offset, sub.data(), sub.size());
+        int N = sub.size();
+        CopyVector(&output[offset], &sub[0], N);
     }    
     
     //!
     //! Set to a random vector using the given seed
     //!
     void SetToRandomVector(
-        std::vector<T>& vec, 
+        std::vector<double>& vec, 
         const double scale, 
         const unsigned int seed)
     {
         std::minstd_rand generator;
-        std::uniform_real_distribution<T> distribution(-scale, scale);
+        std::uniform_real_distribution<double> distribution(-scale, scale);
         generator.seed(seed);
         std::for_each(vec.begin(), vec.end(), std::bind(distribution, generator));
     }
@@ -123,7 +136,8 @@ namespace utilities
         const dvec& a, 
         const dvec& b)
     {
-        static double mOne = -1;
+        static const int one = 1;
+        static const double mOne = -1;
         int N = output.size();
         output = a;
         daxpy_(&N, &mOne, b.data(), &one, output.data(), &one);
@@ -137,7 +151,8 @@ namespace utilities
         const double scale,
         const dvec& b)
     {
-        int N = output.size();
+        static const int one = 1;
+        int N = a.size();
         daxpy_(&N, &scale, b.data(), &one, a.data(), &one);
     }
     
@@ -150,6 +165,7 @@ namespace utilities
         const dvec& a, 
         const dvec& b)
     {
+        static const int one = 1;
         int N = output.size();
         static const int K = 0;
         static const double BETA = 0.0;
@@ -164,6 +180,7 @@ namespace utilities
         const dvec& a, 
         const dvec& b)
     {
+        static const int one = 1;
         int N = a.size();
         return ddot_(&N, a.data(), &one, b.data(), &one);
     }
@@ -176,7 +193,7 @@ namespace utilities
         const dvec& vec)
     {
         auto it_sgn = sgnVec.begin();
-        for(auto it_vec = vec.begin; it_vec < vec.end(); ++it_vec, ++it_sgn)
+        for(auto it_vec = vec.begin(); it_vec < vec.end(); ++it_vec, ++it_sgn)
         {
             *it_sgn = (*it_vec > 0) - (*it_vec < 0);
         }
@@ -188,6 +205,7 @@ namespace utilities
     double VectorL2(
         const dvec& a)
     {
+        static const int one = 1;
         int N = a.size();
         return ddot_(&N, a.data(), &one, a.data(), &one);
     }
@@ -198,6 +216,7 @@ namespace utilities
     double VectorL1( 
         const dvec& a)
     {
+        static const int one = 1;
         int N = a.size();
         return dasum_(&N, a.data(), &one);
     }
@@ -210,6 +229,7 @@ namespace utilities
         const double scale,
         const dvec& input)
     {
+        static const int one = 1;
         std::fill(output.begin(), output.end(), 0.0);
         int N = input.size();
         daxpy_(&N, &scale, input.data(), &one, output.data(), &one);

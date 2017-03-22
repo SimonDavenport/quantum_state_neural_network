@@ -28,7 +28,7 @@
 #define _BFGS_HPP_INCLUDED_
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
-#include <function>
+#include <functional>
 #include "../general/dvec_def.hpp"
 #include "../linear_algebra/dense_matrix.hpp"
 #include "../linear_algebra/dense_vector.hpp"
@@ -47,14 +47,15 @@ namespace utilities
             dvec m_deltaX;          //!<    Change in parameters at iteration
             dvec m_deltaGrad;       //!<    Change in gradient at iteration
             dvec m_work;            //!<    Working space
-            m_workAllocated;        //!<    Flag set when working memory allocated
+            bool m_workAllocated;   //!<    Flag set when working memory allocated
             public:
             BFGS();
             void AllocateWork(const unsigned int N);
             void Optimize(dvec& x, dvec& grad, 
-                          std::function<double(const dvec&)> EvaluateLoss,
-                          std::function<void(const dvec&, const dvec&)> EvaluateGradients,
+                          std::function<double(const dvec&)>& EvaluateLoss,
+                          std::function<void(dvec&, const dvec&)>& EvaluateGradients,
                           const unsigned int maxIter, const double gradTol);
         };
     }   //  End namespace optimize
 }   //  End namespace utilities
+#endif

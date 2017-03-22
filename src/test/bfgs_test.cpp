@@ -26,6 +26,7 @@
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include "../utilities/optimization/bfgs.hpp"
 #include "../utilities/general/dvec_def.hpp"
+#include <iostream>
 
 //!
 //! A mutlidimensional Rosenbrock function 
@@ -33,7 +34,7 @@
 //! which has a single minimum (1,1,1) for N=3, 
 //! and two minima for N=4-7, at (+/-1,1,1,..)
 //!
-double Rosenbrock(dvec& x)
+double Rosenbrock(const dvec& x)
 {
     double sum = 0.0;
     for(auto it = x.begin(), it1 = x.begin()+1; it1<x.end(); ++it, ++it1)
@@ -50,29 +51,31 @@ double Rosenbrock(dvec& x)
 //! otherwise
 //! 200(x_N - x^2_{N-1})
 //!
-double RosenbrockGrad(dvec& grad, const dvec& x)
+void RosenbrockGrad(dvec& grad, const dvec& x)
 {
     dvec::iterator itg = grad.begin();
-    for(auto it = x.begin(), it1 = x.begin()+1; it1<x.end(); ++it, ++it1 ++itg)
+    for(auto it = x.begin(), it1 = x.begin()+1; it1<x.end(); ++it, ++it1, ++itg)
     {
         *itg = -400.0 * (*it1 - *it * *it) * *it - 2.0 * (1.0 - *it);
     }
-    *itg = 200.0 * (*it - *(it-1) * *(it-1));
+    *itg = 200.0 * (*(x.end()-1) - *(x.end()-2) * *(x.end()-2));
 }
 
 int main(int argc, char *argv[])
 {
     const unsigned int maxIter = 50;
-    const unsigned int gradTol = 1e(-5);
-    const double passTol = 1e(-5);
+    const double gradTol = 1e-5;
+    const double passTol = 1e-5;
+    std::function<double(const dvec&)> minFunc = Rosenbrock;
+    std::function<void(dvec&, const dvec&)> gradFunc = RosenbrockGrad;
     utilities::optimize::BFGS bfgs;
     //  N=3 case
     bfgs.AllocateWork(3);
     dvec x3 {1.2, 0.8, 1.9};
     dvec grad3(3);
-    bfgs.Optimize(x3, grad3, Rosenbrock, RosenbrockGrad, maxIter, gradTol);
+    bfgs.Optimize(x3, grad3,  minFunc, gradFunc, maxIter, gradTol);
     std::cout << "Test optimization output for 3-parameter Rosenbrock function: " << std::endl;
-    std::cout << "\t " << x3[0] << " " << x3[1] << " " x3[2] << std::endl;
+    std::cout << "\t " << x3[0] << " " << x3[1] << " " << x3[2] << std::endl;
     if((std::abs(x3[0]-1.0) < passTol) && (std::abs(x3[1]-1.0) < passTol) 
         && (std::abs(x3[2]-1.0) < passTol))
     {
@@ -88,11 +91,11 @@ int main(int argc, char *argv[])
     dvec x4_global {1.2, 0.8, 1.9, 0.2};
     dvec x4_local {-1.2, 0.8, 1.9, 0.2};
     dvec grad4(4);
-    bfgs.Optimize(x4_global, grad4, Rosenbrock, RosenbrockGrad, maxIter, gradTol);
-    bfgs.Optimize(x4_local, grad4, Rosenbrock, RosenbrockGrad, maxIter, gradTol);
+    bfgs.Optimize(x4_global, grad4, minFunc, gradFunc, maxIter, gradTol);
+    bfgs.Optimize(x4_local, grad4, minFunc, gradFunc, maxIter, gradTol);
     std::cout << "Test optimization output for 4-parameter Rosenbrock function: " << std::endl;
     std::cout << "\t (global)" << x4_global[0] << " " << x4_global[1] 
-              << " " x4_global[2] << " " x4_global[3] << std::endl;
+              << " " << x4_global[2] << " " << x4_global[3] << std::endl;
     if((std::abs(x4_global[0]-1.0) < passTol) && (std::abs(x4_global[1]-1.0) < passTol) 
         && (std::abs(x4_global[2]-1.0) < passTol) && (std::abs(x4_global[3]-1.0) < passTol))
     {
@@ -104,7 +107,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
     std::cout << "\t (local)" << x4_local[0] << " " << x4_local[1] 
-              << " " x4_local[2] << " " x4_local[3] << std::endl;
+              << " " << x4_local[2] << " " << x4_local[3] << std::endl;
     if((std::abs(x4_local[0]+1.0) < passTol) && (std::abs(x4_local[1]-1.0) < passTol) 
         && (std::abs(x4_local[2]-1.0) < passTol) && (std::abs(x4_local[3]-1.0) < passTol))
     {

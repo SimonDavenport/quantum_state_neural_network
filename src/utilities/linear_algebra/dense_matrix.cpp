@@ -45,17 +45,16 @@ namespace utilities
         matrix<double>& mat,
         const double value)
     {
-        std::fill(mat.begin(), mat.end(), value);
+        std::fill(mat.m_data.begin(), mat.m_data.end(), value);
     }
     
     //!
     //! Set all matrix elements to an identity matrix
     //!
     void SetToIdentityMatrix(
-        matrix<double>& mat,
-        const double value)
+        matrix<double>& mat)
     {
-        for(auto it = mat.begin(); it < mat.end(); it += mat.m_dLeading)
+        for(auto it = mat.m_data.begin(); it < mat.m_data.end(); it += mat.m_dLeading)
         {
             *it = 1.0;
         }
@@ -67,13 +66,14 @@ namespace utilities
     void MatrixVectorMultiply(
         dvec& output, 
         const double scale,
-        matrix<double>& a, 
-        dvec& x)
+        const matrix<double>& a, 
+        const dvec& x)
     {
+        static const int one = 1;
         int M = output.size();
         int N = x.size(); 
         double BETA = 0.0;
-        dgemv_('N', &M, &N, &scale, a.data(), &M, x.data(), &one, &BETA, x.data(), &one);
+        dgemv_("N", &M, &N, &scale, a.data(), &M, x.data(), &one, &BETA, x.data(), &one);
     }
     
     //!
@@ -82,12 +82,13 @@ namespace utilities
     void SymmetricMatrixVectorMultiply(
         dvec& output, 
         const double scale,
-        matrix<double>& a, 
-        dvec& x)
+        const matrix<double>& a, 
+        const dvec& x)
     {
+        static const int one = 1;
         int N = x.size(); 
         double BETA = 0.0;
-        dsymv_('U', &N, &scale, a.data(), &N, x.data(), &one, &BETA, x.data(), &one);
+        dsymv_("U", &N, &scale, a.data(), &N, x.data(), &one, &BETA, output.data(), &one);
     }
     
     //!
@@ -96,8 +97,8 @@ namespace utilities
     //!
     void MatrixMatrixMultiply(
         matrix<double>& output, 
-        matrix<double>& a, 
-        matrix<double>& b, 
+        const matrix<double>& a, 
+        const matrix<double>& b, 
         std::string trOpt)
     {
         char TRANSA = trOpt[0];
@@ -107,7 +108,8 @@ namespace utilities
         int K = b.m_dLeading;
         double ALPHA = 1.0;
         double BETA = 0.0;
-        dgemm_(&TRANSA, &TRANSB, &M, &N, &K, &ALPHA, a.data(), &M, b.data(), &K, &BETA, &M);
+        dgemm_(&TRANSA, &TRANSB, &M, &N, &K, &ALPHA, a.data(), &M, b.data(), &K, 
+               &BETA, output.data(), &M);
     }
 
     //!
@@ -117,12 +119,13 @@ namespace utilities
     void OuterProductIncrement(
         matrix<double>& a, 
         const double scale,
-        dvec& x, 
-        dvec& y)
+        const dvec& x, 
+        const dvec& y)
     {
+        static const int one = 1;
         int M = x.size();
         int N = y.size();
-        dger_(&M, &N, &scale, &x, &one, &y, &one, a.data(), &M);
+        dger_(&M, &N, &scale, x.data(), &one, y.data(), &one, a.data(), &M);
     }
 
     //!
@@ -132,11 +135,12 @@ namespace utilities
     void SymmetricOuterProductIncrement(
         matrix<double>& a, 
         const double scale,
-        dvec& x)
+        const dvec& x)
     {
+        static const int one = 1;
         char UPLO = 'U';
         int N = x.size();
-        dsyr_(&UPLO, &N, &scale, &x, &one, a.data(), &N);
+        dsyr_(&UPLO, &N, &scale, x.data(), &one, a.data(), &N);
     }
     
     //!
@@ -146,12 +150,13 @@ namespace utilities
     void SymmetricOuterProductIncrement(
         matrix<double>& a, 
         const double scale,
-        dvec& x, 
-        dvec& y)
+        const dvec& x, 
+        const dvec& y)
     {
+        static const int one = 1;
         char UPLO = 'U';
         int N = x.size();
-        dsyr2_(&UPLO, &N, &scale, &x, &one, &y, &one, a.data(), &N);
+        dsyr2_(&UPLO, &N, &scale, x.data(), &one, y.data(), &one, a.data(), &N);
     }
 
     //!
@@ -161,8 +166,8 @@ namespace utilities
     void MatrixHadamard(
         matrix<double>& output, 
         const double scale, 
-        matrix<double>& a, 
-        matrix<double>& b)
+        const matrix<double>& a, 
+        const matrix<double>& b)
     {
         VectorHadamard(output.m_data, scale, a.m_data, b.m_data);
     }
@@ -172,8 +177,8 @@ namespace utilities
     //!
     void MatrixIncrement(
         matrix<double>& a,  
-        double& scale, 
-        matrix<double>& b)
+        const double& scale, 
+        const matrix<double>& b)
     {
         VectorIncrement(a.m_data, scale, b.m_data);
     }
@@ -183,7 +188,7 @@ namespace utilities
     //!
     void MatrixSgn(
         matrix<double>& sgnMat, 
-        matrix<double>& mat)
+        const matrix<double>& mat)
     {
         VectorSgn(sgnMat.m_data, mat.m_data);
     }
@@ -193,14 +198,14 @@ namespace utilities
     //!
     void MatrixMask(
         matrix<double>& mat, 
-        std::vector<unsigned int>& zeros)
+        const std::vector<unsigned int>& zeros)
     {
-        auto it_mat = mat.begin()
-        unsigned int runSize = 0;
+        auto it_mat = mat.m_data.begin();
+        int nnzConsecutive = 0;
         for(auto it_zeros = zeros.begin(); it_zeros < zeros.end(); ++it_zeros)
         {
-            runSize = *it_zeros - runSize;
-            it_mat += d_index;
+            nnzConsecutive = *it_zeros - nnzConsecutive;
+            it_mat += nnzConsecutive;
             *it_mat = 0;
         }
     }
@@ -209,7 +214,7 @@ namespace utilities
     //! Get the L2 sum of matrix elements
     //!
     double MatrixL2(
-        matrix<double>& mat)
+        const matrix<double>& mat)
     {
         return VectorL2(mat.m_data);
     }
@@ -218,8 +223,25 @@ namespace utilities
     //! Get the L1 sum of matrix elements
     //!
     double MatrixL1(
-        matrix<double>& mat)
+        const matrix<double>& mat)
     {
         return VectorL1(mat.m_data);
+    }
+    
+    //!
+    //! Slice a given matrix to return a sub matrix
+    //!
+    void ToSubMatrix(
+        matrix<double>& output, 
+        const matrix<double>& input, 
+        const unsigned int leadingOffset, 
+        const unsigned int secondOffset)
+    {
+        for(unsigned int inRow = leadingOffset, outRow = 0; inRow<input.m_dLeading; ++inRow, ++outRow)
+        {
+            unsigned int colWidth = input.m_dSecond - secondOffset;
+            CopyVector(&output.m_data[outRow*output.m_dLeading], 
+                       &input.m_data[inRow*input.m_dLeading+secondOffset], colWidth);
+        }
     }
 };

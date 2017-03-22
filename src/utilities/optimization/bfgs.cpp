@@ -33,9 +33,9 @@ namespace utilities
         //!
         //! Default constructor
         //!
-        BFGS()
+        BFGS::BFGS()
             :
-            m_workAllocated = false
+            m_workAllocated(false)
         {}
 
         //!
@@ -61,14 +61,14 @@ namespace utilities
         void BFGS::Optimize(
             dvec& x, 
             dvec& grad,
-            std::function<double(const dvec&)> EvaluateLoss,
-            std::function<void(const dvec&, const dvec&)> EvaluateGradients,
+            std::function<double(const dvec&)>& EvaluateLoss,
+            std::function<void(dvec&, const dvec&)>& EvaluateGradients,
             const unsigned int maxIter, 
             const double gradTol)
         {
-            if(!m_workAllocated)
+            if(!m_workAllocated || (m_nextGrad.size() != x.size()))
             {
-                this->AllocateWork(N);
+                this->AllocateWork(x.size());
             }
             SetToIdentityMatrix(m_Binv);
             unsigned int iter = 0;
@@ -78,8 +78,9 @@ namespace utilities
             while((VectorL2(grad) > gradTol) && (iter < maxIter))
             {
                 SymmetricMatrixVectorMultiply(m_searchDir, -1.0, m_Binv, grad);
-                bool success = LineSearch(alpha, m_searchDir, x, grad, m_nextGrad, m_work,
-                                          prevLoss, EvaluateLoss, EvaluateGradients);
+                bool success = LineSearch(alpha, m_nextGrad, prevLoss,
+                                          m_searchDir, x, grad, m_work, 
+                                          EvaluateLoss, EvaluateGradients);
                 if(!success)    break;
                 //  Compute parameter and gradient increments
                 VectorScale(m_deltaX, alpha, m_searchDir);

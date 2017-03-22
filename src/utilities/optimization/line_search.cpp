@@ -40,8 +40,8 @@ namespace utilities
             const dvec& x, 
             const dvec& grad,
             dvec& work,
-            std::function<double(const dvec&)> EvaluateLoss,
-            std::function<void(const dvec&, const dvec&)> EvaluateGradients)
+            std::function<double(const dvec&)>& EvaluateLoss,
+            std::function<void(dvec&, const dvec&)>& EvaluateGradients)
         {
             double startLoss = EvaluateLoss(x);
             double startDeriv = VectorDot(grad, searchDir);
@@ -49,7 +49,7 @@ namespace utilities
             double optDeriv = startDeriv;
             // Set initial search limits
             double alpha0 = 0.0;
-            double alpha1 = std::min(1.0, 2.02*(currLoss - prevLoss)/currLossDeriv);
+            double alpha1 = std::min(1.0, 2.02*(startLoss - prevLoss)/startDeriv);
             if(alpha1 <= 0.0)
             {
                 alpha1 = 1.0;
@@ -60,14 +60,14 @@ namespace utilities
             double alpha1Loss = LossIncrement(x, alpha1, searchDir, work, EvaluateLoss);
             double alpha1Deriv = 0.0;
             //  Iterate search region
-            for(unsigned int i=0; i<m_maxIter; ++i)
+            for(unsigned int i=0; i<maxIter; ++i)
             {
                 if(alpha1 < 0)
                 {
                     break;
                 }
                 //  Check Wolfe conditions
-                if((alpha1Loss > currLoss + c1*alpha1*currDeriv) ||
+                if((alpha1Loss > startLoss + c1*alpha1*startDeriv) ||
                    ((alpha1Loss >= alpha0Loss) && (i>0)))
                 {
                     Zoom(alpha, optLoss, optDeriv, nextGrad, alpha0, alpha1, 
@@ -75,8 +75,8 @@ namespace utilities
                          searchDir, x, work, EvaluateLoss, EvaluateGradients);
                     break;
                 }
-                GradIncrement(newGrad, x, alpha1, searchDir, work, EvaluateGradients);
-                alpha1Deriv = VectorDot(newGrad, searchDir);
+                GradIncrement(nextGrad, x, alpha1, searchDir, work, EvaluateGradients);
+                alpha1Deriv = VectorDot(nextGrad, searchDir);
                 //  Check Wolfe conditions
                 if(std::abs(alpha1Deriv) <= -c2*alpha0Deriv)
                 {
@@ -93,12 +93,13 @@ namespace utilities
                     break;
                 }
                 //  Iterate search region
-                alpha0 = alpha1
+                alpha0 = alpha1;
                 alpha1 = 2.0*alpha0;
                 alpha0Loss = alpha1Loss;
                 alpha1Loss = LossIncrement(x, alpha1, searchDir, work, EvaluateLoss);
                 alpha0Deriv = alpha1Deriv;
             }
+            return true;
         }
 
         //!
@@ -109,7 +110,7 @@ namespace utilities
             const double& alpha, 
             const dvec& searchDir,
             dvec& x1,
-            std::function<double(const dvec&)> EvaluateLoss)
+            std::function<double(const dvec&)>& EvaluateLoss)
         {
             x1 = x;
             VectorIncrement(x1, alpha, searchDir);
@@ -125,7 +126,7 @@ namespace utilities
             const double& alpha, 
             const dvec& searchDir,
             dvec& x1,
-            std::function<void(const dvec&, const dvec&)> EvaluateGradients)
+            std::function<void(dvec&, const dvec&)>& EvaluateGradients)
         {
             x1 = x;
             VectorIncrement(x1, alpha, searchDir);
@@ -140,26 +141,25 @@ namespace utilities
             double& optLoss,
             double& optDeriv,
             dvec& nextGrad,
-            const double alpha0, 
-            const double alpha1, 
-            const double alpha0Loss, 
-            const double alpha1Loss, 
-            const double alpha0Deriv,
-            const double startLoss, 
-            const double startDeriv,
+            double& alpha0, 
+            double& alpha1, 
+            double& alpha0Loss, 
+            double& alpha1Loss, 
+            double& alpha0Deriv,
+            const double& startLoss, 
+            const double& startDeriv,
             const dvec& searchDir,
             const dvec& x, 
             dvec& work,
-            std::function<double(const dvec&)> EvaluateLoss,
-            std::function<void(const dvec&, const dvec&)> EvaluateGradients)
+            std::function<double(const dvec&)>& EvaluateLoss,
+            std::function<void(dvec&, const dvec&)>& EvaluateGradients)
         {
-            double currLoss = startLoss;
             double alphaRec = 0.0;
             double lossRec = 0.0;
             double dAlpha = 0.0;
             double lowerLim = 0.0;
             double upperLim = 0.0;
-            for(unsigned int i=0; i<m_maxIter; ++i)
+            for(unsigned int i=0; i<maxIter; ++i)
             {
                 dAlpha = alpha1 - alpha0;
                 if(dAlpha < 0)
@@ -176,13 +176,13 @@ namespace utilities
                 double quadCheck = delta2 * dAlpha;
                 if(i > 0)
                 {
-                    alpha = this->CubicMin(alpha0, alpha0Loss, alpha0Deriv, 
-                                           alpha1, alpha1Loss, alphaRec, lossRec);
+                    alpha = CubicMin(alpha0, alpha0Loss, alpha0Deriv, 
+                                     alpha1, alpha1Loss, alphaRec, lossRec);
                 }
                 if((0 == i) || (alpha > upperLim - cubicCheck) || (alpha < lowerLim + cubicCheck))
                 {
-                    alpha = this->QuadMin(alpha0, alpha0Loss, alpha0Deriv, 
-                                          alpha1, alpha1Loss);
+                    alpha = QuadMin(alpha0, alpha0Loss, alpha0Deriv, 
+                                    alpha1, alpha1Loss);
                     if((alpha > upperLim - quadCheck) || (alpha < lowerLim + quadCheck))
                     {
                         alpha = alpha0 + 0.5*dAlpha;
@@ -199,8 +199,8 @@ namespace utilities
                 }
                 else
                 {
-                    GradIncrement(newGrad, x, alpha, searchDir, work, EvaluateGradients);
-                    optDeriv = VectorDot(newGrad, searchDir);
+                    GradIncrement(nextGrad, x, alpha, searchDir, work, EvaluateGradients);
+                    optDeriv = VectorDot(nextGrad, searchDir);
                     if(std::abs(optDeriv) <= -c2*startDeriv)
                     {
                         break;
@@ -241,7 +241,7 @@ namespace utilities
             double C = fpa;
             double db = b - a;
             double dc = c - a;
-            double denom = (db * dc)*(db * dc)*(db - dc)
+            double denom = (db * dc)*(db * dc)*(db - dc);
             double A = dc * dc * (fb - fa - C * db) - db * db * (fc - fa - C * dc);
             double B = -dc * dc * dc * (fb - fa - C * db) + db * db * db * (fc - fa - C * dc);
             A /= denom;
@@ -261,7 +261,7 @@ namespace utilities
             const double fb)
         {
             double D = fa;
-            double C - fpa;
+            double C = fpa;
             double db = b - a * 1.0;
             double B = (fb - D - C * db) / (db *db);
             return a - C / (2.0 * B);

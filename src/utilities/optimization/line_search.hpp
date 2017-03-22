@@ -41,28 +41,28 @@ namespace utilities
         static const double delta2 = 0.1; //!<    Quadratic interpolant check
         static const unsigned int maxIter = 10; 
                                     //!<    Max iteration number in line searches
-        bool LineSearch(double& alpha, const dvec& searchDir, const dvec& x, 
-                        const dvec& grad, dvec& nextGrad, const double prevLoss, 
-                        dvec& work, std::function<double(const dvec&)> EvaluateLoss, 
-                        std::function<void(const dvec&, const dvec&)> EvaluateGradients);
-        void LossIncrement(const dvec& x, const double& alpha, 
-                           const dvec& searchDir, dvec& x1,
-                           std::function<double(const dvec&)> EvaluateLoss)
+        bool LineSearch(double& alpha, dvec& nextGrad, const double prevLoss,
+                        const dvec& searchDir, const dvec& x, const dvec& grad,
+                        dvec& work, std::function<double(const dvec&)>& EvaluateLoss,
+                        std::function<void(dvec&, const dvec&)>& EvaluateGradients);
+        double LossIncrement(const dvec& x, const double& alpha, 
+                             const dvec& searchDir, dvec& x1,
+                             std::function<double(const dvec&)>& EvaluateLoss);
         void GradIncrement(dvec& newGrad, const dvec& x, const double& alpha, 
                            const dvec& searchDir, dvec& x1,
-                           std::function<void(const dvec&, const dvec&)> EvaluateGradients)
+                           std::function<void(dvec&, const dvec&)>& EvaluateGradients);
         void Zoom(double& alpha, double& optLoss, double& optDeriv,
-                  const dvec& searchDir, const dvec& x, dvec& nextGrad, 
-                  const double alpha0, const double alpha1, 
-                  const double alpha0Loss, const double alpha1Loss, 
-                  const double alpha0Deriv, const double startLoss, 
-                  const double startDeriv, dvec& work,
-                  std::function<double(const dvec&)> EvaluateLoss,
-                  std::function<void(const dvec&, const dvec&)> EvaluateGradients);
+                  dvec& nextGrad, double& alpha0, double& alpha1, 
+                  double& alpha0Loss, double& alpha1Loss, 
+                  double& alpha0Deriv, const double& startLoss, 
+                  const double& startDeriv, const dvec& searchDir, const dvec& x, 
+                  dvec& work, std::function<double(const dvec&)>& EvaluateLoss,
+                  std::function<void(dvec&, const dvec&)>& EvaluateGradients);
         double CubicMin(const double a, const double fa, const double fpa, 
                         const double b, const double fb, const double c, 
                         const double fc);
         double QuadMin(const double a, const double fa, const double fpa,
-                       const double b, const double fb)
+                       const double b, const double fb);
     }   //  End namespace optimize
 }   //  End namespace utilities
+#endif

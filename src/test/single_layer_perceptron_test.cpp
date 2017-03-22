@@ -24,7 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
-#include "../neutral_network/single_layer_perceptron.hpp"
+#include "../neural_network/single_layer_perceptron.hpp"
 #include "../utilities/general/dvec_def.hpp"
 #include "../utilities/linear_algebra/dense_matrix.hpp"
 
@@ -54,13 +54,13 @@ int main(int argc, char *argv[])
     ann::SingleLayerPerceptron slp(H, P);
     slp.AllocateWork(trainN);
     slp.RandomizeWeights(0.5, 0);
-    slp.Train(trainOutputs, trainFeatures);
+    ann::Train(slp, trainOutputs, trainFeatures);
     
     dvec networkOutputs(testN);
     slp.Evaluate(networkOutputs, testFeatures);
     
     std::cout << "\t" << "Prediction" << " " << "Actual" << std::endl;
-    for(auto it_network = networkOutputs.begin(), it_test = testOutputs.begin;
+    for(auto it_network = networkOutputs.begin(), it_test = testOutputs.begin();
         it_network < networkOutputs.end(); ++it_network, ++it_test)
     {
         std::cout << "\t" << *it_network << " " << *it_test << std::endl;

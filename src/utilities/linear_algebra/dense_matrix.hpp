@@ -33,14 +33,21 @@
 
 namespace utilities
 {
-    static int one = 1;
-    
     template<typename T>
     struct matrix
     {
         unsigned int m_dLeading;    //!<    Leading dimension of matrix
         unsigned int m_dSecond;     //!<    Second dimension of matrix
         std::vector<T> m_data;      //!<    Container for matrix data
+        
+        //!
+        //! Default constructor
+        //!
+        matrix()
+            :
+            m_dLeading(0),
+            m_dSecond(0)
+        {}
         
         //!
         //! Allocate space to store a n*m dense matrix
@@ -69,35 +76,37 @@ namespace utilities
         }
         
         //!
-        //! Get the iterator at the start of the container
-        //!        
-        std::vector<T>::iterator begin()
-        {
-            return m_data.begin();
-        }
-        
+        //! Get a pointer to the underlying container
         //!
-        //! Get the iterator at the end of the container
-        //!        
-        std::vector<T>::iterator end()
+        const T* data()
+        const
         {
-            return m_data.end();
+            return m_data.data();
         }
     };
     
     void SetToRandomMatrix(matrix<double>& mat, const double scale, const unsigned int seed);
     void SetToConstantMatrix(matrix<double>& mat, const double value);
-    void SetToIdentityMatrix(matrix<double>& mat, const double value);
-    void MatrixVectorMultiply(dvec& output, const double scale, matrix<double>& a, dvec& x);
-    void SymmetricMatrixVectorMultiply(dvec& output, const double scale, matrix<double>& a, dvec& x);
-    void MatrixMatrixMultiply(matrix<double>& output, matrix<double>& a, matrix<double>& b);
-    void OuterProductIncrement(matrix<double>& a, const double scale, dvec& x, dvec& y);
-    void SymmetricOuterProductIncrement(matrix<double>& a, const double scale, dvec& x, dvec& y);
-    void MatrixHadamard(matrix<double>& output, matrix<double> a, matrix<double>& b);
-    void MatrixIncrement(matrix<double>& a, double& scale, matrix<double>& b);
-    void MatrixSgn(matrix<double>& sgnMat, matrix<double>& mat);
-    void MatrixMask(matrix<double>& mat, std::vector<unsigned int>& zeros);
-    double MatrixL2(dvec& mat);
-    double MatrixL1(dvec& mat);
+    void SetToIdentityMatrix(matrix<double>& mat);
+    void MatrixVectorMultiply(dvec& output, const double scale, const matrix<double>& a, 
+                              const dvec& x);
+    void SymmetricMatrixVectorMultiply(dvec& output, const double scale, 
+                                       const matrix<double>& a, const dvec& x);
+    void MatrixMatrixMultiply(matrix<double>& output, const matrix<double>& a, 
+                              const matrix<double>& b, std::string trOpt);
+    void OuterProductIncrement(matrix<double>& a, const double scale, const dvec& x, 
+                               const dvec& y);
+    void SymmetricOuterProductIncrement(matrix<double>& a, const double scale, const dvec& x);
+    void SymmetricOuterProductIncrement(matrix<double>& a, const double scale, const dvec& x, 
+                                        const dvec& y);
+    void MatrixHadamard(matrix<double>& output, const double scale, const matrix<double>& a, 
+                        const matrix<double>& b);
+    void MatrixIncrement(matrix<double>& a, const double& scale, const matrix<double>& b);
+    void MatrixSgn(matrix<double>& sgnMat, const matrix<double>& mat);
+    void MatrixMask(matrix<double>& mat, const std::vector<unsigned int>& zeros);
+    double MatrixL2(const matrix<double>& mat);
+    double MatrixL1(const matrix<double>& mat);
+    void ToSubMatrix(matrix<double>& output, const matrix<double>& input, 
+                     const unsigned int leadingOffset, const unsigned int secondOffset);
 }   //  End namespace utilities
 #endif

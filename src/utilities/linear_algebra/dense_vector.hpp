@@ -35,20 +35,19 @@
 
 namespace utilities
 {
-    static int one = 1;
-    void CopyVector(double* out, const double* in, unsigned int N);
-    void ToSubVector(dvec& sub, dvec& input, const unsigned int offset, 
+    void CopyVector(double* out, const double* in, const int N);
+    void ToSubVector(dvec& sub, const dvec& input, const unsigned int offset, 
                      const std::vector<unsigned int>& zeros);
-    void ToSubVector(dvec& sub, dvec& input, const unsigned int offset);
+    void ToSubVector(dvec& sub, const dvec& input, const unsigned int offset);
     void FromSubVector(const dvec& sub, dvec& output,  const unsigned int offset, 
                        const std::vector<unsigned int>& zeros);
     void FromSubVector(const dvec& sub, dvec& output, const unsigned int offset);
-    void SetToRandomVector(dvec& vec, const double scale, const unsigned int seed)
+    void SetToRandomVector(dvec& vec, const double scale, const unsigned int seed);
     void VectorDiff(dvec& output, const dvec& a, const dvec& b);
     void VectorIncrement(dvec& a, const double scale, const dvec& b);
     void VectorSgn(dvec& sgnVec, const dvec& vec);
     void VectorHadamard(dvec& output, const double scale, const dvec& a, const dvec& b);
-    double VectorDot(const dVec& a, const dvec& b);
+    double VectorDot(const dvec& a, const dvec& b);
     double VectorL2(const dvec& a);
     double VectorL1(const dvec& a);
     void VectorScale(dvec& output, const double scale, const dvec& input);
