@@ -29,11 +29,13 @@
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include <iostream>
 #include <functional>
-#include <algorithm>
 #include "../utilities/linear_algebra/dense_matrix.hpp"
 #include "../utilities/linear_algebra/dense_vector.hpp"
 #include "../utilities/optimization/bfgs.hpp"
 #include "../utilities/general/dvec_def.hpp"
+#if _DEBUG_
+#include "../utilities/general/debug.hpp"
+#endif
 
 namespace ann
 {
@@ -89,10 +91,12 @@ namespace ann
         dvec m_outputDeriv;                 //!<    Working space for network derivative output
         dvec m_residual;                    //!<    Working space for residual
         dvec m_sqResidual;                  //!<    Working space for squared residuals
-        dvec m_delta;                       //!<    Working space for delta
+        dvec m_delta1;                      //!<    Working space for delta
+        dvec m_delta2;                      //!<    Working space for delta
         utilities::matrix<double> m_activationDeriv;
                                             //!<    Working space for activation function derivative
-        utilities::matrix<double> m_S;      //!<    Working space for S
+        utilities::matrix<double> m_S1;     //!<    Working space for S matrix
+        utilities::matrix<double> m_S2;     //!<    Working space for S matrix
         utilities::matrix<double> m_sgnAlpha;//!<    Working space for alpha weights signs
         dvec m_sgnBeta;                     //!<    Working space for beta weights signs
         std::function<double(const double& x)> m_ActivationImpl; 
@@ -111,11 +115,14 @@ namespace ann
         void OutputFunctionDeriv(dvec& Y, const utilities::matrix<double>& Z);
         public:
         SingleLayerPerceptron();
-        SingleLayerPerceptron(const unsigned int H, const unsigned int P);
+        SingleLayerPerceptron(const unsigned int P, const unsigned int H);
         ~SingleLayerPerceptron();
         void AllocateWork(unsigned int N);
         bool CheckDimensions(const dvec& Y, const utilities::matrix<double>& X);
         void RandomizeWeights(const double scale, const unsigned int seed);
+        void SetActivationFunction(
+            std::function<double(const double& x)> activationImpl,
+            std::function<double(const double& x)> activationDerivImpl);
         void SetLossFunctionWeights(const LossFunctionWeights& lfWeights);
         void SetWeights(const utilities::matrix<double>& alpha, const dvec& beta);
         void GetWeights(utilities::matrix<double>& alpha, dvec& beta) const;

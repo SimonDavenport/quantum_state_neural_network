@@ -52,7 +52,7 @@ void PRINT(const std::string name, const T val)
 }
 
 template <typename T>
-void PRINT(const std::string name, T* array, const int dim)
+void PRINT(const std::string name, const T* array, const int dim)
 {
     std::cout<<std::endl;
     for(int i=0; i<dim; ++i)
@@ -64,9 +64,10 @@ void PRINT(const std::string name, T* array, const int dim)
 }
 
 template<typename T>
-void PRINTVEC(const std::string name, std::vector<T>& vec)
+void PRINTVEC(const std::string name, const std::vector<T>& vec)
 {
     int dim = vec.size();
     PRINT<T>(name, vec.data(), dim);
 }
+
 #endif

@@ -92,7 +92,22 @@ utilities/optimization/bfgs.o: utilities/optimization/bfgs.cpp \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/c++/4.8/bits/functional_hash.h \
  /usr/include/c++/4.8/bits/basic_string.tcc \
- /usr/include/c++/4.8/bits/uses_allocator.h \
+ /usr/include/c++/4.8/bits/uses_allocator.h /usr/include/c++/4.8/iostream \
+ /usr/include/c++/4.8/ostream /usr/include/c++/4.8/ios \
+ /usr/include/c++/4.8/bits/ios_base.h \
+ /usr/include/c++/4.8/bits/locale_classes.h \
+ /usr/include/c++/4.8/bits/locale_classes.tcc \
+ /usr/include/c++/4.8/streambuf /usr/include/c++/4.8/bits/streambuf.tcc \
+ /usr/include/c++/4.8/bits/basic_ios.h \
+ /usr/include/c++/4.8/bits/locale_facets.h /usr/include/c++/4.8/cwctype \
+ /usr/include/wctype.h \
+ /usr/include/x86_64-linux-gnu/c++/4.8/bits/ctype_base.h \
+ /usr/include/c++/4.8/bits/streambuf_iterator.h \
+ /usr/include/x86_64-linux-gnu/c++/4.8/bits/ctype_inline.h \
+ /usr/include/c++/4.8/bits/locale_facets.tcc \
+ /usr/include/c++/4.8/bits/basic_ios.tcc \
+ /usr/include/c++/4.8/bits/ostream.tcc /usr/include/c++/4.8/istream \
+ /usr/include/c++/4.8/bits/istream.tcc \
  utilities/optimization/../general/dvec_def.hpp \
  /usr/include/c++/4.8/vector /usr/include/c++/4.8/bits/stl_construct.h \
  /usr/include/c++/4.8/ext/alloc_traits.h \
@@ -126,11 +141,7 @@ utilities/optimization/bfgs.o: utilities/optimization/bfgs.cpp \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/fxsrintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/adxintrin.h \
  /usr/include/c++/4.8/bits/random.tcc /usr/include/c++/4.8/numeric \
- /usr/include/c++/4.8/bits/stl_numeric.h /usr/include/c++/4.8/algorithm \
- /usr/include/c++/4.8/bits/stl_algo.h \
- /usr/include/c++/4.8/bits/algorithmfwd.h \
- /usr/include/c++/4.8/bits/stl_heap.h \
- /usr/include/c++/4.8/bits/stl_tempbuf.h \
+ /usr/include/c++/4.8/bits/stl_numeric.h \
  utilities/optimization/../linear_algebra/blas.hpp \
  utilities/optimization/../linear_algebra/dense_vector.hpp \
  utilities/optimization/line_search.hpp
@@ -377,6 +388,46 @@ utilities/optimization/bfgs.hpp:
 
 /usr/include/c++/4.8/bits/uses_allocator.h:
 
+/usr/include/c++/4.8/iostream:
+
+/usr/include/c++/4.8/ostream:
+
+/usr/include/c++/4.8/ios:
+
+/usr/include/c++/4.8/bits/ios_base.h:
+
+/usr/include/c++/4.8/bits/locale_classes.h:
+
+/usr/include/c++/4.8/bits/locale_classes.tcc:
+
+/usr/include/c++/4.8/streambuf:
+
+/usr/include/c++/4.8/bits/streambuf.tcc:
+
+/usr/include/c++/4.8/bits/basic_ios.h:
+
+/usr/include/c++/4.8/bits/locale_facets.h:
+
+/usr/include/c++/4.8/cwctype:
+
+/usr/include/wctype.h:
+
+/usr/include/x86_64-linux-gnu/c++/4.8/bits/ctype_base.h:
+
+/usr/include/c++/4.8/bits/streambuf_iterator.h:
+
+/usr/include/x86_64-linux-gnu/c++/4.8/bits/ctype_inline.h:
+
+/usr/include/c++/4.8/bits/locale_facets.tcc:
+
+/usr/include/c++/4.8/bits/basic_ios.tcc:
+
+/usr/include/c++/4.8/bits/ostream.tcc:
+
+/usr/include/c++/4.8/istream:
+
+/usr/include/c++/4.8/bits/istream.tcc:
+
 utilities/optimization/../general/dvec_def.hpp:
 
 /usr/include/c++/4.8/vector:
@@ -454,16 +505,6 @@ utilities/optimization/../linear_algebra/dense_vector.hpp:
 /usr/include/c++/4.8/numeric:
 
 /usr/include/c++/4.8/bits/stl_numeric.h:
-
-/usr/include/c++/4.8/algorithm:
-
-/usr/include/c++/4.8/bits/stl_algo.h:
-
-/usr/include/c++/4.8/bits/algorithmfwd.h:
-
-/usr/include/c++/4.8/bits/stl_heap.h:
-
-/usr/include/c++/4.8/bits/stl_tempbuf.h:
 
 utilities/optimization/../linear_algebra/blas.hpp:
 

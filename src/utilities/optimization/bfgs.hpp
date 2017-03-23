@@ -29,6 +29,7 @@
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include <functional>
+#include <iostream>
 #include "../general/dvec_def.hpp"
 #include "../linear_algebra/dense_matrix.hpp"
 #include "../linear_algebra/dense_vector.hpp"

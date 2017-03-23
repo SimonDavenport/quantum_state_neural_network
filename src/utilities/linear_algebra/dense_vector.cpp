@@ -125,7 +125,10 @@ namespace utilities
         std::minstd_rand generator;
         std::uniform_real_distribution<double> distribution(-scale, scale);
         generator.seed(seed);
-        std::for_each(vec.begin(), vec.end(), std::bind(distribution, generator));
+        for(auto& it: vec)
+        {
+            it = distribution(generator);
+        }
     }
     
     //!
@@ -157,20 +160,20 @@ namespace utilities
     }
     
     //!
-    //! Compute: output_i = scale*a_i b_i
+    //! Compute: c_i = scale*a_i b_i + BETA*c_i
     //!
     void VectorHadamard(
-        dvec& output, 
+        dvec& c, 
         const double scale,
         const dvec& a, 
         const dvec& b)
     {
         static const int one = 1;
-        int N = output.size();
+        int N = c.size();
         static const int K = 0;
         static const double BETA = 0.0;
         dsbmv_("L", &N, &K, &scale, a.data(), &one, b.data(), 
-               &one, &BETA, output.data(), &one);
+               &one, &BETA, c.data(), &one);
     }
 
     //!

@@ -66,7 +66,7 @@ namespace utilities
             const unsigned int maxIter, 
             const double gradTol)
         {
-            if(!m_workAllocated || (m_nextGrad.size() != x.size()))
+            if(!m_workAllocated || (m_nextGrad.size() != grad.size()))
             {
                 this->AllocateWork(x.size());
             }
@@ -92,8 +92,13 @@ namespace utilities
                 //  Sherman-Morrison formula:
                 //  Binv_{k+1} = Binv_k + (norm + y^T.v) s.s^T / norm^2
                 //  - v.s^T/norm - s.v^T/norm
-                //double norm = std::max(VectorDot(m_deltaX, m_deltaGrad), 0.00001);
+                //double norm = std::max(VectorDot(m_deltaX, m_deltaGrad), 0.00000001);
                 double norm = VectorDot(m_deltaX, m_deltaGrad);
+                if(norm < 0.000000001)
+                {
+                    break;
+                    std::cerr << "BFGS terminating due to convergence issue " << std::endl;
+                }
                 SymmetricMatrixVectorMultiply(m_work, 1.0, m_Binv, m_deltaGrad);
                 SymmetricOuterProductIncrement(m_Binv, (norm+VectorDot(m_deltaGrad, m_work))/
                                                (norm*norm), m_deltaX);                         

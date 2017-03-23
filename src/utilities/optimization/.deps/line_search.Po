@@ -125,11 +125,7 @@ utilities/optimization/line_search.o: \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/fxsrintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/adxintrin.h \
  /usr/include/c++/4.8/bits/random.tcc /usr/include/c++/4.8/numeric \
- /usr/include/c++/4.8/bits/stl_numeric.h /usr/include/c++/4.8/algorithm \
- /usr/include/c++/4.8/bits/stl_algo.h \
- /usr/include/c++/4.8/bits/algorithmfwd.h \
- /usr/include/c++/4.8/bits/stl_heap.h \
- /usr/include/c++/4.8/bits/stl_tempbuf.h \
+ /usr/include/c++/4.8/bits/stl_numeric.h \
  utilities/optimization/../linear_algebra/blas.hpp \
  utilities/optimization/../linear_algebra/dense_vector.hpp \
  utilities/optimization/../general/dvec_def.hpp
@@ -451,16 +447,6 @@ utilities/optimization/../linear_algebra/dense_vector.hpp:
 /usr/include/c++/4.8/numeric:
 
 /usr/include/c++/4.8/bits/stl_numeric.h:
-
-/usr/include/c++/4.8/algorithm:
-
-/usr/include/c++/4.8/bits/stl_algo.h:
-
-/usr/include/c++/4.8/bits/algorithmfwd.h:
-
-/usr/include/c++/4.8/bits/stl_heap.h:
-
-/usr/include/c++/4.8/bits/stl_tempbuf.h:
 
 utilities/optimization/../linear_algebra/blas.hpp:
 

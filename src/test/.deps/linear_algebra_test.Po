@@ -1,7 +1,7 @@
-utilities/linear_algebra/dense_matrix.o: \
- utilities/linear_algebra/dense_matrix.cpp /usr/include/stdc-predef.h \
- utilities/linear_algebra/dense_matrix.hpp \
- utilities/linear_algebra/../general/dvec_def.hpp \
+test/linear_algebra_test.o: test/linear_algebra_test.cpp \
+ /usr/include/stdc-predef.h \
+ test/../utilities/linear_algebra/dense_matrix.hpp \
+ test/../utilities/linear_algebra/../general/dvec_def.hpp \
  /usr/include/c++/4.8/vector /usr/include/c++/4.8/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h \
@@ -42,9 +42,9 @@ utilities/linear_algebra/dense_matrix.o: \
  /usr/include/c++/4.8/bits/hash_bytes.h \
  /usr/include/c++/4.8/bits/range_access.h \
  /usr/include/c++/4.8/bits/vector.tcc \
- utilities/linear_algebra/dense_vector.hpp /usr/include/c++/4.8/random \
- /usr/include/c++/4.8/cmath /usr/include/math.h \
- /usr/include/x86_64-linux-gnu/bits/huge_val.h \
+ test/../utilities/linear_algebra/dense_vector.hpp \
+ /usr/include/c++/4.8/random /usr/include/c++/4.8/cmath \
+ /usr/include/math.h /usr/include/x86_64-linux-gnu/bits/huge_val.h \
  /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
  /usr/include/x86_64-linux-gnu/bits/huge_vall.h \
  /usr/include/x86_64-linux-gnu/bits/inf.h \
@@ -121,8 +121,8 @@ utilities/linear_algebra/dense_matrix.o: \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/adxintrin.h \
  /usr/include/c++/4.8/bits/random.tcc /usr/include/c++/4.8/numeric \
  /usr/include/c++/4.8/bits/stl_numeric.h \
- utilities/linear_algebra/blas.hpp \
- utilities/linear_algebra/../general/debug.hpp \
+ test/../utilities/linear_algebra/blas.hpp \
+ test/../utilities/linear_algebra/../general/debug.hpp \
  /usr/include/c++/4.8/iostream /usr/include/c++/4.8/ostream \
  /usr/include/c++/4.8/ios /usr/include/c++/4.8/bits/ios_base.h \
  /usr/include/c++/4.8/bits/locale_classes.h \
@@ -137,13 +137,15 @@ utilities/linear_algebra/dense_matrix.o: \
  /usr/include/c++/4.8/bits/locale_facets.tcc \
  /usr/include/c++/4.8/bits/basic_ios.tcc \
  /usr/include/c++/4.8/bits/ostream.tcc /usr/include/c++/4.8/istream \
- /usr/include/c++/4.8/bits/istream.tcc /usr/include/c++/4.8/bitset
+ /usr/include/c++/4.8/bits/istream.tcc /usr/include/c++/4.8/bitset \
+ test/../utilities/linear_algebra/dense_vector.hpp \
+ test/../utilities/general/debug.hpp
 
 /usr/include/stdc-predef.h:
 
-utilities/linear_algebra/dense_matrix.hpp:
+test/../utilities/linear_algebra/dense_matrix.hpp:
 
-utilities/linear_algebra/../general/dvec_def.hpp:
+test/../utilities/linear_algebra/../general/dvec_def.hpp:
 
 /usr/include/c++/4.8/vector:
 
@@ -233,7 +235,7 @@ utilities/linear_algebra/../general/dvec_def.hpp:
 
 /usr/include/c++/4.8/bits/vector.tcc:
 
-utilities/linear_algebra/dense_vector.hpp:
+test/../utilities/linear_algebra/dense_vector.hpp:
 
 /usr/include/c++/4.8/random:
 
@@ -439,9 +441,9 @@ utilities/linear_algebra/dense_vector.hpp:
 
 /usr/include/c++/4.8/bits/stl_numeric.h:
 
-utilities/linear_algebra/blas.hpp:
+test/../utilities/linear_algebra/blas.hpp:
 
-utilities/linear_algebra/../general/debug.hpp:
+test/../utilities/linear_algebra/../general/debug.hpp:
 
 /usr/include/c++/4.8/iostream:
 
@@ -484,3 +486,7 @@ utilities/linear_algebra/../general/debug.hpp:
 /usr/include/c++/4.8/bits/istream.tcc:
 
 /usr/include/c++/4.8/bitset:
+
+test/../utilities/linear_algebra/dense_vector.hpp:
+
+test/../utilities/general/debug.hpp:

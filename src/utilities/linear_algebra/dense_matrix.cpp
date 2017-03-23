@@ -26,7 +26,7 @@
 #include "dense_matrix.hpp"
 
 namespace utilities
-{
+{   
     //!
     //! Set to a random matrix using a given seed
     //!
@@ -59,7 +59,7 @@ namespace utilities
         {
             *it = 1.0;
         }
-    }
+    } 
     
     //!
     //! Standard matrix-vector multiplication algorithm output = ALPHA*a*x
@@ -68,13 +68,14 @@ namespace utilities
         dvec& output, 
         const double scale,
         const matrix<double>& a, 
-        const dvec& x)
+        const dvec& x,
+        char TRANS)
     {
         static const int one = 1;
         int M = output.size();
-        int N = x.size(); 
+        int N = x.size();
         double BETA = 0.0;
-        dgemv_("N", &M, &N, &scale, a.data(), &M, x.data(), &one, &BETA, x.data(), &one);
+        dgemv_(&TRANS, &M, &N, &scale, a.data(), &M, x.data(), &one, &BETA, output.data(), &one);
     }
     
     //!
@@ -94,23 +95,44 @@ namespace utilities
     
     //!
     //! Standard matrix-matrix multiplication algorithm C := ALPHA*A*B
-    //! A and B can be optionally transposed
+    //! A and B can be optionally transposed. 
     //!
     void MatrixMatrixMultiply(
-        matrix<double>& output, 
+        matrix<double>& c, 
         const matrix<double>& a, 
         const matrix<double>& b, 
         std::string trOpt)
     {
         char TRANSA = trOpt[0];
         char TRANSB = trOpt[1];
-        int M = a.m_dLeading;
-        int N = b.m_dSecond;
-        int K = b.m_dLeading;
+        int M, N, K, LDA, LDB;
+        if('N' == TRANSA)
+        {
+            M = a.m_dLeading;
+            K = a.m_dSecond;
+            LDA = M;
+        }
+        else
+        {
+            M = a.m_dSecond;
+            K = a.m_dLeading;
+            LDA = K;
+        }
+        if('N' == TRANSB)
+        {
+            N = b.m_dSecond;
+            LDB = K;
+        }
+        else
+        {
+            N = b.m_dLeading;
+            LDB = N;
+        }
+        
         double ALPHA = 1.0;
         double BETA = 0.0;
-        dgemm_(&TRANSA, &TRANSB, &M, &N, &K, &ALPHA, a.data(), &M, b.data(), &K, 
-               &BETA, output.data(), &M);
+        dgemm_(&TRANSA, &TRANSB, &M, &N, &K, &ALPHA, a.data(), &LDA, 
+               b.data(), &LDB, &BETA, c.data(), &M);
     }
 
     //!
@@ -160,15 +182,15 @@ namespace utilities
 
     //!
     //! Multiply two matrices element-wise and write to output
-    //! output_ij = a_ij * b_ij
+    //! c_ij = scale * a_ij * b_ij + BETA*c_ij
     //!
     void MatrixHadamard(
-        matrix<double>& output, 
-        const double scale, 
+        matrix<double>& c, 
+        const double scale,
         const matrix<double>& a, 
         const matrix<double>& b)
     {
-        VectorHadamard(output.m_data, scale, a.m_data, b.m_data);
+        VectorHadamard(c.m_data, scale, a.m_data, b.m_data);
     }
 
     //!
@@ -228,19 +250,18 @@ namespace utilities
     }
     
     //!
-    //! Slice a given matrix to return a sub matrix
+    //! Slice a given matrix to return a sub matrix. Using fortran-style indexing.
     //!
     void ToSubMatrix(
         matrix<double>& output, 
         const matrix<double>& input, 
         const unsigned int leadingOffset, 
         const unsigned int secondOffset)
-    {
-        for(unsigned int inRow = leadingOffset, outRow = 0; inRow<input.m_dLeading; ++inRow, ++outRow)
+    {    
+        for(unsigned int inCol = leadingOffset, outCol = 0; inCol<output.m_dLeading; ++inCol, ++outCol)
         {
-            unsigned int colWidth = input.m_dSecond - secondOffset;
-            CopyVector(&output.m_data[outRow*output.m_dLeading], 
-                       &input.m_data[inRow*input.m_dLeading+secondOffset], colWidth);
+            CopyVector(&output.m_data[outCol*output.m_dSecond], 
+                       &input.m_data[inCol*input.m_dSecond+secondOffset], output.m_dSecond);
         }
     }
 };

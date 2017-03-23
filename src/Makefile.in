@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = bfgs_test$(EXEEXT) \
+bin_PROGRAMS = bfgs_test$(EXEEXT) linear_algebra_test$(EXEEXT) \
 	single_layer_perceptron_test$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
@@ -98,6 +98,11 @@ am_bfgs_test_OBJECTS = test/bfgs_test.$(OBJEXT) \
 	utilities/linear_algebra/dense_matrix.$(OBJEXT)
 bfgs_test_OBJECTS = $(am_bfgs_test_OBJECTS)
 bfgs_test_LDADD = $(LDADD)
+am_linear_algebra_test_OBJECTS = test/linear_algebra_test.$(OBJEXT) \
+	utilities/linear_algebra/dense_vector.$(OBJEXT) \
+	utilities/linear_algebra/dense_matrix.$(OBJEXT)
+linear_algebra_test_OBJECTS = $(am_linear_algebra_test_OBJECTS)
+linear_algebra_test_LDADD = $(LDADD)
 am_single_layer_perceptron_test_OBJECTS =  \
 	test/single_layer_perceptron_test.$(OBJEXT) \
 	neural_network/single_layer_perceptron.$(OBJEXT) \
@@ -137,8 +142,9 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(bfgs_test_SOURCES) $(single_layer_perceptron_test_SOURCES)
-DIST_SOURCES = $(bfgs_test_SOURCES) \
+SOURCES = $(bfgs_test_SOURCES) $(linear_algebra_test_SOURCES) \
+	$(single_layer_perceptron_test_SOURCES)
+DIST_SOURCES = $(bfgs_test_SOURCES) $(linear_algebra_test_SOURCES) \
 	$(single_layer_perceptron_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -263,6 +269,12 @@ utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp
 
 bfgs_test_LINK = $(FC) $(LDFLAGS) -o bfgs_test
+linear_algebra_test_SOURCES = \
+test/linear_algebra_test.cpp \
+utilities/linear_algebra/dense_vector.cpp \
+utilities/linear_algebra/dense_matrix.cpp
+
+linear_algebra_test_LINK = $(FC) $(LDFLAGS) -o linear_algebra_test
 single_layer_perceptron_test_SOURCES = \
 test/single_layer_perceptron_test.cpp \
 neural_network/single_layer_perceptron.cpp \
@@ -285,9 +297,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/Makefile
+	  $(AUTOMAKE) --gnu src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -384,6 +396,12 @@ utilities/linear_algebra/dense_matrix.$(OBJEXT):  \
 bfgs_test$(EXEEXT): $(bfgs_test_OBJECTS) $(bfgs_test_DEPENDENCIES) $(EXTRA_bfgs_test_DEPENDENCIES) 
 	@rm -f bfgs_test$(EXEEXT)
 	$(AM_V_GEN)$(bfgs_test_LINK) $(bfgs_test_OBJECTS) $(bfgs_test_LDADD) $(LIBS)
+test/linear_algebra_test.$(OBJEXT): test/$(am__dirstamp) \
+	test/$(DEPDIR)/$(am__dirstamp)
+
+linear_algebra_test$(EXEEXT): $(linear_algebra_test_OBJECTS) $(linear_algebra_test_DEPENDENCIES) $(EXTRA_linear_algebra_test_DEPENDENCIES) 
+	@rm -f linear_algebra_test$(EXEEXT)
+	$(AM_V_GEN)$(linear_algebra_test_LINK) $(linear_algebra_test_OBJECTS) $(linear_algebra_test_LDADD) $(LIBS)
 test/single_layer_perceptron_test.$(OBJEXT): test/$(am__dirstamp) \
 	test/$(DEPDIR)/$(am__dirstamp)
 neural_network/$(am__dirstamp):
@@ -412,6 +430,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@neural_network/$(DEPDIR)/single_layer_perceptron.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/bfgs_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/linear_algebra_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/single_layer_perceptron_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@utilities/linear_algebra/$(DEPDIR)/dense_matrix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@utilities/linear_algebra/$(DEPDIR)/dense_vector.Po@am__quote@

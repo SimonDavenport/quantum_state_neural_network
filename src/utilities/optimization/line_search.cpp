@@ -58,6 +58,11 @@ namespace utilities
             double alpha0Loss = startLoss;
             double alpha0Deriv = startDeriv;
             double alpha1Loss = LossIncrement(x, alpha1, searchDir, work, EvaluateLoss);
+            if(std::isnan(alpha1Loss))
+            {
+                alpha1 = 0.001;
+                alpha1Loss = LossIncrement(x, alpha1, searchDir, work, EvaluateLoss);
+            }
             double alpha1Deriv = 0.0;
             //  Iterate search region
             for(unsigned int i=0; i<maxIter; ++i)

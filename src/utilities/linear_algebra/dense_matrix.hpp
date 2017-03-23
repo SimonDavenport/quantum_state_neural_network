@@ -97,10 +97,10 @@ namespace utilities
     void SetToConstantMatrix(matrix<double>& mat, const double value);
     void SetToIdentityMatrix(matrix<double>& mat);
     void MatrixVectorMultiply(dvec& output, const double scale, const matrix<double>& a, 
-                              const dvec& x);
+                              const dvec& x, char TRANS);
     void SymmetricMatrixVectorMultiply(dvec& output, const double scale, 
                                        const matrix<double>& a, const dvec& x);
-    void MatrixMatrixMultiply(matrix<double>& output, const matrix<double>& a, 
+    void MatrixMatrixMultiply(matrix<double>& c, const matrix<double>& a, 
                               const matrix<double>& b, std::string trOpt);
     void OuterProductIncrement(matrix<double>& a, const double scale, const dvec& x, 
                                const dvec& y);

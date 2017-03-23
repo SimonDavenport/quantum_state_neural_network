@@ -29,9 +29,10 @@
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include "../general/dvec_def.hpp"
 #include <random>
-//#include <functional>
-#include <algorithm>
 #include "blas.hpp"
+#if _DEBUG_
+#include "../general/debug.hpp"
+#endif
 
 namespace utilities
 {
@@ -46,7 +47,7 @@ namespace utilities
     void VectorDiff(dvec& output, const dvec& a, const dvec& b);
     void VectorIncrement(dvec& a, const double scale, const dvec& b);
     void VectorSgn(dvec& sgnVec, const dvec& vec);
-    void VectorHadamard(dvec& output, const double scale, const dvec& a, const dvec& b);
+    void VectorHadamard(dvec& c, const double scale, const dvec& a, const dvec& b);
     double VectorDot(const dvec& a, const dvec& b);
     double VectorL2(const dvec& a);
     double VectorL1(const dvec& a);

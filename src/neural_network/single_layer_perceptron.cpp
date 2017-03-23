@@ -61,6 +61,23 @@ namespace ann
     }
     
     //!
+    //! Logistic function
+    //!
+    double Logistic(const double& input)
+    {
+        return 1.0 / (1.0 + exp(-input));
+    }
+    
+    //!
+    //! Logistic function derivative
+    //!
+    double LogisticDeriv(const double& input)
+    {
+        double logistic = Logistic(input);
+        return logistic*(1.0 - logistic);
+    }
+    
+    //!
     //! Default constructor for loss function weights
     //!
     LossFunctionWeights::LossFunctionWeights()
@@ -83,38 +100,49 @@ namespace ann
     }
 
     //!
-    //! Implementation of activation function, mapping N inputs X of size P to 
-    //! H hidden node parameters Z via weights alpha.
+    //! Implementation of activation function, mapping N inputs X of size  
+    //! P to H hidden node parameters Z via weights alpha.
     //!
     void SingleLayerPerceptron::ActivationFunction(
-        utilities::matrix<double>& Z,       //!<    H by N hidden node parameters
+        utilities::matrix<double>& Z,       //!<    H by N hidden 
+                                            //!     node parameters
         const utilities::matrix<double>& X) //!<    P by N inputs
     {
         utilities::MatrixMatrixMultiply(Z, m_alpha, X, "NN");
-        std::for_each(Z.m_data.begin(), Z.m_data.end(), m_ActivationImpl);
+        for(auto& it : Z.m_data)
+        {
+            it = m_ActivationImpl(it);
+        }
     }
     
     //!
     //! Implementation of activation function derivative
     //!
     void SingleLayerPerceptron::ActivationFunctionDeriv(
-        utilities::matrix<double>& Z,       //!<    H by N hidden node parameters
+        utilities::matrix<double>& Z,       //!<    H by N hidden 
+                                            //!     node parameters
         const utilities::matrix<double>& X) //!<    P by N inputs
     {
         utilities::MatrixMatrixMultiply(Z, m_alpha, X, "NN");
-        std::for_each(Z.m_data.begin(), Z.m_data.end(), m_ActivationDerivImpl);
+        for(auto& it : Z.m_data)
+        {
+            it = m_ActivationDerivImpl(it);
+        }
     }
     
     //!
-    //! Implementation of the output function, mapping hidden node parameters Z
-    //! to output parameters Y via weights beta
+    //! Implementation of the output function, mapping hidden node 
+    //! parameters Z to output parameters Y via weights beta
     //!
     void SingleLayerPerceptron::OutputFunction(
         dvec& Y,                            //!<    Vector of N outputs
         const utilities::matrix<double>& Z) //!<    H by N hidden node parameters
     {
-        utilities::MatrixVectorMultiply(Y, 1.0, Z, m_beta);
-        std::for_each(Y.begin(), Y.end(), m_OutputFunctionImpl);
+        utilities::MatrixVectorMultiply(Y, 1.0, Z, m_beta, 'N');
+        for(auto& it : Y)
+        {
+            it = m_OutputFunctionImpl(it);
+        }
     }
     
     //!
@@ -122,10 +150,14 @@ namespace ann
     //!
     void SingleLayerPerceptron::OutputFunctionDeriv(
         dvec& Y,                            //!<    Vector of N outputs
-        const utilities::matrix<double>& Z) //!<    H by N hidden node parameters
+        const utilities::matrix<double>& Z) //!<    H by N hidden 
+                                            //!     node parameters
     {
-        utilities::MatrixVectorMultiply(Y, 1.0, Z, m_beta);
-        std::for_each(Y.begin(), Y.end(), m_OutputFunctionDerivImpl);
+        utilities::MatrixVectorMultiply(Y, 1.0, Z, m_beta, 'N');
+        for(auto& it : Y)
+        {
+            it = m_OutputFunctionDerivImpl(it);
+        }
     }        
     
     //!
@@ -137,8 +169,8 @@ namespace ann
         m_H(0),
         m_N(0),
         m_workAllocated(false),
-        m_ActivationImpl(ShiftedExponential),
-        m_ActivationDerivImpl(ShiftedExponentialDeriv),
+        m_ActivationImpl(Logistic),
+        m_ActivationDerivImpl(LogisticDeriv),
         m_OutputFunctionImpl(Unit),
         m_OutputFunctionDerivImpl(UnitDeriv)
     {}
@@ -147,15 +179,15 @@ namespace ann
     //! Constructor for a certian number of features and hidden nodes
     //!
     SingleLayerPerceptron::SingleLayerPerceptron(
-        const unsigned int H,       //!<    Number of hidden nodes in layer
-        const unsigned int P)       //!<    Number of features
+        const unsigned int P,       //!<    Number of features
+        const unsigned int H)       //!<    Number of hidden nodes in layer
         :
         m_P(P),
         m_H(H),
         m_N(0),
         m_workAllocated(false),
-        m_ActivationImpl(ShiftedExponential),
-        m_ActivationDerivImpl(ShiftedExponentialDeriv),
+        m_ActivationImpl(Logistic),
+        m_ActivationDerivImpl(LogisticDeriv),
         m_OutputFunctionImpl(Unit),
         m_OutputFunctionDerivImpl(UnitDeriv)
     {
@@ -183,9 +215,11 @@ namespace ann
             m_output.resize(m_N);
             m_residual.resize(m_N);
             m_sqResidual.resize(m_N);
-            m_delta.resize(m_N);
+            m_delta1.resize(m_N);
+            m_delta2.resize(m_N);
             m_activationDeriv.resize(m_H, m_N);
-            m_S.resize(m_H, m_N);
+            m_S1.resize(m_H, m_N);
+            m_S2.resize(m_H, m_N);
             m_alphaGradient.resize(m_H, m_P);
             m_betaGradient.resize(m_H);
             m_sgnAlpha.resize(m_H, m_P);
@@ -223,11 +257,25 @@ namespace ann
     //! Function to set the current weights to be random.
     //!
     void SingleLayerPerceptron::RandomizeWeights(
-        const double scale,         //!<    Scale of the initial random weights
+        const double scale,         //!<    Scale of weights
         const unsigned int seed)    //!<    Random seed
     {
         utilities::SetToRandomMatrix(m_alpha, scale, seed);
         utilities::SetToRandomVector(m_beta, scale, seed);
+    }
+    
+    //!
+    //! Set the activation function
+    //!
+    void SingleLayerPerceptron::SetActivationFunction(
+        std::function<double(const double& x)> activationImpl,
+                            //!< Implementaion of the activation function
+        std::function<double(const double& x)> activationDerivImpl)
+                            //!< Implementation of activation func deriv
+    
+    {
+        m_ActivationImpl = activationImpl;
+        m_ActivationDerivImpl = activationDerivImpl;
     }
     
     //!
@@ -351,7 +399,10 @@ namespace ann
             unsigned int N = Y.size();
             m_Z.resize(m_H, N);
         }
+        //PRINTVEC("alpha", m_alpha.m_data);
+        //PRINTVEC("beta", m_beta);
         this->ActivationFunction(m_Z, X);
+        //PRINTVEC("Z", m_Z.m_data);
         this->OutputFunction(Y, m_Z);
     }
   
@@ -376,11 +427,15 @@ namespace ann
         }
         this->Evaluate(m_output, X);
         utilities::VectorDiff(m_residual, Y, m_output);
-        utilities::VectorHadamard(m_sqResidual, 1.0, m_residual, m_residual);
         double lossFunction = 0.0;
         if(m_lfWeights.usingResiduals)
         {
+            utilities::VectorHadamard(m_sqResidual, 1.0, m_residual, m_residual);
             lossFunction += utilities::VectorDot(m_lfWeights.residuals, m_sqResidual);
+        }
+        else
+        {
+            lossFunction += utilities::VectorL2(m_residual);
         }
         lossFunction += m_lfWeights.l1Alpha*utilities::MatrixL1(m_alpha);
         lossFunction += m_lfWeights.l1Beta*utilities::VectorL1(m_beta);
@@ -402,9 +457,11 @@ namespace ann
             m_Z.resize(m_H, N);
             m_output.resize(N);
             m_residual.resize(N);
-            m_delta.resize(N);
+            m_delta1.resize(N);
+            m_delta2.resize(N);
             m_activationDeriv.resize(m_H, N);
-            m_S.resize(m_H, N);
+            m_S1.resize(m_H, N);
+            m_S2.resize(m_H, N);
             m_alphaGradient.resize(m_H, m_P);
             m_betaGradient.resize(m_H);
             m_sgnAlpha.resize(m_H, m_P);
@@ -415,23 +472,27 @@ namespace ann
         this->OutputFunction(m_output, m_Z);
         this->OutputFunctionDeriv(m_outputDeriv, m_Z);
         utilities::VectorDiff(m_residual, Y, m_output);
-        utilities::VectorHadamard(m_delta, 1.0, m_residual, m_outputDeriv);
+        utilities::VectorHadamard(m_delta1, -2.0, m_residual, m_outputDeriv);
         if(m_lfWeights.usingResiduals)
         {
-            utilities::VectorHadamard(m_delta, -2.0, m_delta, m_lfWeights.residuals);
+            utilities::VectorHadamard(m_delta2, 1.0, m_delta1, m_lfWeights.residuals);
+        }
+        else
+        {
+            m_delta2 = m_delta1;
         }
         //  Compute S = activationDeriv*OuterProduct(beta, delta)
         this->ActivationFunctionDeriv(m_activationDeriv, X);
-        utilities::SetToConstantMatrix(m_S, 0.0);
-        utilities::OuterProductIncrement(m_S, 1.0, m_beta, m_delta);
-        utilities::MatrixHadamard(m_S, 1.0, m_activationDeriv, m_S);
+        utilities::SetToConstantMatrix(m_S1, 0.0);
+        utilities::OuterProductIncrement(m_S1, 1.0, m_beta, m_delta2);
+        utilities::MatrixHadamard(m_S2, 1.0, m_activationDeriv, m_S1);
         //  Compute alpha_gradient = S.X^T + 2*l2*alpha + l1*sgn(alpha)
-        utilities::MatrixMatrixMultiply(m_alphaGradient, m_S, X, "NT");
+        utilities::MatrixMatrixMultiply(m_alphaGradient, m_S2, X, "NT");
         utilities::MatrixIncrement(m_alphaGradient, 2*m_lfWeights.l2Alpha, m_alpha);
         utilities::MatrixSgn(m_sgnAlpha, m_alpha);
         utilities::MatrixIncrement(m_alphaGradient, m_lfWeights.l1Alpha, m_sgnAlpha);
         //  Compute beta_gradient = Z.delta + 2*l2*beta + l1*sgn(beta)
-        utilities::MatrixVectorMultiply(m_betaGradient, 1.0, m_Z, m_delta);
+        utilities::MatrixVectorMultiply(m_betaGradient, 1.0, m_Z, m_delta2, 'N');
         utilities::VectorIncrement(m_betaGradient, 2*m_lfWeights.l2Beta, m_beta);
         utilities::VectorSgn(m_sgnBeta, m_beta);
         utilities::VectorIncrement(m_betaGradient, m_lfWeights.l1Beta, m_sgnBeta);
@@ -493,21 +554,22 @@ namespace ann
                                         //!     of optimization
         const double gradTol)           //!<    Gradient tol for terminating bfgs
     {
-        unsigned int N = Y.size();
+        const unsigned int N = Y.size();
         slp.AllocateWork(N);
         if(slp.CheckDimensions(Y, X))
         {
             return;
         }
-        dvec x(slp.nnzWeights());
-        dvec grad(slp.nnzWeights());
+        const unsigned int nnzWeights = slp.nnzWeights();
+        dvec x(nnzWeights);
+        dvec grad(nnzWeights);
         slp.ExtractNzWeights(x);
         slp.ExtractNzGradients(grad);
         utilities::optimize::BFGS bfgs;
-        bfgs.AllocateWork(N);
+        bfgs.AllocateWork(nnzWeights);
         std::function<double(const dvec&)> minFunc = std::bind(ann::EvaluateSquaredLoss, std::placeholders::_1, slp, Y, X);
         std::function<void(dvec&, const dvec&)> gradFunc = std::bind(ann::EvaluateSquaredLossGradient, std::placeholders::_1, std::placeholders::_2, slp, Y, X);
-        bfgs.Optimize(x, grad, minFunc, gradFunc, maxIter, gradTol);                          
+        bfgs.Optimize(x, grad, minFunc, gradFunc, maxIter, gradTol);                    
         slp.UpdateNzWeights(x);
     }
 }   //  End namespace ann
