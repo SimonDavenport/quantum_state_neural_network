@@ -128,7 +128,6 @@ namespace utilities
             N = b.m_dLeading;
             LDB = N;
         }
-        
         double ALPHA = 1.0;
         double BETA = 0.0;
         dgemm_(&TRANSA, &TRANSB, &M, &N, &K, &ALPHA, a.data(), &LDA, 
@@ -191,6 +190,17 @@ namespace utilities
         const matrix<double>& b)
     {
         VectorHadamard(c.m_data, scale, a.m_data, b.m_data);
+    }
+    
+    //!
+    //! Compute a_ij *= scale * b_ij
+    //!
+    void MatrixHadamardIncrement(
+        matrix<double>& a, 
+        const double scale, 
+        const matrix<double>& b)
+    {
+        VectorHadamardIncrement(a.m_data, scale, b.m_data);
     }
 
     //!

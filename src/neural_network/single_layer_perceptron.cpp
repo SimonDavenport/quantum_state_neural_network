@@ -215,11 +215,9 @@ namespace ann
             m_output.resize(m_N);
             m_residual.resize(m_N);
             m_sqResidual.resize(m_N);
-            m_delta1.resize(m_N);
-            m_delta2.resize(m_N);
+            m_delta.resize(m_N);
             m_activationDeriv.resize(m_H, m_N);
-            m_S1.resize(m_H, m_N);
-            m_S2.resize(m_H, m_N);
+            m_S.resize(m_H, m_N);
             m_alphaGradient.resize(m_H, m_P);
             m_betaGradient.resize(m_H);
             m_sgnAlpha.resize(m_H, m_P);
@@ -399,10 +397,7 @@ namespace ann
             unsigned int N = Y.size();
             m_Z.resize(m_H, N);
         }
-        //PRINTVEC("alpha", m_alpha.m_data);
-        //PRINTVEC("beta", m_beta);
         this->ActivationFunction(m_Z, X);
-        //PRINTVEC("Z", m_Z.m_data);
         this->OutputFunction(Y, m_Z);
     }
   
@@ -457,11 +452,9 @@ namespace ann
             m_Z.resize(m_H, N);
             m_output.resize(N);
             m_residual.resize(N);
-            m_delta1.resize(N);
-            m_delta2.resize(N);
+            m_delta.resize(N);
             m_activationDeriv.resize(m_H, N);
-            m_S1.resize(m_H, N);
-            m_S2.resize(m_H, N);
+            m_S.resize(m_H, N);
             m_alphaGradient.resize(m_H, m_P);
             m_betaGradient.resize(m_H);
             m_sgnAlpha.resize(m_H, m_P);
@@ -472,27 +465,23 @@ namespace ann
         this->OutputFunction(m_output, m_Z);
         this->OutputFunctionDeriv(m_outputDeriv, m_Z);
         utilities::VectorDiff(m_residual, Y, m_output);
-        utilities::VectorHadamard(m_delta1, -2.0, m_residual, m_outputDeriv);
+        utilities::VectorHadamard(m_delta, -2.0, m_residual, m_outputDeriv);
         if(m_lfWeights.usingResiduals)
         {
-            utilities::VectorHadamard(m_delta2, 1.0, m_delta1, m_lfWeights.residuals);
-        }
-        else
-        {
-            m_delta2 = m_delta1;
+            utilities::VectorHadamardIncrement(m_delta, 1.0, m_lfWeights.residuals);
         }
         //  Compute S = activationDeriv*OuterProduct(beta, delta)
         this->ActivationFunctionDeriv(m_activationDeriv, X);
-        utilities::SetToConstantMatrix(m_S1, 0.0);
-        utilities::OuterProductIncrement(m_S1, 1.0, m_beta, m_delta2);
-        utilities::MatrixHadamard(m_S2, 1.0, m_activationDeriv, m_S1);
+        utilities::SetToConstantMatrix(m_S, 0.0);
+        utilities::OuterProductIncrement(m_S, 1.0, m_beta, m_delta);
+        utilities::MatrixHadamardIncrement(m_S, 1.0, m_activationDeriv);
         //  Compute alpha_gradient = S.X^T + 2*l2*alpha + l1*sgn(alpha)
-        utilities::MatrixMatrixMultiply(m_alphaGradient, m_S2, X, "NT");
+        utilities::MatrixMatrixMultiply(m_alphaGradient, m_S, X, "NT");
         utilities::MatrixIncrement(m_alphaGradient, 2*m_lfWeights.l2Alpha, m_alpha);
         utilities::MatrixSgn(m_sgnAlpha, m_alpha);
         utilities::MatrixIncrement(m_alphaGradient, m_lfWeights.l1Alpha, m_sgnAlpha);
         //  Compute beta_gradient = Z.delta + 2*l2*beta + l1*sgn(beta)
-        utilities::MatrixVectorMultiply(m_betaGradient, 1.0, m_Z, m_delta2, 'N');
+        utilities::MatrixVectorMultiply(m_betaGradient, 1.0, m_Z, m_delta, 'N');
         utilities::VectorIncrement(m_betaGradient, 2*m_lfWeights.l2Beta, m_beta);
         utilities::VectorSgn(m_sgnBeta, m_beta);
         utilities::VectorIncrement(m_betaGradient, m_lfWeights.l1Beta, m_sgnBeta);

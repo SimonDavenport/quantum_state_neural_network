@@ -122,9 +122,10 @@ test/linear_algebra_test.o: test/linear_algebra_test.cpp \
  /usr/include/c++/4.8/bits/random.tcc /usr/include/c++/4.8/numeric \
  /usr/include/c++/4.8/bits/stl_numeric.h \
  test/../utilities/linear_algebra/blas.hpp \
- test/../utilities/linear_algebra/../general/debug.hpp \
- /usr/include/c++/4.8/iostream /usr/include/c++/4.8/ostream \
- /usr/include/c++/4.8/ios /usr/include/c++/4.8/bits/ios_base.h \
+ test/../utilities/linear_algebra/dense_vector.hpp \
+ test/../utilities/general/debug.hpp /usr/include/c++/4.8/iostream \
+ /usr/include/c++/4.8/ostream /usr/include/c++/4.8/ios \
+ /usr/include/c++/4.8/bits/ios_base.h \
  /usr/include/c++/4.8/bits/locale_classes.h \
  /usr/include/c++/4.8/bits/locale_classes.tcc \
  /usr/include/c++/4.8/streambuf /usr/include/c++/4.8/bits/streambuf.tcc \
@@ -137,9 +138,7 @@ test/linear_algebra_test.o: test/linear_algebra_test.cpp \
  /usr/include/c++/4.8/bits/locale_facets.tcc \
  /usr/include/c++/4.8/bits/basic_ios.tcc \
  /usr/include/c++/4.8/bits/ostream.tcc /usr/include/c++/4.8/istream \
- /usr/include/c++/4.8/bits/istream.tcc /usr/include/c++/4.8/bitset \
- test/../utilities/linear_algebra/dense_vector.hpp \
- test/../utilities/general/debug.hpp
+ /usr/include/c++/4.8/bits/istream.tcc /usr/include/c++/4.8/bitset
 
 /usr/include/stdc-predef.h:
 
@@ -443,7 +442,9 @@ test/../utilities/linear_algebra/dense_vector.hpp:
 
 test/../utilities/linear_algebra/blas.hpp:
 
-test/../utilities/linear_algebra/../general/debug.hpp:
+test/../utilities/linear_algebra/dense_vector.hpp:
+
+test/../utilities/general/debug.hpp:
 
 /usr/include/c++/4.8/iostream:
 
@@ -486,7 +487,3 @@ test/../utilities/linear_algebra/../general/debug.hpp:
 /usr/include/c++/4.8/bits/istream.tcc:
 
 /usr/include/c++/4.8/bitset:
-
-test/../utilities/linear_algebra/dense_vector.hpp:
-
-test/../utilities/general/debug.hpp:

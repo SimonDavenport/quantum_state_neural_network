@@ -48,6 +48,7 @@ namespace utilities
     void VectorIncrement(dvec& a, const double scale, const dvec& b);
     void VectorSgn(dvec& sgnVec, const dvec& vec);
     void VectorHadamard(dvec& c, const double scale, const dvec& a, const dvec& b);
+    void VectorHadamardIncrement(dvec& a, const double scale, const dvec& b);
     double VectorDot(const dvec& a, const dvec& b);
     double VectorL2(const dvec& a);
     double VectorL1(const dvec& a);

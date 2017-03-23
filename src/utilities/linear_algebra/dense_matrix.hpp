@@ -91,7 +91,7 @@ namespace utilities
         }
     };
     
-    static const char UPLO = 'U';
+    static const char UPLO = 'U';   //!<    Symmetric matrix update convention
     
     void SetToRandomMatrix(matrix<double>& mat, const double scale, const unsigned int seed);
     void SetToConstantMatrix(matrix<double>& mat, const double value);
@@ -107,8 +107,9 @@ namespace utilities
     void SymmetricOuterProductIncrement(matrix<double>& a, const double scale, const dvec& x);
     void SymmetricOuterProductIncrement(matrix<double>& a, const double scale, const dvec& x, 
                                         const dvec& y);
-    void MatrixHadamard(matrix<double>& output, const double scale, const matrix<double>& a, 
+    void MatrixHadamard(matrix<double>& c, const double scale, const matrix<double>& a, 
                         const matrix<double>& b);
+    void MatrixHadamardIncrement(matrix<double>& a, const double scale, const matrix<double>& b);
     void MatrixIncrement(matrix<double>& a, const double& scale, const matrix<double>& b);
     void MatrixSgn(matrix<double>& sgnMat, const matrix<double>& mat);
     void MatrixMask(matrix<double>& mat, const std::vector<unsigned int>& zeros);

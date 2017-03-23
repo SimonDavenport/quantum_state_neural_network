@@ -175,6 +175,26 @@ namespace utilities
         dsbmv_("L", &N, &K, &scale, a.data(), &one, b.data(), 
                &one, &BETA, c.data(), &one);
     }
+    
+    //!
+    //! Compute: a_i *= scale*b_i
+    //!
+    void VectorHadamardIncrement(
+        dvec& a, 
+        const double scale, 
+        const dvec& b)
+    {
+        static const int block = 64;
+        auto it_b = b.begin();
+        for(auto it_a = a.begin(); it_a < a.end(); it_a+=block, it_b+=block)
+        {
+            auto it_b_block = it_b;
+            for(auto it_a_block = it_a; it_a_block < a.end(); ++it_a_block, ++it_b_block)
+            {
+                *it_a_block *= scale * *it_b_block;
+            }
+        }
+    }  
 
     //!
     //! Compute the dot product: output = sum_i a_i b_i

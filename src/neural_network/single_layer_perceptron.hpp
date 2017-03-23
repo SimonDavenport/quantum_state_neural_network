@@ -91,12 +91,10 @@ namespace ann
         dvec m_outputDeriv;                 //!<    Working space for network derivative output
         dvec m_residual;                    //!<    Working space for residual
         dvec m_sqResidual;                  //!<    Working space for squared residuals
-        dvec m_delta1;                      //!<    Working space for delta
-        dvec m_delta2;                      //!<    Working space for delta
+        dvec m_delta;                       //!<    Working space for delta
         utilities::matrix<double> m_activationDeriv;
                                             //!<    Working space for activation function derivative
-        utilities::matrix<double> m_S1;     //!<    Working space for S matrix
-        utilities::matrix<double> m_S2;     //!<    Working space for S matrix
+        utilities::matrix<double> m_S;      //!<    Working space for S matrix
         utilities::matrix<double> m_sgnAlpha;//!<    Working space for alpha weights signs
         dvec m_sgnBeta;                     //!<    Working space for beta weights signs
         std::function<double(const double& x)> m_ActivationImpl; 
