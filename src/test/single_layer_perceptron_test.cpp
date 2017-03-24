@@ -25,10 +25,12 @@
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include "../neural_network/single_layer_perceptron.hpp"
+#include "../neural_network/train.hpp"
 #include "../utilities/general/dvec_def.hpp"
 #include "../utilities/linear_algebra/dense_matrix.hpp"
 #include "../utilities/wrappers/io_wrapper.hpp"
-
+#include "../utilities/optimization/bfgs.hpp"
+#include "../utilities/optimization/lbfgs.hpp"
 #if _DEBUG_
 #include "../utilities/general/debug.hpp"
 #endif
@@ -69,9 +71,10 @@ int main(int argc, char *argv[])
 
     //  Train the single layer perceptron
     ann::SingleLayerPerceptron slp(P, H);
+    utilities::optimize::LBFGS op;
     slp.AllocateWork(trainN);
     slp.RandomizeWeights(0.5, 0);
-    ann::Train(slp, trainOutputs, trainFeatures);
+    ann::Train(slp, op, trainOutputs, trainFeatures);
     dvec networkOutputs(N);
     slp.Evaluate(networkOutputs, features);
     std::cout << "\t" << "Prediction" << " " << "Actual" << std::endl;

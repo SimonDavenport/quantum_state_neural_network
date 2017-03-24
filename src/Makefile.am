@@ -26,6 +26,8 @@ linear_algebra_test_LINK = $(FC) $(LDFLAGS) -o linear_algebra_test
 single_layer_perceptron_test_SOURCES = \
 test/single_layer_perceptron_test.cpp \
 neural_network/single_layer_perceptron.cpp \
+neural_network/loss_function.cpp \
+neural_network/network_functions.cpp \
 utilities/optimization/bfgs.cpp \
 utilities/optimization/lbfgs.cpp \
 utilities/optimization/line_search.cpp \

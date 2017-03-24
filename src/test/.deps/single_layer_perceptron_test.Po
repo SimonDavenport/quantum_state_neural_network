@@ -108,18 +108,7 @@ test/single_layer_perceptron_test.o: \
  /usr/include/c++/4.8/utility /usr/include/c++/4.8/bits/stl_relops.h \
  /usr/include/c++/4.8/array /usr/include/c++/4.8/stdexcept \
  /usr/include/c++/4.8/bits/uses_allocator.h \
- test/../neural_network/../utilities/linear_algebra/dense_matrix.hpp \
- test/../neural_network/../utilities/linear_algebra/../general/dvec_def.hpp \
- /usr/include/c++/4.8/vector /usr/include/c++/4.8/bits/stl_construct.h \
- /usr/include/c++/4.8/ext/alloc_traits.h \
- /usr/include/c++/4.8/bits/alloc_traits.h \
- /usr/include/c++/4.8/bits/ptr_traits.h \
- /usr/include/c++/4.8/bits/stl_uninitialized.h \
- /usr/include/c++/4.8/bits/stl_vector.h \
- /usr/include/c++/4.8/bits/stl_bvector.h \
- /usr/include/c++/4.8/bits/vector.tcc \
- test/../neural_network/../utilities/linear_algebra/dense_vector.hpp \
- /usr/include/c++/4.8/random /usr/include/c++/4.8/cmath \
+ test/../neural_network/network_functions.hpp /usr/include/c++/4.8/cmath \
  /usr/include/math.h /usr/include/x86_64-linux-gnu/bits/huge_val.h \
  /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
  /usr/include/x86_64-linux-gnu/bits/huge_vall.h \
@@ -128,7 +117,21 @@ test/single_layer_perceptron_test.o: \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/c++/4.8/limits /usr/include/c++/4.8/bits/random.h \
+ test/../neural_network/loss_function.hpp \
+ test/../neural_network/../utilities/general/dvec_def.hpp \
+ /usr/include/c++/4.8/vector /usr/include/c++/4.8/bits/stl_construct.h \
+ /usr/include/c++/4.8/ext/alloc_traits.h \
+ /usr/include/c++/4.8/bits/alloc_traits.h \
+ /usr/include/c++/4.8/bits/ptr_traits.h \
+ /usr/include/c++/4.8/bits/stl_uninitialized.h \
+ /usr/include/c++/4.8/bits/stl_vector.h \
+ /usr/include/c++/4.8/bits/stl_bvector.h \
+ /usr/include/c++/4.8/bits/vector.tcc \
+ test/../neural_network/../utilities/linear_algebra/dense_matrix.hpp \
+ test/../neural_network/../utilities/linear_algebra/../general/dvec_def.hpp \
+ test/../neural_network/../utilities/linear_algebra/dense_vector.hpp \
+ /usr/include/c++/4.8/random /usr/include/c++/4.8/limits \
+ /usr/include/c++/4.8/bits/random.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/opt_random.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/x86intrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/ia32intrin.h \
@@ -143,13 +146,7 @@ test/single_layer_perceptron_test.o: \
  /usr/include/c++/4.8/bits/stl_numeric.h \
  test/../neural_network/../utilities/linear_algebra/blas.hpp \
  test/../neural_network/../utilities/linear_algebra/dense_vector.hpp \
- test/../neural_network/../utilities/optimization/bfgs.hpp \
- test/../neural_network/../utilities/optimization/../general/dvec_def.hpp \
- test/../neural_network/../utilities/optimization/../linear_algebra/dense_matrix.hpp \
- test/../neural_network/../utilities/optimization/../linear_algebra/dense_vector.hpp \
- test/../neural_network/../utilities/optimization/line_search.hpp \
- test/../neural_network/../utilities/general/dvec_def.hpp \
- test/../utilities/general/dvec_def.hpp \
+ test/../neural_network/train.hpp test/../utilities/general/dvec_def.hpp \
  test/../utilities/linear_algebra/dense_matrix.hpp \
  test/../utilities/wrappers/io_wrapper.hpp /usr/include/c++/4.8/fstream \
  /usr/include/c++/4.8/bits/codecvt.h \
@@ -165,7 +162,15 @@ test/single_layer_perceptron_test.o: \
  test/../utilities/wrappers/../general/template_tools.hpp \
  test/../utilities/wrappers/../general/dcmplx_type_def.hpp \
  /usr/include/c++/4.8/complex /usr/include/c++/4.8/sstream \
- /usr/include/c++/4.8/bits/sstream.tcc
+ /usr/include/c++/4.8/bits/sstream.tcc \
+ test/../utilities/optimization/bfgs.hpp \
+ test/../utilities/optimization/../general/dvec_def.hpp \
+ test/../utilities/optimization/../linear_algebra/dense_matrix.hpp \
+ test/../utilities/optimization/../linear_algebra/dense_vector.hpp \
+ test/../utilities/optimization/line_search.hpp \
+ test/../utilities/optimization/lbfgs.hpp \
+ test/../utilities/optimization/../data_structures/fixed_size_queue.hpp \
+ test/../utilities/optimization/../data_structures/../linear_algebra/dense_vector.hpp
 
 /usr/include/stdc-predef.h:
 
@@ -449,31 +454,7 @@ test/../neural_network/single_layer_perceptron.hpp:
 
 /usr/include/c++/4.8/bits/uses_allocator.h:
 
-test/../neural_network/../utilities/linear_algebra/dense_matrix.hpp:
-
-test/../neural_network/../utilities/linear_algebra/../general/dvec_def.hpp:
-
-/usr/include/c++/4.8/vector:
-
-/usr/include/c++/4.8/bits/stl_construct.h:
-
-/usr/include/c++/4.8/ext/alloc_traits.h:
-
-/usr/include/c++/4.8/bits/alloc_traits.h:
-
-/usr/include/c++/4.8/bits/ptr_traits.h:
-
-/usr/include/c++/4.8/bits/stl_uninitialized.h:
-
-/usr/include/c++/4.8/bits/stl_vector.h:
-
-/usr/include/c++/4.8/bits/stl_bvector.h:
-
-/usr/include/c++/4.8/bits/vector.tcc:
-
-test/../neural_network/../utilities/linear_algebra/dense_vector.hpp:
-
-/usr/include/c++/4.8/random:
+test/../neural_network/network_functions.hpp:
 
 /usr/include/c++/4.8/cmath:
 
@@ -494,6 +475,36 @@ test/../neural_network/../utilities/linear_algebra/dense_vector.hpp:
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
+
+test/../neural_network/loss_function.hpp:
+
+test/../neural_network/../utilities/general/dvec_def.hpp:
+
+/usr/include/c++/4.8/vector:
+
+/usr/include/c++/4.8/bits/stl_construct.h:
+
+/usr/include/c++/4.8/ext/alloc_traits.h:
+
+/usr/include/c++/4.8/bits/alloc_traits.h:
+
+/usr/include/c++/4.8/bits/ptr_traits.h:
+
+/usr/include/c++/4.8/bits/stl_uninitialized.h:
+
+/usr/include/c++/4.8/bits/stl_vector.h:
+
+/usr/include/c++/4.8/bits/stl_bvector.h:
+
+/usr/include/c++/4.8/bits/vector.tcc:
+
+test/../neural_network/../utilities/linear_algebra/dense_matrix.hpp:
+
+test/../neural_network/../utilities/linear_algebra/../general/dvec_def.hpp:
+
+test/../neural_network/../utilities/linear_algebra/dense_vector.hpp:
+
+/usr/include/c++/4.8/random:
 
 /usr/include/c++/4.8/limits:
 
@@ -529,17 +540,7 @@ test/../neural_network/../utilities/linear_algebra/blas.hpp:
 
 test/../neural_network/../utilities/linear_algebra/dense_vector.hpp:
 
-test/../neural_network/../utilities/optimization/bfgs.hpp:
-
-test/../neural_network/../utilities/optimization/../general/dvec_def.hpp:
-
-test/../neural_network/../utilities/optimization/../linear_algebra/dense_matrix.hpp:
-
-test/../neural_network/../utilities/optimization/../linear_algebra/dense_vector.hpp:
-
-test/../neural_network/../utilities/optimization/line_search.hpp:
-
-test/../neural_network/../utilities/general/dvec_def.hpp:
+test/../neural_network/train.hpp:
 
 test/../utilities/general/dvec_def.hpp:
 
@@ -582,3 +583,19 @@ test/../utilities/wrappers/../general/dcmplx_type_def.hpp:
 /usr/include/c++/4.8/sstream:
 
 /usr/include/c++/4.8/bits/sstream.tcc:
+
+test/../utilities/optimization/bfgs.hpp:
+
+test/../utilities/optimization/../general/dvec_def.hpp:
+
+test/../utilities/optimization/../linear_algebra/dense_matrix.hpp:
+
+test/../utilities/optimization/../linear_algebra/dense_vector.hpp:
+
+test/../utilities/optimization/line_search.hpp:
+
+test/../utilities/optimization/lbfgs.hpp:
+
+test/../utilities/optimization/../data_structures/fixed_size_queue.hpp:
+
+test/../utilities/optimization/../data_structures/../linear_algebra/dense_vector.hpp:

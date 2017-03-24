@@ -29,9 +29,10 @@
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include <iostream>
 #include <functional>
+#include "network_functions.hpp"
+#include "loss_function.hpp"
 #include "../utilities/linear_algebra/dense_matrix.hpp"
 #include "../utilities/linear_algebra/dense_vector.hpp"
-#include "../utilities/optimization/bfgs.hpp"
 #include "../utilities/general/dvec_def.hpp"
 #if _DEBUG_
 #include "../utilities/general/debug.hpp"
@@ -39,27 +40,6 @@
 
 namespace ann
 {
-    //  Possible activation and output functions and their derivatives
-    double ShiftedExponential(const double& input);
-    double ShiftedExponentialDeriv(const double& input);
-    double Unit(const double& input);
-    double UnitDeriv(const double& input);
-    
-    //!
-    //! Container for loss function weights
-    //!
-    struct LossFunctionWeights
-    {
-        bool usingResiduals;    //!<    Flag set if using weighted residuals
-        dvec residuals;         //!<    Weights for squared residuals of each sample
-        double l1Alpha;         //!<    L1 constraint weight on alphas
-        double l1Beta;          //!<    L1 constraint on betas
-        double l2Alpha;         //!<    L2 constraint on alphas
-        double l2Beta;          //!<    L2 constraint on betas
-        LossFunctionWeights();
-        void SetResidualWeights(const dvec& residuals);
-    };
-
     ////////////////////////////////////////////////////////////////////////////////
     //! \brief  Implementation of a single layer perceptron neural network
     //!
@@ -134,19 +114,6 @@ namespace ann
         void Evaluate(dvec& Y, const utilities::matrix<double>& X);
         double EvaluateSquaredLoss(const dvec& Y, const utilities::matrix<double>& X);
         void EvaluateSquaredLossGradient(const dvec& Y, const utilities::matrix<double>& X);
-        
     };
-    
-    //  Helper functions for training the network
-    double EvaluateSquaredLoss(const dvec& nzWeights, SingleLayerPerceptron& slp, 
-                               const dvec& Y, const utilities::matrix<double>& X);
-    void EvaluateNzSquaredLossGradient(dvec& nzGradients, const dvec& nzWeights,
-                                       SingleLayerPerceptron& slp, 
-                                       const dvec& Y, const utilities::matrix<double>& X);
-    void Train(SingleLayerPerceptron& slp, const dvec& Y, 
-        const utilities::matrix<double>& X);
-    void Train(SingleLayerPerceptron& slp, const dvec& Y, 
-        const utilities::matrix<double>& X, const unsigned int maxIter, 
-        const double gradTol);
 }   //  End namespace ann
 #endif
