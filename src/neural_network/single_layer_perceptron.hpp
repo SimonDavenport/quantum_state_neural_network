@@ -30,7 +30,7 @@
 #include <iostream>
 #include <functional>
 #include "network_functions.hpp"
-#include "loss_function.hpp"
+#include "loss_function_data.hpp"
 #include "../utilities/linear_algebra/dense_matrix.hpp"
 #include "../utilities/linear_algebra/dense_vector.hpp"
 #include "../utilities/general/dvec_def.hpp"

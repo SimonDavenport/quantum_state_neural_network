@@ -116,7 +116,7 @@ neural_network/single_layer_perceptron.o: \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- neural_network/loss_function.hpp \
+ neural_network/loss_function_data.hpp \
  neural_network/../utilities/general/dvec_def.hpp \
  /usr/include/c++/4.8/vector /usr/include/c++/4.8/bits/stl_construct.h \
  /usr/include/c++/4.8/ext/alloc_traits.h \
@@ -450,7 +450,7 @@ neural_network/network_functions.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
-neural_network/loss_function.hpp:
+neural_network/loss_function_data.hpp:
 
 neural_network/../utilities/general/dvec_def.hpp:
 

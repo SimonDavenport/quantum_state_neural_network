@@ -107,7 +107,7 @@ linear_algebra_test_LDADD = $(LDADD)
 am_single_layer_perceptron_test_OBJECTS =  \
 	test/single_layer_perceptron_test.$(OBJEXT) \
 	neural_network/single_layer_perceptron.$(OBJEXT) \
-	neural_network/loss_function.$(OBJEXT) \
+	neural_network/loss_function_data.$(OBJEXT) \
 	neural_network/network_functions.$(OBJEXT) \
 	utilities/optimization/bfgs.$(OBJEXT) \
 	utilities/optimization/lbfgs.$(OBJEXT) \
@@ -283,7 +283,7 @@ linear_algebra_test_LINK = $(FC) $(LDFLAGS) -o linear_algebra_test
 single_layer_perceptron_test_SOURCES = \
 test/single_layer_perceptron_test.cpp \
 neural_network/single_layer_perceptron.cpp \
-neural_network/loss_function.cpp \
+neural_network/loss_function_data.cpp \
 neural_network/network_functions.cpp \
 utilities/optimization/bfgs.cpp \
 utilities/optimization/lbfgs.cpp \
@@ -424,7 +424,7 @@ neural_network/$(DEPDIR)/$(am__dirstamp):
 neural_network/single_layer_perceptron.$(OBJEXT):  \
 	neural_network/$(am__dirstamp) \
 	neural_network/$(DEPDIR)/$(am__dirstamp)
-neural_network/loss_function.$(OBJEXT):  \
+neural_network/loss_function_data.$(OBJEXT):  \
 	neural_network/$(am__dirstamp) \
 	neural_network/$(DEPDIR)/$(am__dirstamp)
 neural_network/network_functions.$(OBJEXT):  \
@@ -445,7 +445,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include neural_network/$(DEPDIR)/loss_function.Po
+include neural_network/$(DEPDIR)/loss_function_data.Po
 include neural_network/$(DEPDIR)/network_functions.Po
 include neural_network/$(DEPDIR)/single_layer_perceptron.Po
 include test/$(DEPDIR)/bfgs_test.Po
