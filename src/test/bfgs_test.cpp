@@ -3,8 +3,9 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		Run tests for the implementation of the bfgs optimization algorithm. 
-//!     A typical test is to find the minimum of the Rosenbrock function
+//!		Run tests for the implementation of the bfgs and l-bfgs optimization 
+//!     algorithms. A typical test is to find the minimum of the 
+//!     multi-dimensional Rosenbrock function.
 //!     
 //!                    Copyright (C) Simon C Davenport
 //!                                                                             
@@ -25,6 +26,7 @@
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include "../utilities/optimization/bfgs.hpp"
+#include "../utilities/optimization/lbfgs.hpp"
 #include "../utilities/general/dvec_def.hpp"
 #include <iostream>
 
@@ -67,61 +69,123 @@ void RosenbrockGrad(dvec& grad, const dvec& x)
 
 int main(int argc, char *argv[])
 {
-    const unsigned int maxIter = 50;
-    double gradTol = 1e-5;
-    double passTol = 1e-5;
-    std::function<double(const dvec&)> minFunc = Rosenbrock;
-    std::function<void(dvec&, const dvec&)> gradFunc = RosenbrockGrad;
-    utilities::optimize::BFGS bfgs;
-    //  N=3 case
-    bfgs.AllocateWork(3);
-    dvec x3 {1.4, 0.2, 1.7};
-    dvec grad3(3);
-    bfgs.Optimize(x3, grad3,  minFunc, gradFunc, maxIter, gradTol);
-    std::cout << "Test optimization output for 3-parameter Rosenbrock function: " << std::endl;
-    std::cout << "(global min) " << x3[0] << " " << x3[1] << " " << x3[2] << std::endl;
-    if((std::abs(x3[0]-1.0) < passTol) && (std::abs(x3[1]-1.0) < passTol) 
-        && (std::abs(x3[2]-1.0) < passTol))
+    std::cout << "TEST BFGS IMPLEMENTATION" << std::endl;
     {
-        std::cout << "Test Passed!" <<std::endl;
+        const unsigned int maxIter = 50;
+        double gradTol = 1e-5;
+        double passTol = 1e-5;
+        std::function<double(const dvec&)> minFunc = Rosenbrock;
+        std::function<void(dvec&, const dvec&)> gradFunc = RosenbrockGrad;
+        utilities::optimize::BFGS bfgs;
+        //  N=3 case
+        bfgs.AllocateWork(3);
+        dvec x3 {1.4, 0.2, 1.7};
+        dvec grad3(3);
+        bfgs.Optimize(x3, grad3,  minFunc, gradFunc, maxIter, gradTol);
+        std::cout << "Test optimization output for 3-parameter Rosenbrock function: " << std::endl;
+        std::cout << "(global min) " << x3[0] << " " << x3[1] << " " << x3[2] << std::endl;
+        if((std::abs(x3[0]-1.0) < passTol) && (std::abs(x3[1]-1.0) < passTol) 
+            && (std::abs(x3[2]-1.0) < passTol))
+        {
+            std::cout << "Test Passed!" <<std::endl;
+        }
+        else
+        {
+            std::cout << "Test Failed!" <<std::endl;
+            return EXIT_FAILURE;
+        }
+        //  N=4 case
+        bfgs.AllocateWork(4);
+        dvec x4_global {1.2, 0.8, 1.9, 0.2};
+        dvec x4_local {-1.2, 0.8, 1.0, 0.9};
+        dvec grad4(4);
+        bfgs.Optimize(x4_global, grad4, minFunc, gradFunc, maxIter, gradTol);
+        gradTol = 1e-10;
+        bfgs.Optimize(x4_local, grad4, minFunc, gradFunc, maxIter, gradTol);
+        std::cout << "Test optimization output for 4-parameter Rosenbrock function: " << std::endl;
+        std::cout << "(global min) " << x4_global[0] << " " << x4_global[1] 
+                  << " " << x4_global[2] << " " << x4_global[3] << std::endl;
+        if((std::abs(x4_global[0]-1.0) < passTol) && (std::abs(x4_global[1]-1.0) < passTol) 
+            && (std::abs(x4_global[2]-1.0) < passTol) && (std::abs(x4_global[3]-1.0) < passTol))
+        {
+            std::cout << "Test Passed!" <<std::endl;
+        }
+        else
+        {
+            std::cout << "Test Failed!" <<std::endl;
+            return EXIT_FAILURE;
+        }
+        std::cout << "(local min) " << x4_local[0] << " " << x4_local[1] 
+                  << " " << x4_local[2] << " " << x4_local[3] << std::endl;
+        if((std::abs(x4_local[0]+0.77565923) < passTol) && (std::abs(x4_local[1]-0.61309337) < passTol) 
+            && (std::abs(x4_local[2]-0.38206285) < passTol) && (std::abs(x4_local[3]-0.14597202) < passTol))
+        {
+            std::cout << "Test Passed!" <<std::endl;
+        }
+        else
+        {
+            std::cout << "Test Failed!" <<std::endl;
+            return EXIT_FAILURE;
+        }
     }
-    else
+    std::cout << "TEST L-BFGS IMPLEMENTATION" << std::endl;
     {
-        std::cout << "Test Failed!" <<std::endl;
-        return EXIT_FAILURE;
-    }
-    //  N=4 case
-    bfgs.AllocateWork(4);
-    dvec x4_global {1.2, 0.8, 1.9, 0.2};
-    dvec x4_local {-1.2, 0.8, 1.0, 0.9};
-    dvec grad4(4);
-    bfgs.Optimize(x4_global, grad4, minFunc, gradFunc, maxIter, gradTol);
-    gradTol = 1e-10;
-    bfgs.Optimize(x4_local, grad4, minFunc, gradFunc, maxIter, gradTol);
-    std::cout << "Test optimization output for 4-parameter Rosenbrock function: " << std::endl;
-    std::cout << "(global min) " << x4_global[0] << " " << x4_global[1] 
-              << " " << x4_global[2] << " " << x4_global[3] << std::endl;
-    if((std::abs(x4_global[0]-1.0) < passTol) && (std::abs(x4_global[1]-1.0) < passTol) 
-        && (std::abs(x4_global[2]-1.0) < passTol) && (std::abs(x4_global[3]-1.0) < passTol))
-    {
-        std::cout << "Test Passed!" <<std::endl;
-    }
-    else
-    {
-        std::cout << "Test Failed!" <<std::endl;
-        return EXIT_FAILURE;
-    }
-    std::cout << "(local min) " << x4_local[0] << " " << x4_local[1] 
-              << " " << x4_local[2] << " " << x4_local[3] << std::endl;
-    if((std::abs(x4_local[0]+0.77565923) < passTol) && (std::abs(x4_local[1]-0.61309337) < passTol) 
-        && (std::abs(x4_local[2]-0.38206285) < passTol) && (std::abs(x4_local[3]-0.14597202) < passTol))
-    {
-        std::cout << "Test Passed!" <<std::endl;
-    }
-    else
-    {
-        std::cout << "Test Failed!" <<std::endl;
-        return EXIT_FAILURE;
+        const unsigned int maxIter = 100;
+        double gradTol = 1e-10;
+        double passTol = 1e-5;
+        std::function<double(const dvec&)> minFunc = Rosenbrock;
+        std::function<void(dvec&, const dvec&)> gradFunc = RosenbrockGrad;
+        utilities::optimize::LBFGS lbfgs;
+        lbfgs.SetUpdateNumber(12);  //  Optimal case for this problem
+        //  N=3 case
+        lbfgs.AllocateWork(3);
+        dvec x3 {1.4, 0.2, 1.7};
+        dvec grad3(3);
+        lbfgs.Optimize(x3, grad3,  minFunc, gradFunc, maxIter, gradTol);
+        std::cout << "Test optimization output for 3-parameter Rosenbrock function: " << std::endl;
+        std::cout << "(global min) " << x3[0] << " " << x3[1] << " " << x3[2] << std::endl;
+        if((std::abs(x3[0]-1.0) < passTol) && (std::abs(x3[1]-1.0) < passTol) 
+            && (std::abs(x3[2]-1.0) < passTol))
+        {
+            std::cout << "Test Passed!" <<std::endl;
+        }
+        else
+        {
+            std::cout << "Test Failed!" <<std::endl;
+            return EXIT_FAILURE;
+        }
+        //  N=4 case
+        lbfgs.AllocateWork(4);
+        dvec x4_global {1.2, 0.8, 1.9, 0.2};
+        dvec x4_local {-1.2, 0.8, 1.0, 0.9};
+        dvec grad4(4);
+        lbfgs.Optimize(x4_global, grad4, minFunc, gradFunc, maxIter, gradTol);
+        lbfgs.Optimize(x4_local, grad4, minFunc, gradFunc, maxIter, gradTol);
+        std::cout << "Test optimization output for 4-parameter Rosenbrock function: " << std::endl;
+        std::cout << "(global min) " << x4_global[0] << " " << x4_global[1] 
+                  << " " << x4_global[2] << " " << x4_global[3] << std::endl;
+        if((std::abs(x4_global[0]-1.0) < passTol) && (std::abs(x4_global[1]-1.0) < passTol) 
+            && (std::abs(x4_global[2]-1.0) < passTol) && (std::abs(x4_global[3]-1.0) < passTol))
+        {
+            std::cout << "Test Passed!" <<std::endl;
+        }
+        else
+        {
+            std::cout << "Test Failed!" <<std::endl;
+            return EXIT_FAILURE;
+        }
+        std::cout << "(local min) " << x4_local[0] << " " << x4_local[1] 
+                  << " " << x4_local[2] << " " << x4_local[3] << std::endl;
+        if((std::abs(x4_local[0]+0.77565923) < passTol) && (std::abs(x4_local[1]-0.61309337) < passTol) 
+            && (std::abs(x4_local[2]-0.38206285) < passTol) && (std::abs(x4_local[3]-0.14597202) < passTol))
+        {
+            std::cout << "Test Passed!" <<std::endl;
+        }
+        else
+        {
+            std::cout << "Test Failed!" <<std::endl;
+            return EXIT_FAILURE;
+        }
     }
     return EXIT_SUCCESS;
 }

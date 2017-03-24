@@ -7,6 +7,7 @@ single_layer_perceptron_test
 bfgs_test_SOURCES = \
 test/bfgs_test.cpp \
 utilities/optimization/bfgs.cpp \
+utilities/optimization/lbfgs.cpp \
 utilities/optimization/line_search.cpp \
 utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp
@@ -26,6 +27,7 @@ single_layer_perceptron_test_SOURCES = \
 test/single_layer_perceptron_test.cpp \
 neural_network/single_layer_perceptron.cpp \
 utilities/optimization/bfgs.cpp \
+utilities/optimization/lbfgs.cpp \
 utilities/optimization/line_search.cpp \
 utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp

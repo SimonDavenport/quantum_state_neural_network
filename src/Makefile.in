@@ -93,6 +93,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_bfgs_test_OBJECTS = test/bfgs_test.$(OBJEXT) \
 	utilities/optimization/bfgs.$(OBJEXT) \
+	utilities/optimization/lbfgs.$(OBJEXT) \
 	utilities/optimization/line_search.$(OBJEXT) \
 	utilities/linear_algebra/dense_vector.$(OBJEXT) \
 	utilities/linear_algebra/dense_matrix.$(OBJEXT)
@@ -107,6 +108,7 @@ am_single_layer_perceptron_test_OBJECTS =  \
 	test/single_layer_perceptron_test.$(OBJEXT) \
 	neural_network/single_layer_perceptron.$(OBJEXT) \
 	utilities/optimization/bfgs.$(OBJEXT) \
+	utilities/optimization/lbfgs.$(OBJEXT) \
 	utilities/optimization/line_search.$(OBJEXT) \
 	utilities/linear_algebra/dense_vector.$(OBJEXT) \
 	utilities/linear_algebra/dense_matrix.$(OBJEXT)
@@ -264,6 +266,7 @@ top_srcdir = @top_srcdir@
 bfgs_test_SOURCES = \
 test/bfgs_test.cpp \
 utilities/optimization/bfgs.cpp \
+utilities/optimization/lbfgs.cpp \
 utilities/optimization/line_search.cpp \
 utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp
@@ -279,6 +282,7 @@ single_layer_perceptron_test_SOURCES = \
 test/single_layer_perceptron_test.cpp \
 neural_network/single_layer_perceptron.cpp \
 utilities/optimization/bfgs.cpp \
+utilities/optimization/lbfgs.cpp \
 utilities/optimization/line_search.cpp \
 utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp
@@ -377,6 +381,9 @@ utilities/optimization/$(DEPDIR)/$(am__dirstamp):
 utilities/optimization/bfgs.$(OBJEXT):  \
 	utilities/optimization/$(am__dirstamp) \
 	utilities/optimization/$(DEPDIR)/$(am__dirstamp)
+utilities/optimization/lbfgs.$(OBJEXT):  \
+	utilities/optimization/$(am__dirstamp) \
+	utilities/optimization/$(DEPDIR)/$(am__dirstamp)
 utilities/optimization/line_search.$(OBJEXT):  \
 	utilities/optimization/$(am__dirstamp) \
 	utilities/optimization/$(DEPDIR)/$(am__dirstamp)
@@ -435,6 +442,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@utilities/linear_algebra/$(DEPDIR)/dense_matrix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@utilities/linear_algebra/$(DEPDIR)/dense_vector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@utilities/optimization/$(DEPDIR)/bfgs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@utilities/optimization/$(DEPDIR)/lbfgs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@utilities/optimization/$(DEPDIR)/line_search.Po@am__quote@
 
 .cpp.o:
