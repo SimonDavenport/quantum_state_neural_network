@@ -3,8 +3,9 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains an implementation of a single-layer perceptron
-//!     neural network
+//!     This file contains an implementation of a single-layer perceptron
+//!     neural network. Note: biases in the activation function argument
+//!     can be included via a constant feature vector. 
 //!     
 //!                    Copyright (C) Simon C Davenport
 //!                                                                             
@@ -67,10 +68,10 @@ namespace ann
         dvec& Y,                            //!<    Vector of N outputs
         const utilities::matrix<double>& Z) //!<    H by N hidden node parameters
     {
-        utilities::MatrixVectorMultiply(Y, 1.0, Z, m_beta, 'N');
+        utilities::MatrixVectorMultiply(Y, 1.0, Z, m_beta, 'T');
         for(auto& it : Y)
         {
-            it = m_OutputFunctionImpl(it);
+            it = m_OutputFunctionImpl(m_betaBias + it);
         }
     }
     
@@ -82,10 +83,10 @@ namespace ann
         const utilities::matrix<double>& Z) //!<    H by N hidden 
                                             //!     node parameters
     {
-        utilities::MatrixVectorMultiply(Y, 1.0, Z, m_beta, 'N');
+        utilities::MatrixVectorMultiply(Y, 1.0, Z, m_beta, 'T');
         for(auto& it : Y)
         {
-            it = m_OutputFunctionDerivImpl(it);
+            it = m_OutputFunctionDerivImpl(m_betaBias + it);
         }
     }        
     
@@ -94,6 +95,7 @@ namespace ann
     //!
     SingleLayerPerceptron::SingleLayerPerceptron()
         :
+        m_includeBetaBias(true),
         m_P(0),
         m_H(0),
         m_N(0),
@@ -111,6 +113,7 @@ namespace ann
         const unsigned int P,       //!<    Number of features
         const unsigned int H)       //!<    Number of hidden nodes in layer
         :
+        m_includeBetaBias(true),
         m_P(P),
         m_H(H),
         m_N(0),
@@ -179,18 +182,37 @@ namespace ann
         }
         return false;
     }
+
+    //!
+    //! Get total number of alpha weights
+    //!
+    unsigned int SingleLayerPerceptron::countAlphaWeights() const
+    {
+        return m_H * m_P;
+    }
+   
+    //!
+    //! Get total number of weights
+    //!
+    unsigned int SingleLayerPerceptron::countWeights() const
+    {
+        return this->countAlphaWeights() + m_H;
+    }
     
     //!
-    //! Function to set the current weights to be random.
+    //! Function to set the current weights and the beta bias to be random
     //!
     void SingleLayerPerceptron::RandomizeWeights(
         const double scale,         //!<    Scale of weights
         const unsigned int seed)    //!<    Random seed
     {
-        utilities::SetToRandomMatrix(m_alpha, scale, seed);
-        utilities::SetToRandomVector(m_beta, scale, seed);
+        dvec tempRandom(this->countWeights() + 1);
+        utilities::SetToRandomVector(tempRandom, scale, seed);
+        utilities::ToSubVector(m_alpha.m_data, tempRandom, 0);
+        utilities::ToSubVector(m_beta, tempRandom, this->countAlphaWeights());
+        m_betaBias = tempRandom[this->countWeights()];
     }
-    
+
     //!
     //! Set the activation function
     //!
@@ -274,9 +296,9 @@ namespace ann
     //!
     unsigned int SingleLayerPerceptron::nnzAlpha() const
     {
-        return m_H*m_P - m_zeros.size();
+        return this->countAlphaWeights() - m_zeros.size();
     }
-    
+
     //!
     //! Update non-zero weights from a vector container
     //!
@@ -286,6 +308,10 @@ namespace ann
     {
         utilities::ToSubVector(m_alpha.m_data, nzWeights, 0, m_zeros);
         utilities::ToSubVector(m_beta, nzWeights, this->nnzAlpha());
+        if(m_includeBetaBias)
+        {
+            m_betaBias = nzWeights[this->nnzWeights()];
+        }
     }
     
     //!
@@ -298,10 +324,14 @@ namespace ann
     {
         utilities::FromSubVector(m_alpha.m_data, nzWeights, 0, m_zeros);
         utilities::FromSubVector(m_beta, nzWeights, this->nnzAlpha());
+        if(m_includeBetaBias)
+        {
+            nzWeights[this->nnzWeights()] = m_betaBias;
+        }
     }
     
     //!
-    //! Get the gradients to a single vector container
+    //! Get the gradients of the non-zero weights in a single vector container
     //!
     void SingleLayerPerceptron::GetNzGradients(
         dvec& gradients)                //!<  Vector container for non-zero 
@@ -310,8 +340,20 @@ namespace ann
     {
         utilities::FromSubVector(m_alphaGradient.m_data, gradients, 0, m_zeros);
         utilities::FromSubVector(m_betaGradient, gradients, this->nnzAlpha());
+        if(m_includeBetaBias)
+        {
+            gradients[this->nnzWeights()] = m_betaBiasGradient;
+        }
     }
-    
+
+    //!
+    //! Get total number of non-zero beta biases
+    //!
+    unsigned int SingleLayerPerceptron::nnzBiases() const
+    {
+        return m_includeBetaBias;
+    }
+
     //!
     //! Evalute the current output of the neural network for given inputs X,
     //! where X contains N inputs of size P features in a P by N matrix, and write
@@ -321,13 +363,18 @@ namespace ann
         dvec& Y,                                //!<    Vector of N outputs
         const utilities::matrix<double>& X)     //!<    P by N array of inputs
     {
-        if(!m_workAllocated || (Y.size() != m_N))
+        bool workRequest = (Y.size() != m_N);
+        if(workRequest)
         {
             unsigned int N = Y.size();
             m_Z.resize(m_H, N);
         }
         this->ActivationFunction(m_Z, X);
         this->OutputFunction(Y, m_Z);
+        if(workRequest)
+        {
+            m_Z.resize(m_H, m_N);
+        }
     }
 
     //!
@@ -341,7 +388,8 @@ namespace ann
         const dvec& Y,                          //!<    Vector of N training outputs
         const utilities::matrix<double>& X)     //!<    P by N array of training inputs
     {
-        if(!m_workAllocated || (Y.size() != m_N))
+        bool workRequest = (Y.size() != m_N);
+        if(workRequest)
         {
             unsigned int N = Y.size();
             m_Z.resize(m_H, N);
@@ -365,6 +413,13 @@ namespace ann
         lossFunction += m_lfWeights.l1Beta*utilities::VectorL1(m_beta);
         lossFunction += m_lfWeights.l2Alpha*utilities::MatrixL2(m_alpha);
         lossFunction += m_lfWeights.l2Beta*utilities::VectorL2(m_beta);
+        if(workRequest)
+        {
+            m_Z.resize(m_H, m_N);
+            m_output.resize(m_N);
+            m_residual.resize(m_N);
+            m_sqResidual.resize(m_N);
+        }
         return lossFunction;
     }
    
@@ -375,7 +430,8 @@ namespace ann
         const dvec& Y,                          //!<    Vector of N training outputs
         const utilities::matrix<double>& X)     //!<    P by N array of inputs
     {
-        if(!m_workAllocated || (Y.size() != m_N))
+        bool workRequest = (Y.size() != m_N);
+        if(workRequest)
         {
             unsigned int N = Y.size();
             m_Z.resize(m_H, N);
@@ -385,6 +441,9 @@ namespace ann
             m_activationDeriv.resize(m_H, N);
             m_S.resize(m_H, N);
             m_alphaGradient.resize(m_H, m_P);
+        }
+        if(!m_workAllocated)
+        {
             m_betaGradient.resize(m_H);
             m_sgnAlpha.resize(m_H, m_P);
             m_sgnBeta.resize(m_H);
@@ -404,15 +463,40 @@ namespace ann
         utilities::SetToConstantMatrix(m_S, 0.0);
         utilities::OuterProductIncrement(m_S, 1.0, m_beta, m_delta);
         utilities::MatrixHadamardIncrement(m_S, 1.0, m_activationDeriv);
-        //  Compute alpha_gradient = S.X^T + 2*l2*alpha + l1*sgn(alpha)
+        //  Compute alphaGradient = S.X^T + 2*l2*alpha + l1*sgn(alpha)
         utilities::MatrixMatrixMultiply(m_alphaGradient, m_S, X, "NT");
-        utilities::MatrixIncrement(m_alphaGradient, 2*m_lfWeights.l2Alpha, m_alpha);
-        utilities::MatrixSgn(m_sgnAlpha, m_alpha);
-        utilities::MatrixIncrement(m_alphaGradient, m_lfWeights.l1Alpha, m_sgnAlpha);
-        //  Compute beta_gradient = Z.delta + 2*l2*beta + l1*sgn(beta)
+        if(m_lfWeights.l2Alpha != 0)
+        {
+            utilities::MatrixIncrement(m_alphaGradient, 2*m_lfWeights.l2Alpha, m_alpha);
+        }
+        if(m_lfWeights.l1Alpha != 0)
+        {
+            utilities::MatrixSgn(m_sgnAlpha, m_alpha);
+            utilities::MatrixIncrement(m_alphaGradient, m_lfWeights.l1Alpha, m_sgnAlpha);
+        }
+        //  Compute betaGradient = Z.delta + 2*l2*beta + l1*sgn(beta)
         utilities::MatrixVectorMultiply(m_betaGradient, 1.0, m_Z, m_delta, 'N');
-        utilities::VectorIncrement(m_betaGradient, 2*m_lfWeights.l2Beta, m_beta);
-        utilities::VectorSgn(m_sgnBeta, m_beta);
-        utilities::VectorIncrement(m_betaGradient, m_lfWeights.l1Beta, m_sgnBeta);
+        if(m_lfWeights.l2Beta != 0)
+        {
+            utilities::VectorIncrement(m_betaGradient, 2 * m_lfWeights.l2Beta, m_beta);
+        }
+        if(m_lfWeights.l1Beta != 0)
+        {
+            utilities::VectorSgn(m_sgnBeta, m_beta);
+            utilities::VectorIncrement(m_betaGradient, m_lfWeights.l1Beta, m_sgnBeta);
+        }
+        // Compute betaBiasGradient = sum_i delta + 2*l2*betaBias + l1*sgn(betaBias)
+        m_betaBiasGradient = utilities::VectorSum(m_delta);
+        m_betaBiasGradient += 2 * m_lfWeights.l2Beta * m_betaBias;
+        m_betaBiasGradient += 2 * m_lfWeights.l2Beta * ((m_betaBias > 0) - (m_betaBias < 0));
+        if(workRequest)
+        {
+            m_Z.resize(m_H, m_N);
+            m_output.resize(m_N);
+            m_residual.resize(m_N);
+            m_delta.resize(m_N);
+            m_activationDeriv.resize(m_H, m_N);
+            m_S.resize(m_H, m_N);
+        }
     }
 }   //  End namespace ann

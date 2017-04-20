@@ -96,11 +96,12 @@ namespace ann
         {
             return;
         }
-        dvec x(network.nnzWeights());
-        dvec grad(network.nnzWeights());
+        unsigned int problemSize = network.nnzWeights() + network.nnzBiases();
+        dvec x(problemSize);
+        dvec grad(problemSize);
         network.GetNzWeights(x);
         network.GetNzGradients(grad);
-        optimizer.AllocateWork(network.nnzWeights());
+        optimizer.AllocateWork(problemSize);
         std::function<double(const dvec&)> minFunc = std::bind(EvaluateSquaredLoss<N>, std::placeholders::_1, network, Y, X);
         std::function<void(dvec&, const dvec&)> gradFunc = std::bind(EvaluateSquaredLossGradient<N>, std::placeholders::_1, std::placeholders::_2, network, Y, X);
         optimizer.Optimize(x, grad, minFunc, gradFunc, maxIter, gradTol);
