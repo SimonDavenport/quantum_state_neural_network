@@ -43,7 +43,7 @@ namespace ann
         const dvec& Y,                  //!<    Vector of N training outputs
         const utilities::matrix<double>& X)//!<    P by N array of training inputs    
     {
-        network.UpdateNzWeights(nzWeights);
+        network.SetNzWeights(nzWeights);
         return network.EvaluateSquaredLoss(Y, X);
     }
 
@@ -60,9 +60,9 @@ namespace ann
         const dvec& Y,              //!<    Vector of N training outputs
         const utilities::matrix<double>& X)//!<    P by N array of inputs
     {
-        network.UpdateNzWeights(nzWeights);
+        network.SetNzWeights(nzWeights);
         network.EvaluateSquaredLossGradient(Y, X);
-        network.ExtractNzGradients(nzGradients);
+        network.GetNzGradients(nzGradients);
     }
     
     //!
@@ -79,7 +79,7 @@ namespace ann
     }
 
     //!
-    //! Train the network N using optimization method )
+    //! Train the network N using optimization method O
     //!
     template<class O, class N>
     void Train(
@@ -98,14 +98,13 @@ namespace ann
         }
         dvec x(network.nnzWeights());
         dvec grad(network.nnzWeights());
-        network.ExtractNzWeights(x);
-        network.ExtractNzGradients(grad);
+        network.GetNzWeights(x);
+        network.GetNzGradients(grad);
         optimizer.AllocateWork(network.nnzWeights());
         std::function<double(const dvec&)> minFunc = std::bind(EvaluateSquaredLoss<N>, std::placeholders::_1, network, Y, X);
         std::function<void(dvec&, const dvec&)> gradFunc = std::bind(EvaluateSquaredLossGradient<N>, std::placeholders::_1, std::placeholders::_2, network, Y, X);
         optimizer.Optimize(x, grad, minFunc, gradFunc, maxIter, gradTol);
-        network.UpdateNzWeights(x);
+        network.SetNzWeights(x);
     }
-
 }   //  End namespace ann
 #endif

@@ -108,9 +108,9 @@ namespace ann
         void GetZeros(std::vector<unsigned int>& zeros) const;
         unsigned int nnzWeights() const;
         unsigned int nnzAlpha() const;
-        void UpdateNzWeights(const dvec& nzWeights);
-        void ExtractNzWeights(dvec& nzWeights) const;
-        void ExtractNzGradients(dvec& nzGradients) const;
+        void SetNzWeights(const dvec& nzWeights);
+        void GetNzWeights(dvec& nzWeights) const;
+        void GetNzGradients(dvec& nzGradients) const;
         void Evaluate(dvec& Y, const utilities::matrix<double>& X);
         double EvaluateSquaredLoss(const dvec& Y, const utilities::matrix<double>& X);
         void EvaluateSquaredLossGradient(const dvec& Y, const utilities::matrix<double>& X);

@@ -43,7 +43,7 @@ namespace ann
             it = m_ActivationImpl(it);
         }
     }
-    
+
     //!
     //! Implementation of activation function derivative
     //!
@@ -123,13 +123,13 @@ namespace ann
         m_alpha.resize(m_H, m_P);
         m_beta.resize(m_H);
     }
-    
+
     //! 
     //! Destructor
     //!
     SingleLayerPerceptron::~SingleLayerPerceptron()
     {}
-    
+
     //!
     //! Allocate working space
     //!
@@ -280,7 +280,7 @@ namespace ann
     //!
     //! Update non-zero weights from a vector container
     //!
-    void SingleLayerPerceptron::UpdateNzWeights(
+    void SingleLayerPerceptron::SetNzWeights(
         const dvec& nzWeights)      //! Vector container for non-zero 
                                     //! alpha and beta weights
     {
@@ -291,7 +291,7 @@ namespace ann
     //!
     //! Get non-zero weights and place in a vector container
     //!
-    void SingleLayerPerceptron::ExtractNzWeights(
+    void SingleLayerPerceptron::GetNzWeights(
         dvec& nzWeights)                //! Vector container for non-zero 
                                         //! alpha and beta weights
         const
@@ -303,7 +303,7 @@ namespace ann
     //!
     //! Get the gradients to a single vector container
     //!
-    void SingleLayerPerceptron::ExtractNzGradients(
+    void SingleLayerPerceptron::GetNzGradients(
         dvec& gradients)                //!<  Vector container for non-zero 
                                         //!<  alpha and beta gradients
         const
@@ -329,7 +329,7 @@ namespace ann
         this->ActivationFunction(m_Z, X);
         this->OutputFunction(Y, m_Z);
     }
-  
+
     //!
     //! Evaluate a squared loss function between the current output 
     //! and a training data set.
@@ -352,10 +352,10 @@ namespace ann
         this->Evaluate(m_output, X);
         utilities::VectorDiff(m_residual, Y, m_output);
         double lossFunction = 0.0;
-        if(m_lfWeights.usingResiduals)
+        if(m_lfWeights.usingResidualWeights)
         {
             utilities::VectorHadamard(m_sqResidual, 1.0, m_residual, m_residual);
-            lossFunction += utilities::VectorDot(m_lfWeights.residuals, m_sqResidual);
+            lossFunction += utilities::VectorDot(m_lfWeights.residualWeights, m_sqResidual);
         }
         else
         {
@@ -395,9 +395,9 @@ namespace ann
         this->OutputFunctionDeriv(m_outputDeriv, m_Z);
         utilities::VectorDiff(m_residual, Y, m_output);
         utilities::VectorHadamard(m_delta, -2.0, m_residual, m_outputDeriv);
-        if(m_lfWeights.usingResiduals)
+        if(m_lfWeights.usingResidualWeights)
         {
-            utilities::VectorHadamardIncrement(m_delta, 1.0, m_lfWeights.residuals);
+            utilities::VectorHadamardIncrement(m_delta, 1.0, m_lfWeights.residualWeights);
         }
         //  Compute S = activationDeriv*OuterProduct(beta, delta)
         this->ActivationFunctionDeriv(m_activationDeriv, X);

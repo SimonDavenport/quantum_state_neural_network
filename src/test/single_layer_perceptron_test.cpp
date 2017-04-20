@@ -44,7 +44,6 @@ int main(int argc, char *argv[])
     const unsigned int P = 2;
     //  Get a dataset and partition into train and test subsets
     utilities::matrix<double> features(P, N);
-    dvec outputs(N);
     std::ifstream f_features;
     utilities::GenFileStream(f_features, "./test/test_features.dat", io::_TEXT_);
     for(auto& it : features.m_data)
@@ -53,13 +52,24 @@ int main(int argc, char *argv[])
     }
     f_features.close();
     std::ifstream f_outputs;
+    dvec outputs(N);
     utilities::GenFileStream(f_outputs, "./test/test_outputs.dat", io::_TEXT_);
     for(auto& it : outputs)
     {
         f_outputs >> it;
     }
     f_outputs.close();
-
+    // Get the starting weights
+    dvec startingWeights(P*H+H);
+    std::ifstream f_starting;
+    utilities::GenFileStream(f_starting, "./test/test_starting.dat", io::_TEXT_);
+    for(auto& it : startingWeights)
+    {
+        f_starting >> it;
+        std::cout << it << std::endl;
+    }
+    f_outputs.close();
+    
     utilities::matrix<double> trainFeatures(P, trainN);
     dvec trainOutputs(trainN);
     utilities::ToSubMatrix(trainFeatures, features, 0, 0);
@@ -72,9 +82,11 @@ int main(int argc, char *argv[])
     //  Train the single layer perceptron
     ann::SingleLayerPerceptron slp(P, H);
     utilities::optimize::LBFGS op;
-    slp.AllocateWork(trainN);
-    slp.RandomizeWeights(0.5, 0);
-    ann::Train(slp, op, trainOutputs, trainFeatures);
+    //slp.AllocateWork(trainN);
+    //slp.RandomizeWeights(0.5, time(NULL));
+    slp.SetNzWeights(startingWeights);
+    //std::cout << "\t" << "Loss function " << slp.EvaluateSquaredLoss(trainOutputs, features) << std::endl;
+    //ann::Train(slp, op, trainOutputs, trainFeatures);
     dvec networkOutputs(N);
     slp.Evaluate(networkOutputs, features);
     std::cout << "\t" << "Prediction" << " " << "Actual" << std::endl;
@@ -83,6 +95,7 @@ int main(int argc, char *argv[])
     {
         std::cout << "\t" << *it_network << " " << *it_test << std::endl;
     }
+    std::cout << "\t" << "Loss function " << slp.EvaluateSquaredLoss(trainOutputs, features) << std::endl;
 
     return EXIT_SUCCESS;
 }

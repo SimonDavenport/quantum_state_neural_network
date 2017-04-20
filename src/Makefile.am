@@ -1,7 +1,17 @@
 bin_PROGRAMS = \
+line_search_test \
 bfgs_test \
 linear_algebra_test \
 single_layer_perceptron_test
+
+##  line search test
+line_search_test_SOURCES = \
+test/line_search_test.cpp \
+utilities/optimization/line_search.cpp \
+utilities/linear_algebra/dense_vector.cpp \
+utilities/linear_algebra/dense_matrix.cpp
+
+line_search_test_LINK = $(FC) $(LDFLAGS) -o line_search_test
 
 ##  bfgs test
 bfgs_test_SOURCES = \

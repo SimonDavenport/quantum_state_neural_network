@@ -32,7 +32,7 @@ namespace ann
     //!
     LossFunctionWeights::LossFunctionWeights()
         :
-        usingResiduals(false),
+        usingResidualWeights(false),
         l1Alpha(0.0),
         l1Beta(0.0),
         l2Alpha(0.0),
@@ -43,9 +43,9 @@ namespace ann
     //! Set the residuals weights
     //!
     void LossFunctionWeights::SetResidualWeights(
-        const dvec& residuals)
+        const dvec& residualWeights)
     {
-        this->residuals = residuals;
-        this->usingResiduals = true;
+        this->residualWeights = residualWeights;
+        this->usingResidualWeights = true;
     }
 }   //  End namespace ann
