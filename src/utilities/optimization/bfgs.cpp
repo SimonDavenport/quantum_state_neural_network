@@ -83,7 +83,7 @@ namespace utilities
                                           EvaluateLoss, EvaluateGradients);
                 if(!success)
                 {
-                    std::cerr << "WARNING: BFGS terminating due to convergence issue" << std::endl;
+                    std::cerr << "\tBFGS terminating early at iteration " << iter << std::endl;
                     break;
                 }
                 prevLoss = EvaluateLoss(x);
@@ -99,7 +99,8 @@ namespace utilities
                 double norm = VectorDot(m_deltaX, m_deltaGrad);
                 if(norm < 1e-20)
                 {
-                    std::cerr << "WARNING: BFGS terminating due to convergence issue" << std::endl;
+                    std::cerr << "\tWARNING: norm of delta vector below limit 1e-20" <<std::endl;
+                    std::cerr << "\tBFGS terminating early at iteration " << iter << std::endl;
                     break;
                 }
                 SymmetricMatrixVectorMultiply(m_work, 1.0, m_Binv, m_deltaGrad);

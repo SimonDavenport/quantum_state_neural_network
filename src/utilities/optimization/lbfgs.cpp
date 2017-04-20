@@ -109,7 +109,7 @@ namespace utilities
                                           EvaluateLoss, EvaluateGradients);
                 if(!success)
                 {
-                    std::cerr << "WARNING: L-BFGS terminating due to convergence issue " << std::endl;
+                    std::cerr << "\tL-BFGS terminating early at iteration " << iter << std::endl;
                     break;
                 }
                 prevLoss = EvaluateLoss(x);
@@ -125,7 +125,8 @@ namespace utilities
                 double norm = VectorDot(m_deltaX, m_deltaGrad);
                 if(norm < 1e-20)
                 {
-                    std::cerr << "WARNING: L-BFGS terminating due to convergence issue " << std::endl;
+                    std::cerr << "\tWARNING: norm of delta vector below limit 1e-20" <<std::endl;
+                    std::cerr << "\tL-BFGS terminating early at iteration " << iter << std::endl;
                     break;
                 }
                 if(0 == iter)
