@@ -64,7 +64,7 @@ namespace utilities
     }
 
     //!
-    //! Overload for ToSubVector where non zeros are present
+    //! Overload for ToSubVector where no zeros are present
     //!
     void ToSubVector(
         dvec& sub, 
@@ -103,7 +103,7 @@ namespace utilities
     }
     
     //!
-    //! Overload for FromSubVector where non zeros are present
+    //! Overload for FromSubVector where no zeros are present
     //!
     void FromSubVector(
         const dvec& sub, 
@@ -242,6 +242,16 @@ namespace utilities
         static const int one = 1;
         int N = a.size();
         return dasum_(&N, a.data(), &one);
+    }
+    
+    //!
+    //! Compute the sum of vector elements
+    //!
+    double VectorSum(
+        const dvec& a)
+    {
+        dvec temp(a.size(), 1.0);
+        return VectorDot(a, temp);
     }
     
     //!

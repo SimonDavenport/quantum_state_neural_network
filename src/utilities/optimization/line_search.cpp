@@ -3,7 +3,10 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains functions to perform a line search optimization
+//!     This file contains functions to perform a line search optimization. 
+//!     The implementation has been lifted from scipy.optimize.linesearch, 
+//!     where it is called scalar_search_wolfe2. Some notation is changed
+//!     for clarity.
 //!     
 //!                    Copyright (C) Simon C Davenport
 //!                                                                             
@@ -30,16 +33,18 @@ namespace utilities
     {
         //!
         //! Implementation of a Wolfe line search algorithm. Determines 
-        //! a scale parameter alpha satisfying the strong Wolfe conditions
+        //! a scale parameter alpha satisfying the strong Wolfe conditions. 
+        //! Implementation lifted from scalar_search_wolfe2 in 
+        //! scipy.optimize.linesearch.
         //!
         bool LineSearch(
-            double& alpha, 
-            dvec& nextGrad,
-            const double prevLoss,
-            const dvec& searchDir,
-            const dvec& x, 
-            const dvec& grad,
-            dvec& work,
+            double& alpha,          //!< Optimial scale factor to be set
+            dvec& nextGrad,         //!< Gradient at the optimal point to be set
+            const double prevLoss,  //!< Current value of the loss function
+            const dvec& searchDir,  //!< Search direction
+            const dvec& x,          //!< Current value of the loss function arguments
+            const dvec& grad,       //!< Current value of the gradient
+            dvec& work,             //!< Working memory space
             std::function<double(const dvec&)>& EvaluateLoss,
             std::function<void(dvec&, const dvec&)>& EvaluateGradients)
         {
@@ -54,45 +59,39 @@ namespace utilities
             {
                 alpha1 = 1.0;
             }
-            //  Set initial loss function values and derivs at the search region limits
             double alpha0Loss = startLoss;
             double alpha0Deriv = startDeriv;
             double alpha1Loss = LossIncrement(x, alpha1, searchDir, work, EvaluateLoss);
-            if(std::isnan(alpha1Loss))
-            {
-                alpha1 = 0.001;
-                alpha1Loss = LossIncrement(x, alpha1, searchDir, work, EvaluateLoss);
-            }
-            double alpha1Deriv = 0.0;
             //  Iterate search region
-            for(unsigned int i=0; i<maxIter; ++i)
+            bool success = false;
+            for(unsigned int iter=0; iter<maxIter; ++iter)
             {
-                if(alpha1 < 0)
+                if(alpha1 == 0.0)
                 {
+                    success = true;
                     break;
                 }
                 //  Check Wolfe conditions
-                if((alpha1Loss > startLoss + c1*alpha1*startDeriv) ||
-                   ((alpha1Loss >= alpha0Loss) && (i>0)))
+                if((alpha1Loss > startLoss + c1 * alpha1 * startDeriv) ||
+                   ((alpha1Loss >= alpha0Loss) && (iter > 0)))
                 {
-                    Zoom(alpha, optLoss, optDeriv, nextGrad, alpha0, alpha1, 
+                    success = Interpolate(alpha, optLoss, optDeriv, nextGrad, alpha0, alpha1, 
                          alpha0Loss, alpha1Loss, alpha0Deriv, startLoss, startDeriv, 
                          searchDir, x, work, EvaluateLoss, EvaluateGradients);
                     break;
                 }
                 GradIncrement(nextGrad, x, alpha1, searchDir, work, EvaluateGradients);
-                alpha1Deriv = VectorDot(nextGrad, searchDir);
+                double alpha1Deriv = VectorDot(nextGrad, searchDir);
                 //  Check Wolfe conditions
                 if(std::abs(alpha1Deriv) <= -c2*alpha0Deriv)
                 {
                     alpha = alpha1;
-                    optLoss = alpha1Loss;
-                    optDeriv = alpha1Deriv;
+                    success = true;
                     break;
                 }
                 if(alpha1Deriv >= 0)
                 {
-                    Zoom(alpha, optLoss, optDeriv, nextGrad, alpha1, alpha0, 
+                    success = Interpolate(alpha, optLoss, optDeriv, nextGrad, alpha1, alpha0, 
                          alpha1Loss, alpha0Loss, alpha1Deriv, startLoss, startDeriv, 
                          searchDir, x, work, EvaluateLoss, EvaluateGradients);
                     break;
@@ -104,17 +103,23 @@ namespace utilities
                 alpha1Loss = LossIncrement(x, alpha1, searchDir, work, EvaluateLoss);
                 alpha0Deriv = alpha1Deriv;
             }
-            return true;
+            if(!success)
+            {
+                alpha = alpha1;
+                std::cerr << "\tWARNING: Line search algorithm failed to converge after ";
+                std::cerr << maxIter << " iterations " << std::endl;
+            }
+            return success;
         }
 
         //!
         //! Get the loss function for parameters x1 = x + alpha*searchDir
         //!
         double LossIncrement(
-            const dvec& x,
-            const double& alpha, 
-            const dvec& searchDir,
-            dvec& x1,
+            const dvec& x,          //!< Current loss function arguments
+            const double& alpha,    //!< Scale factor
+            const dvec& searchDir,  //!< Search direction
+            dvec& x1,               //!< New arguments to be set
             std::function<double(const dvec&)>& EvaluateLoss)
         {
             x1 = x;
@@ -126,11 +131,11 @@ namespace utilities
         //! Get gradient of loss function for parameters x1 = x + alpha*searchDir
         //!
         void GradIncrement(
-            dvec& newGrad,
-            const dvec& x,
-            const double& alpha, 
-            const dvec& searchDir,
-            dvec& x1,
+            dvec& newGrad,          //!< New gradient value to be set
+            const dvec& x,          //!< Loss function arguments
+            const double& alpha,    //!< Scale factor
+            const dvec& searchDir,  //!< Direction of search
+            dvec& x1,               //!< New arguments to be set
             std::function<void(dvec&, const dvec&)>& EvaluateGradients)
         {
             x1 = x;
@@ -139,23 +144,28 @@ namespace utilities
         }
         
         //!
-        //! Subroutine of the linear search algorithm
+        //! Subroutine of the linear search algorithm, lifted from the
+        //! _zoom function in scipy.optimize.linesearch. Interpolates to find 
+        //! a trial step length between alpha0 and alpha1. A cubic scheme is
+        //! used; then if the result is too close to the end points, then 
+        //! use quadratic interpolation, then if again it is too close, 
+        //! bisection is used. 
         //!
-        void Zoom(
-            double& alpha,
-            double& optLoss,
-            double& optDeriv,
-            dvec& nextGrad,
-            double& alpha0, 
-            double& alpha1, 
-            double& alpha0Loss, 
-            double& alpha1Loss, 
-            double& alpha0Deriv,
-            const double& startLoss, 
-            const double& startDeriv,
-            const dvec& searchDir,
-            const dvec& x, 
-            dvec& work,
+        bool Interpolate(
+            double& alpha,          //!< Optimal interpolated scale factor to be set
+            double& optLoss,        //!< Optimal interpolated loss function to be set
+            double& optDeriv,       //!< Optimal loss function deriv to be set
+            dvec& nextGrad,         //!< Gradient at the optimal point to be set
+            double& alpha0,         //!< Scale factor at lower edge of search region
+            double& alpha1,         //!< Scale factor at upper edge of search region
+            double& alpha0Loss,     //!< Loss function at lower edge of search region
+            double& alpha1Loss,     //!< Loss function at upper edge of search region
+            double& alpha0Deriv,    //!< Loss function deriv at lower edge of region
+            const double& startLoss, //!< Initial loss function value
+            const double& startDeriv,//!< Initial loss funtion deriv
+            const dvec& searchDir,  //!< Search direction
+            const dvec& x,          //!< Current loss function arguments
+            dvec& work,             //!< Working memory space
             std::function<double(const dvec&)>& EvaluateLoss,
             std::function<void(dvec&, const dvec&)>& EvaluateGradients)
         {
@@ -164,7 +174,8 @@ namespace utilities
             double dAlpha = 0.0;
             double lowerLim = 0.0;
             double upperLim = 0.0;
-            for(unsigned int i=0; i<maxIter; ++i)
+            bool success = false;
+            for(unsigned int iter=0; iter<maxIter; ++iter)
             {
                 dAlpha = alpha1 - alpha0;
                 if(dAlpha < 0)
@@ -177,25 +188,29 @@ namespace utilities
                     lowerLim = alpha0;
                     upperLim = alpha1;
                 }
+                //  Parameters delta1 and delta2 are fixed in the header.
                 double cubicCheck = delta1 * dAlpha;
                 double quadCheck = delta2 * dAlpha;
-                if(i > 0)
+                if(iter > 0)
                 {
+                    //  Cubic interpolation
                     alpha = CubicMin(alpha0, alpha0Loss, alpha0Deriv, 
                                      alpha1, alpha1Loss, alphaRec, lossRec);
                 }
-                if((0 == i) || (alpha > upperLim - cubicCheck) || (alpha < lowerLim + cubicCheck))
+                if((0 == iter) || (alpha > upperLim - cubicCheck) || (alpha < lowerLim + cubicCheck))
                 {
+                    //  Quadratic interpolation
                     alpha = QuadMin(alpha0, alpha0Loss, alpha0Deriv, 
                                     alpha1, alpha1Loss);
                     if((alpha > upperLim - quadCheck) || (alpha < lowerLim + quadCheck))
                     {
+                        //  Linear interpolation
                         alpha = alpha0 + 0.5*dAlpha;
                     }
                 }
-                optLoss = LossIncrement(x, alpha, searchDir, work, EvaluateLoss);
                 //  Check Wolfe conditions
-                if((optLoss > startLoss + c1*alpha*startDeriv) || optLoss >= alpha0Loss)
+                optLoss = LossIncrement(x, alpha, searchDir, work, EvaluateLoss);
+                if((optLoss > startLoss + c1*alpha*startDeriv) || optLoss > alpha0Loss)
                 {
                     lossRec = alpha1Loss;
                     alphaRec = alpha1;
@@ -208,6 +223,7 @@ namespace utilities
                     optDeriv = VectorDot(nextGrad, searchDir);
                     if(std::abs(optDeriv) <= -c2*startDeriv)
                     {
+                        success = true;
                         break;
                     }
                     if(optDeriv*(alpha1 - alpha0) >= 0)
@@ -227,12 +243,14 @@ namespace utilities
                     alpha0Deriv = optDeriv;
                 }
             }
+            return success;
         }
         
         //!
         //! Find the minimizer for a cubic polynomial that goes through 
         //! the points (a, fa), (b, fb) and (c,fc) with derivative fpa
-        //! at a. 
+        //! at a. Implementation lifted from scipy.optimize.linesearch
+        //! where it is the _cubicmin function.
         //!
         double CubicMin(
             const double a,
@@ -256,7 +274,9 @@ namespace utilities
 
         //!
         //! Find the minimizer for a quadratic polynomial that goes through
-        //! the points (a,fa), (b,fb) with derivative fpa at a.
+        //! the points (a,fa), (b,fb) with derivative fpa at a. Implementation
+        //! lifted from scipy.optimize.linesearch where it is the _quadmin
+        //! function.
         //!
         double QuadMin(
             const double a,

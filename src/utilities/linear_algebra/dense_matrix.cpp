@@ -72,10 +72,11 @@ namespace utilities
         char TRANS)
     {
         static const int one = 1;
-        int M = output.size();
-        int N = x.size();
+        int M = a.m_dLeading;
+        int N = a.m_dSecond;
+        int LDA = M;
         double BETA = 0.0;
-        dgemv_(&TRANS, &M, &N, &scale, a.data(), &M, x.data(), &one, &BETA, output.data(), &one);
+        dgemv_(&TRANS, &M, &N, &scale, a.data(), &LDA, x.data(), &one, &BETA, output.data(), &one);
     }
     
     //!
@@ -105,7 +106,7 @@ namespace utilities
     {
         char TRANSA = trOpt[0];
         char TRANSB = trOpt[1];
-        int M, N, K, LDA, LDB;
+        int M, N, K, LDA, LDB, LDC;
         if('N' == TRANSA)
         {
             M = a.m_dLeading;
@@ -130,8 +131,9 @@ namespace utilities
         }
         double ALPHA = 1.0;
         double BETA = 0.0;
+        LDC = M;
         dgemm_(&TRANSA, &TRANSB, &M, &N, &K, &ALPHA, a.data(), &LDA, 
-               b.data(), &LDB, &BETA, c.data(), &M);
+               b.data(), &LDB, &BETA, c.data(), &LDC);
     }
 
     //!

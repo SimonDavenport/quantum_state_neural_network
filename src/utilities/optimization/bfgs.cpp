@@ -3,7 +3,7 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains an implementation of the BFGS quasi-Newton
+//!     This file contains an implementation of the BFGS quasi-Newton
 //!     optimization algorithm (Broyden-Fletcher-Goldfarb-Shanno)
 //!     See Wikipedia article for nomenclature
 //!
@@ -81,7 +81,11 @@ namespace utilities
                 bool success = LineSearch(alpha, m_nextGrad, prevLoss,
                                           m_searchDir, x, grad, m_work, 
                                           EvaluateLoss, EvaluateGradients);
-                if(!success)    break;
+                if(!success)
+                {
+                    std::cerr << "\tBFGS terminating early at iteration " << iter << std::endl;
+                    break;
+                }
                 prevLoss = EvaluateLoss(x);
                 //  Compute parameter and gradient increments
                 VectorScale(m_deltaX, alpha, m_searchDir);
@@ -95,7 +99,8 @@ namespace utilities
                 double norm = VectorDot(m_deltaX, m_deltaGrad);
                 if(norm < 1e-20)
                 {
-                    std::cerr << "BFGS terminating due to convergence issue " << std::endl;
+                    std::cerr << "\tWARNING: norm of delta vector below limit 1e-20" <<std::endl;
+                    std::cerr << "\tBFGS terminating early at iteration " << iter << std::endl;
                     break;
                 }
                 SymmetricMatrixVectorMultiply(m_work, 1.0, m_Binv, m_deltaGrad);

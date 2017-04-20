@@ -58,6 +58,9 @@ namespace ann
         utilities::matrix<double> m_alpha;  //!<    Set of H by P activation function weights
         std::vector<unsigned int> m_zeros;  //!<    List of locations of zero alpha weights
         dvec m_beta;                        //!<    Set of H output function weights
+        bool m_includeBetaBias;             //!<    Option to include a beta bias term
+        double m_betaBias;                  //!<    Bias of the output function
+        double m_betaBiasGradient;          //!<    Gradient of loss function w.r.t beta bias
         unsigned int m_P;                   //!<    Number of features
         unsigned int m_H;                   //!<    Number of hidden nodes
         unsigned int m_N;                   //!<    Number of samples
@@ -97,6 +100,8 @@ namespace ann
         ~SingleLayerPerceptron();
         void AllocateWork(unsigned int N);
         bool CheckDimensions(const dvec& Y, const utilities::matrix<double>& X);
+        unsigned int countAlphaWeights() const;
+        unsigned int countWeights() const;
         void RandomizeWeights(const double scale, const unsigned int seed);
         void SetActivationFunction(
             std::function<double(const double& x)> activationImpl,
@@ -108,9 +113,10 @@ namespace ann
         void GetZeros(std::vector<unsigned int>& zeros) const;
         unsigned int nnzWeights() const;
         unsigned int nnzAlpha() const;
-        void UpdateNzWeights(const dvec& nzWeights);
-        void ExtractNzWeights(dvec& nzWeights) const;
-        void ExtractNzGradients(dvec& nzGradients) const;
+        void SetNzWeights(const dvec& nzWeights);
+        void GetNzWeights(dvec& nzWeights) const;
+        void GetNzGradients(dvec& nzGradients) const;
+        unsigned int nnzBiases() const;
         void Evaluate(dvec& Y, const utilities::matrix<double>& X);
         double EvaluateSquaredLoss(const dvec& Y, const utilities::matrix<double>& X);
         void EvaluateSquaredLossGradient(const dvec& Y, const utilities::matrix<double>& X);

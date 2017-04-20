@@ -38,13 +38,12 @@
 int main(int argc, char *argv[])
 {   
     const unsigned int N = 20;
-    const unsigned int trainN = 20;
-    const unsigned int testN = 0;
+    const unsigned int trainN = 10;
+    const unsigned int testN = 10;
     const unsigned int H = 10;
-    const unsigned int P = 2;
+    const unsigned int P = 3;
     //  Get a dataset and partition into train and test subsets
     utilities::matrix<double> features(P, N);
-    dvec outputs(N);
     std::ifstream f_features;
     utilities::GenFileStream(f_features, "./test/test_features.dat", io::_TEXT_);
     for(auto& it : features.m_data)
@@ -53,13 +52,24 @@ int main(int argc, char *argv[])
     }
     f_features.close();
     std::ifstream f_outputs;
+    dvec outputs(N);
     utilities::GenFileStream(f_outputs, "./test/test_outputs.dat", io::_TEXT_);
     for(auto& it : outputs)
     {
         f_outputs >> it;
     }
     f_outputs.close();
-
+    // Get the starting weights
+    dvec startingWeights(P*H+H+1);
+    std::ifstream f_starting;
+    utilities::GenFileStream(f_starting, "./test/test_starting.dat", io::_TEXT_);
+    for(auto& it : startingWeights)
+    {
+        f_starting >> it;
+    }
+    f_outputs.close();
+    
+    // Divide data into training and testing sets
     utilities::matrix<double> trainFeatures(P, trainN);
     dvec trainOutputs(trainN);
     utilities::ToSubMatrix(trainFeatures, features, 0, 0);
@@ -68,21 +78,32 @@ int main(int argc, char *argv[])
     dvec testOutputs(testN);
     utilities::ToSubMatrix(testFeatures, features, 0, trainN);
     utilities::ToSubVector(testOutputs, outputs, trainN);
-
+    
     //  Train the single layer perceptron
     ann::SingleLayerPerceptron slp(P, H);
     utilities::optimize::LBFGS op;
     slp.AllocateWork(trainN);
-    slp.RandomizeWeights(0.5, 0);
+    //slp.RandomizeWeights(0.5, time(NULL));
+    slp.SetNzWeights(startingWeights);
+    std::cout << "\t" << "Intitial training loss function " << slp.EvaluateSquaredLoss(trainOutputs, trainFeatures) << std::endl;
+    std::cout << "\t" << "Initial testing loss function " << slp.EvaluateSquaredLoss(testOutputs, testFeatures) << std::endl;
     ann::Train(slp, op, trainOutputs, trainFeatures);
     dvec networkOutputs(N);
     slp.Evaluate(networkOutputs, features);
+    std::cout << "\n\t" << "Predicted outputs:" << std::endl;
     std::cout << "\t" << "Prediction" << " " << "Actual" << std::endl;
     for(auto it_network = networkOutputs.begin(), it_test = outputs.begin();
         it_network < networkOutputs.end(); ++it_network, ++it_test)
     {
         std::cout << "\t" << *it_network << " " << *it_test << std::endl;
     }
-
+    std::cout << "\t" << "Final training loss function " << slp.EvaluateSquaredLoss(trainOutputs, trainFeatures) << std::endl;
+    std::cout << "\t" << "Final testing loss function " << slp.EvaluateSquaredLoss(testOutputs, testFeatures) << std::endl;
+    slp.GetNzWeights(startingWeights);
+    std::cout << "\t" << "\nOptimized weights (last value is beta bias)" << std::endl;
+    for(auto& it : startingWeights)
+    {
+        std::cout << "\t" << it << std::endl;
+    }
     return EXIT_SUCCESS;
 }

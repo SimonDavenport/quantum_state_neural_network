@@ -35,14 +35,14 @@ namespace ann
     //!
     struct LossFunctionWeights
     {
-        bool usingResiduals;    //!<    Flag set if using weighted residuals
-        dvec residuals;         //!<    Weights for squared residuals of each sample
+        bool usingResidualWeights;//!<  Flag set if using residual weights
+        dvec residualWeights;   //!<    Weights for squared residuals of each sample
         double l1Alpha;         //!<    L1 constraint weight on alphas
         double l1Beta;          //!<    L1 constraint on betas
         double l2Alpha;         //!<    L2 constraint on alphas
         double l2Beta;          //!<    L2 constraint on betas
         LossFunctionWeights();
-        void SetResidualWeights(const dvec& residuals);
+        void SetResidualWeights(const dvec& residualWeights);
     };
 }   //  End namespace ann
 #endif

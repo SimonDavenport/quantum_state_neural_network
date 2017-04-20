@@ -3,7 +3,10 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains functions to perform a line search optimization
+//!     This file contains functions to perform a line search optimization. 
+//!     The implementation has been lifted from scipy.optimize.linesearch, 
+//!     where it is called scalar_search_wolfe2. Some notation is changed
+//!     for clarity.
 //!     
 //!                    Copyright (C) Simon C Davenport
 //!                                                                             
@@ -30,6 +33,7 @@
 #include "../linear_algebra/dense_matrix.hpp"
 #include "../linear_algebra/dense_vector.hpp"
 #include "../general/dvec_def.hpp"
+#include <iostream>
 #if _DEBUG_
 #include "../general/debug.hpp"
 #endif
@@ -38,12 +42,15 @@ namespace utilities
 {
     namespace optimize
     {
+        //  Default versions of the constraint parameters are lifted from
+        //  the scalar_search_wolf2 function in scipy.optimize.linesearch 
         static const double c1 = 0.0001;  //!<    Armijo constraint weight
         static const double c2 = 0.9;     //!<    curvature constraint weight
+        // Default versions of the interpolant check parameters are lifted
+        // from the _zoom function in scipy.optimize.linesearch
         static const double delta1 = 0.2; //!<    Cubic interpolant check
         static const double delta2 = 0.1; //!<    Quadratic interpolant check
-        static const unsigned int maxIter = 10; 
-                                    //!<    Max iteration number in line searches
+        static const unsigned int maxIter = 20; //!<    Max iteration number
         bool LineSearch(double& alpha, dvec& nextGrad, const double prevLoss,
                         const dvec& searchDir, const dvec& x, const dvec& grad,
                         dvec& work, std::function<double(const dvec&)>& EvaluateLoss,
@@ -54,13 +61,13 @@ namespace utilities
         void GradIncrement(dvec& newGrad, const dvec& x, const double& alpha, 
                            const dvec& searchDir, dvec& x1,
                            std::function<void(dvec&, const dvec&)>& EvaluateGradients);
-        void Zoom(double& alpha, double& optLoss, double& optDeriv,
-                  dvec& nextGrad, double& alpha0, double& alpha1, 
-                  double& alpha0Loss, double& alpha1Loss, 
-                  double& alpha0Deriv, const double& startLoss, 
-                  const double& startDeriv, const dvec& searchDir, const dvec& x, 
-                  dvec& work, std::function<double(const dvec&)>& EvaluateLoss,
-                  std::function<void(dvec&, const dvec&)>& EvaluateGradients);
+        bool Interpolate(double& alpha, double& optLoss, double& optDeriv,
+                         dvec& nextGrad, double& alpha0, double& alpha1, 
+                         double& alpha0Loss, double& alpha1Loss, 
+                         double& alpha0Deriv, const double& startLoss, 
+                         const double& startDeriv, const dvec& searchDir, const dvec& x, 
+                         dvec& work, std::function<double(const dvec&)>& EvaluateLoss,
+                         std::function<void(dvec&, const dvec&)>& EvaluateGradients);
         double CubicMin(const double a, const double fa, const double fpa, 
                         const double b, const double fb, const double c, 
                         const double fc);

@@ -71,15 +71,15 @@ int main(int argc, char *argv[])
 {
     std::cout << "TEST BFGS IMPLEMENTATION" << std::endl;
     {
-        const unsigned int maxIter = 50;
-        double gradTol = 1e-5;
+        const unsigned int maxIter = 100;
+        double gradTol = 1e-7;
         double passTol = 1e-5;
         std::function<double(const dvec&)> minFunc = Rosenbrock;
         std::function<void(dvec&, const dvec&)> gradFunc = RosenbrockGrad;
         utilities::optimize::BFGS bfgs;
         //  N=3 case
         bfgs.AllocateWork(3);
-        dvec x3 {1.4, 0.2, 1.7};
+        dvec x3 {1.2, 0.1, 5.5};
         dvec grad3(3);
         bfgs.Optimize(x3, grad3,  minFunc, gradFunc, maxIter, gradTol);
         std::cout << "Test optimization output for 3-parameter Rosenbrock function: " << std::endl;
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
         }
         //  N=4 case
         bfgs.AllocateWork(4);
-        dvec x4_global {1.2, 0.8, 1.9, 0.2};
+        dvec x4_global {1.4, 0.1, 3.5, 3.3};
         dvec x4_local {-1.2, 0.8, 1.0, 0.9};
         dvec grad4(4);
         bfgs.Optimize(x4_global, grad4, minFunc, gradFunc, maxIter, gradTol);

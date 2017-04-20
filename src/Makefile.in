@@ -76,7 +76,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = bfgs_test$(EXEEXT) linear_algebra_test$(EXEEXT) \
+bin_PROGRAMS = line_search_test$(EXEEXT) bfgs_test$(EXEEXT) \
+	linear_algebra_test$(EXEEXT) \
 	single_layer_perceptron_test$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
@@ -99,6 +100,12 @@ am_bfgs_test_OBJECTS = test/bfgs_test.$(OBJEXT) \
 	utilities/linear_algebra/dense_matrix.$(OBJEXT)
 bfgs_test_OBJECTS = $(am_bfgs_test_OBJECTS)
 bfgs_test_LDADD = $(LDADD)
+am_line_search_test_OBJECTS = test/line_search_test.$(OBJEXT) \
+	utilities/optimization/line_search.$(OBJEXT) \
+	utilities/linear_algebra/dense_vector.$(OBJEXT) \
+	utilities/linear_algebra/dense_matrix.$(OBJEXT)
+line_search_test_OBJECTS = $(am_line_search_test_OBJECTS)
+line_search_test_LDADD = $(LDADD)
 am_linear_algebra_test_OBJECTS = test/linear_algebra_test.$(OBJEXT) \
 	utilities/linear_algebra/dense_vector.$(OBJEXT) \
 	utilities/linear_algebra/dense_matrix.$(OBJEXT)
@@ -146,9 +153,11 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(bfgs_test_SOURCES) $(linear_algebra_test_SOURCES) \
+SOURCES = $(bfgs_test_SOURCES) $(line_search_test_SOURCES) \
+	$(linear_algebra_test_SOURCES) \
 	$(single_layer_perceptron_test_SOURCES)
-DIST_SOURCES = $(bfgs_test_SOURCES) $(linear_algebra_test_SOURCES) \
+DIST_SOURCES = $(bfgs_test_SOURCES) $(line_search_test_SOURCES) \
+	$(linear_algebra_test_SOURCES) \
 	$(single_layer_perceptron_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -265,6 +274,13 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+line_search_test_SOURCES = \
+test/line_search_test.cpp \
+utilities/optimization/line_search.cpp \
+utilities/linear_algebra/dense_vector.cpp \
+utilities/linear_algebra/dense_matrix.cpp
+
+line_search_test_LINK = $(FC) $(LDFLAGS) -o line_search_test
 bfgs_test_SOURCES = \
 test/bfgs_test.cpp \
 utilities/optimization/bfgs.cpp \
@@ -407,6 +423,12 @@ utilities/linear_algebra/dense_matrix.$(OBJEXT):  \
 bfgs_test$(EXEEXT): $(bfgs_test_OBJECTS) $(bfgs_test_DEPENDENCIES) $(EXTRA_bfgs_test_DEPENDENCIES) 
 	@rm -f bfgs_test$(EXEEXT)
 	$(AM_V_GEN)$(bfgs_test_LINK) $(bfgs_test_OBJECTS) $(bfgs_test_LDADD) $(LIBS)
+test/line_search_test.$(OBJEXT): test/$(am__dirstamp) \
+	test/$(DEPDIR)/$(am__dirstamp)
+
+line_search_test$(EXEEXT): $(line_search_test_OBJECTS) $(line_search_test_DEPENDENCIES) $(EXTRA_line_search_test_DEPENDENCIES) 
+	@rm -f line_search_test$(EXEEXT)
+	$(AM_V_GEN)$(line_search_test_LINK) $(line_search_test_OBJECTS) $(line_search_test_LDADD) $(LIBS)
 test/linear_algebra_test.$(OBJEXT): test/$(am__dirstamp) \
 	test/$(DEPDIR)/$(am__dirstamp)
 
@@ -449,6 +471,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@neural_network/$(DEPDIR)/network_functions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@neural_network/$(DEPDIR)/single_layer_perceptron.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/bfgs_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/line_search_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/linear_algebra_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/single_layer_perceptron_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@utilities/linear_algebra/$(DEPDIR)/dense_matrix.Po@am__quote@

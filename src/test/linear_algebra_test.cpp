@@ -31,32 +31,33 @@
 
 int main(int argc, char *argv[])
 {   
-    const unsigned int N = 20;
-    const unsigned int P = 20;
-    const unsigned int H = 20;
+    const unsigned int N = 3;
+    const unsigned int P = 3;
+    const unsigned int H = 2;
     utilities::matrix<double> a(P, N);
     utilities::matrix<double> b(N, H);
     utilities::matrix<double> c(P, H);
     std::vector<double> d(H);
     std::vector<double> e(P);
     
-    
-    utilities::SetToConstantMatrix(a, 1.0);
-    utilities::SetToConstantMatrix(b, 2.0);
+    utilities::SetToRandomMatrix(a, 1.0, 0);
+    utilities::SetToRandomMatrix(b, 2.0, 1);
     std::fill(d.begin(), d.end(), -0.5);
     
-    utilities::MatrixMatrixMultiply(c, a, b, "NT");
+    utilities::MatrixMatrixMultiply(c, a, b, "NN");
+    
+    std::cout << "Compute C = A*B" << std::endl;
     
     PRINTVEC("A", a.m_data);
     PRINTVEC("B", b.m_data);
     PRINTVEC("C", c.m_data);
     
-    utilities::MatrixMatrixMultiply(c, a, b, "NT");
-    utilities::MatrixVectorMultiply(e, 1.0, c, d, 'N');
+    //utilities::MatrixMatrixMultiply(c, a, b, "NT");
+    //utilities::MatrixVectorMultiply(e, 1.0, c, d, 'N');
     
-    PRINTVEC("E", e);
+    //PRINTVEC("E", e);
     
-    utilities::MatrixVectorMultiply(e, 1.0, c, d, 'T');
+    //utilities::MatrixVectorMultiply(e, 1.0, c, d, 'T');
     
     return EXIT_SUCCESS;
 }
