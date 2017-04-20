@@ -52,6 +52,7 @@ namespace utilities
     double VectorDot(const dvec& a, const dvec& b);
     double VectorL2(const dvec& a);
     double VectorL1(const dvec& a);
+    double VectorSum(const dvec& a);
     void VectorScale(dvec& output, const double scale, const dvec& input);
 }   //  End namespace utilities
 #endif
