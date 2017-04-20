@@ -3,7 +3,7 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains an implementation of the L-BFGS quasi-Newton
+//!     This file contains an implementation of the L-BFGS quasi-Newton
 //!     optimization algorithm (Limited-memory Broyden-Fletcher-Goldfarb-Shanno). 
 //!     See Wikipedia article for nomenclature
 //!     
@@ -107,7 +107,11 @@ namespace utilities
                 bool success = LineSearch(alpha, m_nextGrad, prevLoss,
                                           m_searchDir, x, grad, m_work, 
                                           EvaluateLoss, EvaluateGradients);
-                if(!success)    break;
+                if(!success)
+                {
+                    std::cerr << "WARNING: L-BFGS terminating due to convergence issue " << std::endl;
+                    break;
+                }
                 prevLoss = EvaluateLoss(x);
                 //  Compute parameter and gradient increments
                 VectorScale(m_deltaX, alpha, m_searchDir);
@@ -121,7 +125,7 @@ namespace utilities
                 double norm = VectorDot(m_deltaX, m_deltaGrad);
                 if(norm < 1e-20)
                 {
-                    std::cerr << "L-BFGS terminating due to convergence issue " << std::endl;
+                    std::cerr << "WARNING: L-BFGS terminating due to convergence issue " << std::endl;
                     break;
                 }
                 if(0 == iter)

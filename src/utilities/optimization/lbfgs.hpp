@@ -3,7 +3,7 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains an implementation of the L-BFGS quasi-Newton
+//!     This file contains an implementation of the L-BFGS quasi-Newton
 //!     optimization algorithm (Limited-memory Broyden-Fletcher-Goldfarb-Shanno). 
 //!     See Wikipedia article for nomenclature
 //!     
@@ -45,9 +45,9 @@ namespace utilities
         class LBFGS
         {
             private:
-            FixedSizeQueue<dvec> m_prevDeltaX;   //!<    Store the previous M deltaX values
-            FixedSizeQueue<dvec> m_prevDeltaGrad;//!<    Store the previous M deltaGrad values
-            FixedSizeQueue<double> m_prevNorm;   //!<    Store previous values of the norm
+            FixedSizeQueue<dvec> m_prevDeltaX;   //!<    Queue previous deltaX
+            FixedSizeQueue<dvec> m_prevDeltaGrad;//!<    Queue previous deltaGrad
+            FixedSizeQueue<double> m_prevNorm;   //!<    Queue previous norm
             int m_M;                    //!<    Number of previous updates 
                                         //!     to compute hessian approx
             dvec m_a;                   //!<    Working space used in Hessian computation

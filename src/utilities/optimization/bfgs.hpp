@@ -3,7 +3,7 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains an implementation of the BFGS quasi-Newton
+//!     This file contains an implementation of the BFGS quasi-Newton
 //!     optimization algorithm (Broyden-Fletcher-Goldfarb-Shanno). 
 //!     See Wikipedia article for nomenclature
 //!     
