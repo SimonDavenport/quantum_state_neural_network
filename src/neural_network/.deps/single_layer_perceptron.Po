@@ -115,13 +115,16 @@ neural_network/single_layer_perceptron.o: \
  /usr/include/x86_64-linux-gnu/bits/nan.h \
  /usr/include/x86_64-linux-gnu/bits/mathdef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
+ /usr/include/x86_64-linux-gnu/bits/mathinline.h /usr/include/c++/4.8/map \
+ /usr/include/c++/4.8/bits/stl_tree.h \
+ /usr/include/c++/4.8/bits/alloc_traits.h \
+ /usr/include/c++/4.8/bits/ptr_traits.h \
+ /usr/include/c++/4.8/bits/stl_map.h \
+ /usr/include/c++/4.8/bits/stl_multimap.h \
  neural_network/loss_function_data.hpp \
  neural_network/../utilities/general/dvec_def.hpp \
  /usr/include/c++/4.8/vector /usr/include/c++/4.8/bits/stl_construct.h \
  /usr/include/c++/4.8/ext/alloc_traits.h \
- /usr/include/c++/4.8/bits/alloc_traits.h \
- /usr/include/c++/4.8/bits/ptr_traits.h \
  /usr/include/c++/4.8/bits/stl_uninitialized.h \
  /usr/include/c++/4.8/bits/stl_vector.h \
  /usr/include/c++/4.8/bits/stl_bvector.h \
@@ -450,6 +453,18 @@ neural_network/network_functions.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
+/usr/include/c++/4.8/map:
+
+/usr/include/c++/4.8/bits/stl_tree.h:
+
+/usr/include/c++/4.8/bits/alloc_traits.h:
+
+/usr/include/c++/4.8/bits/ptr_traits.h:
+
+/usr/include/c++/4.8/bits/stl_map.h:
+
+/usr/include/c++/4.8/bits/stl_multimap.h:
+
 neural_network/loss_function_data.hpp:
 
 neural_network/../utilities/general/dvec_def.hpp:
@@ -459,10 +474,6 @@ neural_network/../utilities/general/dvec_def.hpp:
 /usr/include/c++/4.8/bits/stl_construct.h:
 
 /usr/include/c++/4.8/ext/alloc_traits.h:
-
-/usr/include/c++/4.8/bits/alloc_traits.h:
-
-/usr/include/c++/4.8/bits/ptr_traits.h:
 
 /usr/include/c++/4.8/bits/stl_uninitialized.h:
 

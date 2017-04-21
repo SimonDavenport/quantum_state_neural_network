@@ -97,6 +97,8 @@ namespace ann
         public:
         SingleLayerPerceptron();
         SingleLayerPerceptron(const unsigned int P, const unsigned int H);
+        SingleLayerPerceptron(const unsigned int P, const unsigned int H, 
+                              const std::string activationFuncName);
         ~SingleLayerPerceptron();
         void AllocateWork(unsigned int N);
         bool CheckDimensions(const dvec& Y, const utilities::matrix<double>& X);
@@ -104,8 +106,11 @@ namespace ann
         unsigned int countWeights() const;
         void RandomizeWeights(const double scale, const unsigned int seed);
         void SetActivationFunction(
-            std::function<double(const double& x)> activationImpl,
-            std::function<double(const double& x)> activationDerivImpl);
+            std::function<double(const double& x)> ActivationImpl,
+            std::function<double(const double& x)> ActivationDerivImpl);
+        void SetOutputFunction(
+            std::function<double(const double& x)> OutputFunctionImpl,
+            std::function<double(const double& x)> OutputFunctionDerivImpl);
         void SetLossFunctionWeights(const LossFunctionWeights& lfWeights);
         void SetWeights(const utilities::matrix<double>& alpha, const dvec& beta);
         void GetWeights(utilities::matrix<double>& alpha, dvec& beta) const;

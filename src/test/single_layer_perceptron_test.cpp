@@ -79,15 +79,17 @@ int main(int argc, char *argv[])
     utilities::ToSubMatrix(testFeatures, features, 0, trainN);
     utilities::ToSubVector(testOutputs, outputs, trainN);
     
-    //  Train the single layer perceptron
-    ann::SingleLayerPerceptron slp(P, H);
-    utilities::optimize::LBFGS op;
-    slp.AllocateWork(trainN);
-    //slp.RandomizeWeights(0.5, time(NULL));
-    slp.SetNzWeights(startingWeights);
+    //  Initialize a single layer perceptron
+    ann::SingleLayerPerceptron slp(P, H, "logistic");
+    slp.RandomizeWeights(0.5, time(NULL));
+    //slp.SetNzWeights(startingWeights);
     std::cout << "\t" << "Intitial training loss function " << slp.EvaluateSquaredLoss(trainOutputs, trainFeatures) << std::endl;
     std::cout << "\t" << "Initial testing loss function " << slp.EvaluateSquaredLoss(testOutputs, testFeatures) << std::endl;
+    //  Train the single layer perceptron
+    slp.AllocateWork(trainN);
+    utilities::optimize::LBFGS op;
     ann::Train(slp, op, trainOutputs, trainFeatures);
+    //  Compute and display results
     dvec networkOutputs(N);
     slp.Evaluate(networkOutputs, features);
     std::cout << "\n\t" << "Predicted outputs:" << std::endl;
@@ -100,7 +102,7 @@ int main(int argc, char *argv[])
     std::cout << "\t" << "Final training loss function " << slp.EvaluateSquaredLoss(trainOutputs, trainFeatures) << std::endl;
     std::cout << "\t" << "Final testing loss function " << slp.EvaluateSquaredLoss(testOutputs, testFeatures) << std::endl;
     slp.GetNzWeights(startingWeights);
-    std::cout << "\t" << "\nOptimized weights (last value is beta bias)" << std::endl;
+    std::cout << "\t" << "\nOptimized weights (alpha, beta, beta bias)" << std::endl;
     for(auto& it : startingWeights)
     {
         std::cout << "\t" << it << std::endl;

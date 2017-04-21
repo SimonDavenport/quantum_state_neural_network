@@ -28,14 +28,25 @@
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include <cmath>
+#include <functional>
+#include <iostream>
+#include <map>
 
 namespace ann
 {
-    double ShiftedExponential(const double& input);
-    double ShiftedExponentialDeriv(const double& input);
     double Unit(const double& input);
     double UnitDeriv(const double& input);
     double Logistic(const double& input);
     double LogisticDeriv(const double& input);
+    double Tanh(const double& input);
+    double TanhDeriv(const double& input);
+    double RectifiedLinearUnit(const double& input);
+    double RectifiedLinearUnitDeriv(const double& input);
+    double ShiftedExponential(const double& input);
+    double ShiftedExponentialDeriv(const double& input);
+    void SelectActivation(
+        std::function<double(const double& x)>& ActivationImpl,
+        std::function<double(const double& x)>& ActivationDerivImpl,
+        const std::string activationFuncName);
 }   //  End namespace ann
 #endif

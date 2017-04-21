@@ -127,6 +127,30 @@ namespace ann
         m_beta.resize(m_H);
     }
 
+    //!
+    //! Constructor for a certian number of features and hidden nodes, 
+    //! and a string specifying the activation function from an 
+    //! available set
+    //!
+    SingleLayerPerceptron::SingleLayerPerceptron(
+        const unsigned int P,                 //!<    Number of features
+        const unsigned int H,                 //!<    Number of hidden nodes in layer
+        const std::string activationFuncName) //!<  Name of activation function
+        :
+        m_includeBetaBias(true),
+        m_P(P),
+        m_H(H),
+        m_N(0),
+        m_workAllocated(false),
+        m_OutputFunctionImpl(Unit),
+        m_OutputFunctionDerivImpl(UnitDeriv)
+    {
+        m_alpha.resize(m_H, m_P);
+        m_beta.resize(m_H);
+        ann::SelectActivation(m_ActivationImpl, m_ActivationDerivImpl, 
+                              activationFuncName);
+    }
+
     //! 
     //! Destructor
     //!
@@ -217,14 +241,28 @@ namespace ann
     //! Set the activation function
     //!
     void SingleLayerPerceptron::SetActivationFunction(
-        std::function<double(const double& x)> activationImpl,
+        std::function<double(const double& x)> ActivationImpl,
                             //!< Implementaion of the activation function
-        std::function<double(const double& x)> activationDerivImpl)
+        std::function<double(const double& x)> ActivationDerivImpl)
                             //!< Implementation of activation func deriv
     
     {
-        m_ActivationImpl = activationImpl;
-        m_ActivationDerivImpl = activationDerivImpl;
+        m_ActivationImpl = ActivationImpl;
+        m_ActivationDerivImpl = ActivationDerivImpl;
+    }
+    
+    //!
+    //! Set the output function
+    //!
+    void SingleLayerPerceptron::SetOutputFunction(
+        std::function<double(const double& x)> OutputFunctionImpl,
+                            //!< Implementaion of the output function
+        std::function<double(const double& x)> OutputFunctionDerivImpl)
+                            //!< Implementation of output func deriv
+    
+    {
+        m_OutputFunctionImpl = OutputFunctionImpl;
+        m_OutputFunctionDerivImpl = OutputFunctionDerivImpl;
     }
     
     //!
