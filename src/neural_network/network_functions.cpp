@@ -125,27 +125,23 @@ namespace ann
         std::function<double(const double& x)>& ActivationDerivImpl,
         const std::string activationFuncName)
     {
-        std::map<std::string, std::function<double(const double& x)>> implFunctions;
-        std::map<std::string, std::function<double(const double& x)>> implDerivFunctions;
-        //  Define map of possible functions
-        implFunctions["identity"] = Unit;
-        implDerivFunctions["identity"] = UnitDeriv;
-        implFunctions["logistic"] = Logistic;
-        implDerivFunctions["logistic"] = LogisticDeriv;
-        implFunctions["tanh"] = Tanh;
-        implDerivFunctions["tanh"] = TanhDeriv;
-        implFunctions["relu"] = RectifiedLinearUnit;
-        implDerivFunctions["relu"] = RectifiedLinearUnitDeriv;
-        implFunctions["shifted-exp"] = ShiftedExponential;
-        implDerivFunctions["shifted-exp"] = ShiftedExponentialDeriv;
-        //  Set implementation from map
-        ActivationImpl = implFunctions[activationFuncName];
-        ActivationDerivImpl = implDerivFunctions[activationFuncName];
-
-        //std::cerr << "ERROR no known activation function: " 
-        //          << activationFuncName << ". Defaulting to logistic" << std::endl;
-        //ActivationImpl = Logistic;
-        //ActivationDerivImpl = LogisticDeriv;
-        //break;
+        std::map<std::string, std::function<double(const double& x)>> implFunctions =
+             {{"identity", Unit}, {"logistic", Logistic}, {"tanh", Tanh}, 
+             {"relu", RectifiedLinearUnit}, {"shifted-exp", ShiftedExponential}};
+        std::map<std::string, std::function<double(const double& x)>> implDerivFunctions = 
+             {{"identity", UnitDeriv}, {"logistic", LogisticDeriv}, {"tanh", TanhDeriv}, 
+             {"relu", RectifiedLinearUnitDeriv}, {"shifted-exp", ShiftedExponentialDeriv}};
+        if(implFunctions.count(activationFuncName))
+        {
+            ActivationImpl = implFunctions[activationFuncName];
+            ActivationDerivImpl = implDerivFunctions[activationFuncName];
+        }
+        else
+        {
+            std::cerr << "ERROR no known activation function: " 
+                      << activationFuncName << ". Defaulting to logistic" << std::endl;
+            ActivationImpl = Logistic;
+            ActivationDerivImpl = LogisticDeriv;
+        }
     }
 }   //  End namespace ann
