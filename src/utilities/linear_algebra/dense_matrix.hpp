@@ -30,6 +30,7 @@
 #include "../general/dvec_def.hpp"
 #include "dense_vector.hpp"
 #include "blas.hpp"
+#include <iostream>
 #if _DEBUG_
 #include "../general/debug.hpp"
 #endif
@@ -84,15 +85,56 @@ namespace utilities
         //!
         //! Get a pointer to the underlying container
         //!
-        const T* data()
-        const
+        const T* data() const
         {
             return m_data.data();
+        }
+        
+        //!
+        //! Set accessor for a single matrix element
+        //!
+        T& operator() (const unsigned int row, const unsigned int col)
+        {
+            return m_data.at(row*m_dSecond+col);
+        }
+        
+        //!
+        //! Get accessor for a single matrix element
+        //!
+        T operator() (const unsigned int row, const unsigned int col) const
+        {
+            return m_data.at(row*m_dSecond+col);
+        }
+        
+        //!
+        //! Set a row of the matrix from a vector
+        //!
+        void SetRow(
+            const unsigned int row, 
+            const std::vector<T>& rowBuffer)
+        {
+            CopyVector(&m_data[row*m_dSecond], rowBuffer.data(), rowBuffer.size());
+        }
+        
+        //!
+        //! Print out matrix elements
+        //!
+        void Print() const
+        {
+            for(unsigned int row=0; row<m_dLeading; ++row)
+            {
+                for(unsigned int col=0; col<m_dSecond; ++col)
+                {
+                    //std::cout << "matrix["<< row << "," << col << "]";
+                    //std::cout << " = " << m_data[row*m_dSecond+col] << std::endl;
+                    std::cout <<  m_data[row*m_dSecond+col] << " ";
+                }
+                std::cout << std::endl;
+            }
         }
     };
     
     static const char UPLO = 'U';   //!<    Symmetric matrix update convention
-    
     void SetToRandomMatrix(matrix<double>& mat, const double scale, const unsigned int seed);
     void SetToConstantMatrix(matrix<double>& mat, const double value);
     void SetToIdentityMatrix(matrix<double>& mat);

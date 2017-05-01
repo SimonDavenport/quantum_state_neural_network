@@ -2,7 +2,9 @@ bin_PROGRAMS = \
 line_search_test \
 bfgs_test \
 linear_algebra_test \
-single_layer_perceptron_test
+single_layer_perceptron_test \
+site_labels_test \
+fit_hamiltonian_terms
 
 ##  line search test
 line_search_test_SOURCES = \
@@ -45,4 +47,27 @@ utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp
 
 single_layer_perceptron_test_LINK = $(FC) $(LDFLAGS) -o single_layer_perceptron_test
+
+## site_labels_test
+site_labels_test_SOURCES = \
+test/site_labels_test.cpp \
+features/site_labels.cpp \
+utilities/linear_algebra/dense_vector.cpp \
+utilities/linear_algebra/dense_matrix.cpp 
+
+fit_hamiltonian_terms_LINK = $(FC) $(LDFLAGS) -o fit_hamiltonian_terms
+
+## fit_hamiltonian_terms
+fit_hamiltonian_terms_SOURCES = \
+hamiltonians/fit_hamiltonian_terms.cpp \
+features/site_labels.cpp \
+neural_network/single_layer_perceptron.cpp \
+neural_network/loss_function_data.cpp \
+neural_network/network_functions.cpp \
+utilities/optimization/lbfgs.cpp \
+utilities/optimization/line_search.cpp \
+utilities/linear_algebra/dense_vector.cpp \
+utilities/linear_algebra/dense_matrix.cpp 
+
+fit_hamiltonian_terms_LINK = $(FC) $(LDFLAGS) -o fit_hamiltonian_terms
 
