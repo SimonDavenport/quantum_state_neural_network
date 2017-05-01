@@ -28,7 +28,7 @@
 #include "single_layer_perceptron.hpp"
 
 namespace ann
-{   
+{
     //!
     //! Implementation of activation function, mapping N inputs X of size  
     //! P to H hidden node parameters Z via weights alpha.
@@ -214,13 +214,21 @@ namespace ann
     {
         return m_H * m_P;
     }
+    
+    //!
+    //! Get total number of beta weights
+    //!
+    unsigned int SingleLayerPerceptron::countBetaWeights() const
+    {
+        return m_H;
+    }
    
     //!
     //! Get total number of weights
     //!
     unsigned int SingleLayerPerceptron::countWeights() const
     {
-        return this->countAlphaWeights() + m_H;
+        return this->countAlphaWeights() + this->countBetaWeights();
     }
     
     //!
@@ -299,6 +307,25 @@ namespace ann
     {
         alpha = m_alpha;
         beta = m_beta;
+    }
+    
+    //!
+    //! Set alpha weights to be zero if below a set limit
+    //!
+    void SingleLayerPerceptron::TruncateAlphaWeights(
+        const double limit)
+    {
+        m_zeros.resize(0);
+        unsigned int index=0;
+        for(auto& it : m_alpha.m_data)
+        {
+            if(std::abs(it) < limit)
+            {
+                it = 0.0;
+                m_zeros.push_back(index);
+            }
+            ++index;
+        }
     }
     
     //!

@@ -103,6 +103,7 @@ namespace ann
         void AllocateWork(unsigned int N);
         bool CheckDimensions(const dvec& Y, const utilities::matrix<double>& X);
         unsigned int countAlphaWeights() const;
+        unsigned int countBetaWeights() const;
         unsigned int countWeights() const;
         void RandomizeWeights(const double scale, const unsigned int seed);
         void SetActivationFunction(
@@ -114,6 +115,7 @@ namespace ann
         void SetLossFunctionWeights(const LossFunctionWeights& lfWeights);
         void SetWeights(const utilities::matrix<double>& alpha, const dvec& beta);
         void GetWeights(utilities::matrix<double>& alpha, dvec& beta) const;
+        void TruncateAlphaWeights(const double limit);
         void SetZeros(const std::vector<unsigned int>& zeros);
         void GetZeros(std::vector<unsigned int>& zeros) const;
         unsigned int nnzWeights() const;
