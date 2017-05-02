@@ -80,7 +80,7 @@ class Hamiltonian
         }
         else
         {
-            ss << "kx_" << this->kx << "_" << this->ky;
+            ss << "kx_" << this->kx << "_ky_" << this->ky;
         }
         ss << ".dat";
         fileName = ss.str();
@@ -136,7 +136,7 @@ class Hamiltonian
     //!
     //! Read a single coefficient from a file stream
     //!
-    double ReadCoefficient(
+    double GetCoefficient(
         std::ifstream& f_in) const
     {
         double reCoefficient=0;
@@ -154,6 +154,30 @@ class Hamiltonian
         {
             return imCoefficient;
         }
+    }
+    
+    //!
+    //! Check if coefficient can be removed from Hamiltonian
+    //! due to fermion commutation rules. Return true if
+    //! the coefficient can be set to zero.
+    //!
+    bool CheckFermionRules(
+        std::vector<unsigned int>& kLabels, 
+        std::string termType) const
+    {
+        if("DDCC" == termType || "CCDD" == termType)
+        {
+            return ((kLabels[0] == kLabels[1]) || (kLabels[2] == kLabels[3]));
+        }
+        if("CDDC" == termType || "DCCD" == termType)
+        {
+            return ((kLabels[0] == kLabels[3]) || (kLabels[1] == kLabels[2]));
+        }
+        if("CDCD" == termType || "DCDC" == termType)
+        {
+            return ((kLabels[0] == kLabels[2]) || (kLabels[1] == kLabels[3]));
+        }
+        return false;
     }
     
     //!
@@ -205,10 +229,10 @@ class Hamiltonian
         termType("CDDC"),
         usingImPart(false),
         termReIm("RE"),
-        modelType("fqhe_sphere"), 
+        modelType("ofl"), 
         L(6),
-        kx(2),
-        ky(3),
+        kx(4),
+        ky(6),
         fileName(),
         siteLabels(0)
     {
@@ -241,16 +265,16 @@ class Hamiltonian
         f_in.open(this->fileName);
         if(!f_in.is_open())
         {
-            std::cerr << " CANNOT OPEN FILE " << fileName <<std::endl;
+            std::cerr << " CANNOT OPEN FILE " << fileName << std::endl;
             exit(EXIT_FAILURE);
         }
         std::string fileHeader;
         getline(f_in, fileHeader);
         unsigned int nbrTerms;
         unsigned int nbrLabels;
-        f_in >> nbrTerms >> nbrLabels;
         if(fileHeader == "# File contains term table data in hash table format")
         {
+            f_in >> nbrTerms >> nbrLabels;
             //  Skip momentum conserving label combinations data stored in file
             for(unsigned int k=0; k<nbrTerms+1; ++k)
             {
@@ -259,6 +283,13 @@ class Hamiltonian
             }
             f_in >> nbrTerms >> nbrLabels;
         }
+        else if(fileHeader == "# File contains term table data in array format")
+        {
+            unsigned int highestState;
+            f_in >> nbrLabels >> highestState;
+            nbrTerms = std::pow(highestState, (int)nbrLabels-1);
+        }
+        std::cout << nbrTerms << " " << nbrLabels << std::endl;
         //  Read in terms of the seleted type only
         std::vector<unsigned int> kLabels(nbrLabels);
         std::vector<unsigned int> kLabelsSorted(nbrLabels);
@@ -276,6 +307,7 @@ class Hamiltonian
         {
             charTermType[label] = storedType[label];
         }
+        unsigned int termCtr = 0;
         for(unsigned int termIndex=0; termIndex<nbrTerms; ++termIndex)
         {
             std::vector<char> termTypeSorted = charTermType;
@@ -284,27 +316,27 @@ class Hamiltonian
                 f_in >> it_k;
             }
             kLabelsSorted = kLabels;
-            utilities::QuickSort<unsigned int, char, _ASCENDING_ORDER_>(kLabelsSorted.data(), 
-                termTypeSorted.data(), kLabelsSorted.size());
-            if(this->termType == std::string(termTypeSorted.begin(), termTypeSorted.end()))
+            utilities::QuickSort<unsigned int, char, _ASCENDING_ORDER_>(
+                kLabelsSorted.data(), termTypeSorted.data(), kLabelsSorted.size());
             {
-                double coefficient = this->ReadCoefficient(f_in);
-                if(0.0 != coefficient)
+                double coefficient = this->GetCoefficient(f_in);
+                std::string termType = std::string(termTypeSorted.begin(), termTypeSorted.end());
+                if(this->termType ==  termType && !this->CheckFermionRules(kLabelsSorted, termType))
                 {
-                    this->coefficients[this->siteLabels->GetIndex(kLabelsSorted)]
-                        = this->CoefficientSign(kLabels, kLabelsSorted) * coefficient;
+                    if(0.0 != coefficient)
+                    {
+                        this->coefficients[this->siteLabels->GetIndex(kLabelsSorted)]
+                            = this->CoefficientSign(kLabels, kLabelsSorted) * coefficient;
+                        ++termCtr;
+                    }
                 }
-            }
-            else
-            {
-                double discard;
-                f_in >> discard;
             }
         }
         if(f_in.is_open())
         {
             f_in.close();
         }
+        std::cout << "Imported " << termCtr << " non-zero terms" << std::endl;
     }
     
     //!
@@ -553,8 +585,9 @@ int main(int argc, char *argv[])
         for(auto it_test = outputs.begin();
             it_test < outputs.end();++it_test)
         {
-            std::cout << "\t" << *it_test << std::endl;
+            //std::cout << "\t" << *it_test << std::endl;
         }
+        std::cout << "Any key to continue" << std::endl;
         getchar();
     }
     //  Define neural network parameters
@@ -619,14 +652,14 @@ int main(int argc, char *argv[])
         //  Compute and display results
         dvec networkOutputs(N);
         slp.Evaluate(networkOutputs, features);
-        std::cout << "\n\t" << "Predicted outputs:" << std::endl;
-        std::cout << "\t" << "Prediction" << " " << "Actual" << std::endl;
-        for(auto it_network = networkOutputs.begin(), it_test = outputs.begin();
-            it_network < networkOutputs.end(); ++it_network, ++it_test)
-        {
-            std::cout << "\t" << *it_network << " " << *it_test << std::endl;
-        }
-        getchar();
+        //std::cout << "\n\t" << "Predicted outputs:" << std::endl;
+        //std::cout << "\t" << "Prediction" << " " << "Actual" << std::endl;
+        //for(auto it_network = networkOutputs.begin(), it_test = outputs.begin();
+        //    it_network < networkOutputs.end(); ++it_network, ++it_test)
+        //{
+        //    std::cout << "\t" << *it_network << " " << *it_test << std::endl;
+        //}
+        //getchar();
     }    
     log.Plot("hidden_nodes_vs_loss", "Nbr hidden nodes", Hvalues);
     return EXIT_SUCCESS;
