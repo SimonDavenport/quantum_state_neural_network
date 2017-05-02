@@ -28,12 +28,32 @@
 namespace utilities
 {
     //!
-    //! Copy part of a vector
+    //! Copy part of a vector using a BLAS subroutine
     //!
-    void CopyVector(double* out, const double* in, const int N)
+    void CopyVector(
+        double* out,        //!<    Pointer to output vector
+        const double* in,   //!<    Pointer to input vector
+        const int N)        //!<    Size of vector
     {
         static const int one = 1;
         ccopy_(&N, in, &one, out, &one);
+    }
+
+    //!
+    //! Mpi sync the given vector with a specified node
+    //!
+    void MpiSyncVector(
+        dvec& vector,               //!<  Vector to synchronize
+        int syncNode,               //!<  Node to sync with
+        utilities::MpiWrapper& mpi) //!<  Address of mpi wrapper   
+    {
+        unsigned int dim = vector.size();
+        mpi.Sync(&dim, 1, syncNode);
+        if(syncNode != mpi.m_id)
+        {
+            vector.resize(dim);
+        }
+        mpi.Sync(vector.data(), dim, syncNode);
     }
 
     //!

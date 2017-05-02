@@ -28,7 +28,10 @@
 #include "../utilities/optimization/bfgs.hpp"
 #include "../utilities/optimization/lbfgs.hpp"
 #include "../utilities/general/dvec_def.hpp"
-#include <iostream>
+#include "../utilities/general/cout_tools.hpp"
+
+///////     GLOBAL DATA STRUCTURES      ////////////////////////////////////////
+utilities::Cout utilities::cout;
 
 //!
 //! A mutlidimensional Rosenbrock function 

@@ -103,12 +103,15 @@ bfgs_test_OBJECTS = $(am_bfgs_test_OBJECTS)
 bfgs_test_LDADD = $(LDADD)
 am_fit_hamiltonian_terms_OBJECTS =  \
 	hamiltonians/fit_hamiltonian_terms.$(OBJEXT) \
+	hamiltonians/hamiltonian_read_in.$(OBJEXT) \
 	features/site_labels.$(OBJEXT) \
 	neural_network/single_layer_perceptron.$(OBJEXT) \
 	neural_network/loss_function_data.$(OBJEXT) \
+	neural_network/optimization_log.$(OBJEXT) \
 	neural_network/network_functions.$(OBJEXT) \
 	utilities/optimization/lbfgs.$(OBJEXT) \
 	utilities/optimization/line_search.$(OBJEXT) \
+	utilities/wrappers/mpi_wrapper.$(OBJEXT) \
 	utilities/linear_algebra/dense_vector.$(OBJEXT) \
 	utilities/linear_algebra/dense_matrix.$(OBJEXT)
 fit_hamiltonian_terms_OBJECTS = $(am_fit_hamiltonian_terms_OBJECTS)
@@ -335,18 +338,22 @@ features/site_labels.cpp \
 utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp 
 
-fit_hamiltonian_terms_LINK = $(FC) $(LDFLAGS) -o fit_hamiltonian_terms
+site_labels_test_LINK = $(FC) $(LDFLAGS) -o site_labels_test
 fit_hamiltonian_terms_SOURCES = \
 hamiltonians/fit_hamiltonian_terms.cpp \
+hamiltonians/hamiltonian_read_in.cpp \
 features/site_labels.cpp \
 neural_network/single_layer_perceptron.cpp \
 neural_network/loss_function_data.cpp \
+neural_network/optimization_log.cpp \
 neural_network/network_functions.cpp \
 utilities/optimization/lbfgs.cpp \
 utilities/optimization/line_search.cpp \
+utilities/wrappers/mpi_wrapper.cpp \
 utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp 
 
+fit_hamiltonian_terms_LINK = $(FC) $(LDFLAGS) -o fit_hamiltonian_terms
 all: all-am
 
 .SUFFIXES:
@@ -471,6 +478,9 @@ hamiltonians/$(DEPDIR)/$(am__dirstamp):
 hamiltonians/fit_hamiltonian_terms.$(OBJEXT):  \
 	hamiltonians/$(am__dirstamp) \
 	hamiltonians/$(DEPDIR)/$(am__dirstamp)
+hamiltonians/hamiltonian_read_in.$(OBJEXT):  \
+	hamiltonians/$(am__dirstamp) \
+	hamiltonians/$(DEPDIR)/$(am__dirstamp)
 features/$(am__dirstamp):
 	@$(MKDIR_P) features
 	@: > features/$(am__dirstamp)
@@ -491,9 +501,21 @@ neural_network/single_layer_perceptron.$(OBJEXT):  \
 neural_network/loss_function_data.$(OBJEXT):  \
 	neural_network/$(am__dirstamp) \
 	neural_network/$(DEPDIR)/$(am__dirstamp)
+neural_network/optimization_log.$(OBJEXT):  \
+	neural_network/$(am__dirstamp) \
+	neural_network/$(DEPDIR)/$(am__dirstamp)
 neural_network/network_functions.$(OBJEXT):  \
 	neural_network/$(am__dirstamp) \
 	neural_network/$(DEPDIR)/$(am__dirstamp)
+utilities/wrappers/$(am__dirstamp):
+	@$(MKDIR_P) utilities/wrappers
+	@: > utilities/wrappers/$(am__dirstamp)
+utilities/wrappers/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) utilities/wrappers/$(DEPDIR)
+	@: > utilities/wrappers/$(DEPDIR)/$(am__dirstamp)
+utilities/wrappers/mpi_wrapper.$(OBJEXT):  \
+	utilities/wrappers/$(am__dirstamp) \
+	utilities/wrappers/$(DEPDIR)/$(am__dirstamp)
 
 fit_hamiltonian_terms$(EXEEXT): $(fit_hamiltonian_terms_OBJECTS) $(fit_hamiltonian_terms_DEPENDENCIES) $(EXTRA_fit_hamiltonian_terms_DEPENDENCIES) 
 	@rm -f fit_hamiltonian_terms$(EXEEXT)
@@ -521,7 +543,7 @@ test/site_labels_test.$(OBJEXT): test/$(am__dirstamp) \
 
 site_labels_test$(EXEEXT): $(site_labels_test_OBJECTS) $(site_labels_test_DEPENDENCIES) $(EXTRA_site_labels_test_DEPENDENCIES) 
 	@rm -f site_labels_test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(site_labels_test_OBJECTS) $(site_labels_test_LDADD) $(LIBS)
+	$(AM_V_GEN)$(site_labels_test_LINK) $(site_labels_test_OBJECTS) $(site_labels_test_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -531,14 +553,17 @@ mostlyclean-compile:
 	-rm -f test/*.$(OBJEXT)
 	-rm -f utilities/linear_algebra/*.$(OBJEXT)
 	-rm -f utilities/optimization/*.$(OBJEXT)
+	-rm -f utilities/wrappers/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
 include features/$(DEPDIR)/site_labels.Po
 include hamiltonians/$(DEPDIR)/fit_hamiltonian_terms.Po
+include hamiltonians/$(DEPDIR)/hamiltonian_read_in.Po
 include neural_network/$(DEPDIR)/loss_function_data.Po
 include neural_network/$(DEPDIR)/network_functions.Po
+include neural_network/$(DEPDIR)/optimization_log.Po
 include neural_network/$(DEPDIR)/single_layer_perceptron.Po
 include test/$(DEPDIR)/bfgs_test.Po
 include test/$(DEPDIR)/line_search_test.Po
@@ -550,6 +575,7 @@ include utilities/linear_algebra/$(DEPDIR)/dense_vector.Po
 include utilities/optimization/$(DEPDIR)/bfgs.Po
 include utilities/optimization/$(DEPDIR)/lbfgs.Po
 include utilities/optimization/$(DEPDIR)/line_search.Po
+include utilities/wrappers/$(DEPDIR)/mpi_wrapper.Po
 
 .cpp.o:
 	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -694,6 +720,8 @@ distclean-generic:
 	-rm -f utilities/linear_algebra/$(am__dirstamp)
 	-rm -f utilities/optimization/$(DEPDIR)/$(am__dirstamp)
 	-rm -f utilities/optimization/$(am__dirstamp)
+	-rm -f utilities/wrappers/$(DEPDIR)/$(am__dirstamp)
+	-rm -f utilities/wrappers/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -703,7 +731,7 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf features/$(DEPDIR) hamiltonians/$(DEPDIR) neural_network/$(DEPDIR) test/$(DEPDIR) utilities/linear_algebra/$(DEPDIR) utilities/optimization/$(DEPDIR)
+	-rm -rf features/$(DEPDIR) hamiltonians/$(DEPDIR) neural_network/$(DEPDIR) test/$(DEPDIR) utilities/linear_algebra/$(DEPDIR) utilities/optimization/$(DEPDIR) utilities/wrappers/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -749,7 +777,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf features/$(DEPDIR) hamiltonians/$(DEPDIR) neural_network/$(DEPDIR) test/$(DEPDIR) utilities/linear_algebra/$(DEPDIR) utilities/optimization/$(DEPDIR)
+	-rm -rf features/$(DEPDIR) hamiltonians/$(DEPDIR) neural_network/$(DEPDIR) test/$(DEPDIR) utilities/linear_algebra/$(DEPDIR) utilities/optimization/$(DEPDIR) utilities/wrappers/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

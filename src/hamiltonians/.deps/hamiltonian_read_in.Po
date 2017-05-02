@@ -1,6 +1,5 @@
-hamiltonians/fit_hamiltonian_terms.o: \
- hamiltonians/fit_hamiltonian_terms.cpp /usr/include/stdc-predef.h \
- hamiltonians/hamiltonian_read_in.hpp \
+hamiltonians/hamiltonian_read_in.o: hamiltonians/hamiltonian_read_in.cpp \
+ /usr/include/stdc-predef.h hamiltonians/hamiltonian_read_in.hpp \
  hamiltonians/../features/site_labels.hpp \
  /usr/include/c++/4.8/unordered_map /usr/include/c++/4.8/utility \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h \
@@ -815,27 +814,7 @@ hamiltonians/fit_hamiltonian_terms.o: \
  /usr/local/include/boost/program_options/detail/convert.hpp \
  /usr/local/include/boost/program_options/variables_map.hpp \
  /usr/local/include/boost/program_options/version.hpp \
- hamiltonians/../utilities/wrappers/../wrappers/mpi_wrapper.hpp \
- hamiltonians/../neural_network/single_layer_perceptron.hpp \
- hamiltonians/../neural_network/network_functions.hpp \
- hamiltonians/../neural_network/loss_function_data.hpp \
- hamiltonians/../neural_network/../utilities/general/dvec_def.hpp \
- hamiltonians/../neural_network/../utilities/linear_algebra/dense_matrix.hpp \
- hamiltonians/../neural_network/../utilities/linear_algebra/dense_vector.hpp \
- hamiltonians/../neural_network/train.hpp \
- hamiltonians/../neural_network/optimization_log.hpp \
- hamiltonians/../neural_network/../utilities/general/run_script.hpp \
- hamiltonians/../neural_network/../utilities/general/cout_tools.hpp \
- hamiltonians/../utilities/linear_algebra/dense_matrix.hpp \
- hamiltonians/../utilities/optimization/lbfgs.hpp \
- hamiltonians/../utilities/optimization/../data_structures/fixed_size_queue.hpp \
- hamiltonians/../utilities/optimization/../data_structures/../linear_algebra/dense_vector.hpp \
- hamiltonians/../utilities/optimization/../general/dvec_def.hpp \
- hamiltonians/../utilities/optimization/../general/cout_tools.hpp \
- hamiltonians/../utilities/optimization/../linear_algebra/dense_vector.hpp \
- hamiltonians/../utilities/optimization/line_search.hpp \
- hamiltonians/../utilities/optimization/../linear_algebra/dense_matrix.hpp \
- hamiltonians/../program_options/general_options.hpp
+ hamiltonians/../utilities/wrappers/../wrappers/mpi_wrapper.hpp
 
 /usr/include/stdc-predef.h:
 
@@ -2582,43 +2561,3 @@ hamiltonians/../utilities/wrappers/program_options_wrapper.hpp:
 /usr/local/include/boost/program_options/version.hpp:
 
 hamiltonians/../utilities/wrappers/../wrappers/mpi_wrapper.hpp:
-
-hamiltonians/../neural_network/single_layer_perceptron.hpp:
-
-hamiltonians/../neural_network/network_functions.hpp:
-
-hamiltonians/../neural_network/loss_function_data.hpp:
-
-hamiltonians/../neural_network/../utilities/general/dvec_def.hpp:
-
-hamiltonians/../neural_network/../utilities/linear_algebra/dense_matrix.hpp:
-
-hamiltonians/../neural_network/../utilities/linear_algebra/dense_vector.hpp:
-
-hamiltonians/../neural_network/train.hpp:
-
-hamiltonians/../neural_network/optimization_log.hpp:
-
-hamiltonians/../neural_network/../utilities/general/run_script.hpp:
-
-hamiltonians/../neural_network/../utilities/general/cout_tools.hpp:
-
-hamiltonians/../utilities/linear_algebra/dense_matrix.hpp:
-
-hamiltonians/../utilities/optimization/lbfgs.hpp:
-
-hamiltonians/../utilities/optimization/../data_structures/fixed_size_queue.hpp:
-
-hamiltonians/../utilities/optimization/../data_structures/../linear_algebra/dense_vector.hpp:
-
-hamiltonians/../utilities/optimization/../general/dvec_def.hpp:
-
-hamiltonians/../utilities/optimization/../general/cout_tools.hpp:
-
-hamiltonians/../utilities/optimization/../linear_algebra/dense_vector.hpp:
-
-hamiltonians/../utilities/optimization/line_search.hpp:
-
-hamiltonians/../utilities/optimization/../linear_algebra/dense_matrix.hpp:
-
-hamiltonians/../program_options/general_options.hpp:

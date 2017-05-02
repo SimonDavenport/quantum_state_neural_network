@@ -25,7 +25,10 @@
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include "../utilities/optimization/line_search.hpp"
-#include <iostream>
+#include "../utilities/general/cout_tools.hpp"
+
+///////     GLOBAL DATA STRUCTURES      ////////////////////////////////////////
+utilities::Cout utilities::cout;
 
 int main(int argc, char *argv[])
 {

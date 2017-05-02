@@ -33,6 +33,7 @@
 #include "../linear_algebra/dense_matrix.hpp"
 #include "../linear_algebra/dense_vector.hpp"
 #include "../general/dvec_def.hpp"
+#include "../general/cout_tools.hpp"
 #include <iostream>
 #if _DEBUG_
 #include "../general/debug.hpp"

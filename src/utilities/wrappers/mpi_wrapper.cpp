@@ -50,7 +50,7 @@ namespace utilities
             m_cout->MainOutput()<<"\n\n\t\tPROGRAM COMMENCED ";
             TimeStamp();
             m_wallTime = std::chrono::high_resolution_clock::now();
-            m_cout->MainOutput()<<"\t\tRUNNING ON "<<m_nbrProcs<<" NODES"<<std::endl;
+            m_cout->MainOutput()<<"\t\tRUNNING ON "<<m_nbrProcs<<" NODE(S)"<<std::endl;
         }
         this->GenerateHostNameList();
         return;
@@ -327,7 +327,7 @@ namespace utilities
     void MpiWrapper::ExitFlagTest()
     {
         MPI_Barrier(m_comm);
-        MPI_Bcast(&m_exitFlag,1,MPI_C_BOOL,0,m_comm);
+        MPI_Bcast(&m_exitFlag, 1, MPI_C_BOOL, 0, m_comm);
         if(m_exitFlag)
         {
             exit(EXIT_FAILURE);
