@@ -2,7 +2,7 @@
 
 Topological quantum states are particular difficult to work with numerically. This property arises firstly because they tend to have high participation ratios, meaning that to represent such states on a computer requires that one specifies the amplitudes of an combinatorically large number of different many-body quantum basis states. Furthermore, the most prominent known topological phases (such as the "Laughlin" state and things related) occur 2-dimensions; meaning that for technical reasons to do with quantum entanglement scaling, methods that work well for 1D quantum states (such as the matrix product states or MPS approach) do not work as well and scale poorly. 
 
-The MPS approach and its derivatives (such as the PEPES) are nevertheless the most promising tools available right now. One added challenge for these methods is that they require a compact representation of the quantum Hamiltonian as a so-called matrix-product operator; Hamiltonians giving rise to topolgical phases are often challenging to represent in these terms.  
+The MPS approach and its derivatives (such as the PEPS) are nevertheless the most promising tools available right now. One added challenge for both MPS and PEPS is that they require a compact representation of the quantum Hamiltonian as a so-called matrix-product operator; Hamiltonians giving rise to topolgical phases are often challenging to represent in these terms. 
 
 The motivation for attempting to use neural-network type data-structures to represent topological quantum states is to have a representation that is naturally capable of dealing with non-local and non-linear relationships between inputs and outputs, while at the same time being simple and computationally efficient to optimize. 
 
