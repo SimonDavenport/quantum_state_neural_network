@@ -3,7 +3,7 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!     This program reads in a set of coefficieitns for Hamiltonain terms,
+//!     This program reads in a set of coefficieints for Hamiltonian terms,
 //!     then attempts to fit these in terms of a certian neural network
 //!     model. This model has an equivalent representation in terms of
 //!     finite state machines, so the method allows for a compact
