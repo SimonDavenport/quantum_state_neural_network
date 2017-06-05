@@ -835,6 +835,9 @@ hamiltonians/fit_hamiltonian_terms.o: \
  hamiltonians/../utilities/optimization/../linear_algebra/dense_vector.hpp \
  hamiltonians/../utilities/optimization/line_search.hpp \
  hamiltonians/../utilities/optimization/../linear_algebra/dense_matrix.hpp \
+ hamiltonians/../utilities/algorithms/quick_sort.hpp \
+ hamiltonians/../utilities/general/load_bar.hpp \
+ hamiltonians/../utilities/general/cout_tools.hpp \
  hamiltonians/../program_options/general_options.hpp
 
 /usr/include/stdc-predef.h:
@@ -2620,5 +2623,11 @@ hamiltonians/../utilities/optimization/../linear_algebra/dense_vector.hpp:
 hamiltonians/../utilities/optimization/line_search.hpp:
 
 hamiltonians/../utilities/optimization/../linear_algebra/dense_matrix.hpp:
+
+hamiltonians/../utilities/algorithms/quick_sort.hpp:
+
+hamiltonians/../utilities/general/load_bar.hpp:
+
+hamiltonians/../utilities/general/cout_tools.hpp:
 
 hamiltonians/../program_options/general_options.hpp:

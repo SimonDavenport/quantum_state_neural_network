@@ -36,8 +36,9 @@
 #include "../utilities/general/dvec_def.hpp"
 #include "../utilities/linear_algebra/dense_matrix.hpp"
 #include "../utilities/optimization/lbfgs.hpp"
-//#include "../utilities/algorithms/quick_sort.hpp"
+#include "../utilities/algorithms/quick_sort.hpp"
 #include "../utilities/general/cout_tools.hpp"
+#include "../utilities/general/load_bar.hpp"
 #include "../utilities/wrappers/mpi_wrapper.hpp"
 #include "../utilities/wrappers/program_options_wrapper.hpp"
 #include "../program_options/general_options.hpp"
@@ -225,8 +226,6 @@ int main(int argc, char *argv[])
         hamiltonian.ImportTerms(mpi);
         hamiltonian.GetCoefficients(outputs);
         hamiltonian.BuildFeatures(features);
-        utilities::cout.MainOutput() << "Press any key to continue" << std::endl;
-        getchar();
     }
     MPI_Barrier(mpi.m_comm);
     mpi.ExitFlagTest();
@@ -266,7 +265,7 @@ int main(int argc, char *argv[])
     {
         if(0 == mpi.m_id)	// FOR THE MASTER NODE
 	    {
-            std::cout << "\n\tFitting network for H=" << H << std::endl;
+            utilities::cout.MainOutput() << "\n\tFitting network for H=" << H << std::endl;
         }
         ann::SingleLayerPerceptron slp(P, H, "shifted-exp");
         slp.AllocateWork(trainN);
@@ -282,7 +281,7 @@ int main(int argc, char *argv[])
             nzWeightsProp.resize(params.nbrStarts);
 	    }
 	    mpi.DivideTasks(mpi.m_id, params.nbrStarts, mpi.m_nbrProcs, &mpi.m_firstTask, 
-                        &mpi.m_lastTask, true);
+                        &mpi.m_lastTask, false);
         {
             int nbrTasks = mpi.m_lastTask - mpi.m_firstTask + 1;
             dvec nodeLosses(nbrTasks);
@@ -295,6 +294,12 @@ int main(int argc, char *argv[])
             }
             mpi.Sync(&startSeed, 1, 0);
             //  Parallelize nbrStarts random initial optimizations
+            utilities::LoadBar progressMeter;
+            if(0 == mpi.m_id)	// FOR THE MASTER NODE
+	        {
+	            utilities::cout.AdditionalInfo() << "\n\tFirst pass:" << std::endl;
+	            progressMeter.Initialize(nbrTasks);
+	        }
             for(int trialIndex=0, seed=startSeed+mpi.m_firstTask; 
                 trialIndex<nbrTasks; ++trialIndex, ++seed)
             {
@@ -302,6 +307,10 @@ int main(int argc, char *argv[])
                 nodeLosses[trialIndex] = slp.EvaluateSquaredLoss(trainOutputs, trainFeatures);
                 nodeSeeds[trialIndex] = seed;
                 nodeNzWeightsProp[trialIndex] = (double)slp.nnzAlpha()/slp.countAlphaWeights();
+                if(0 == mpi.m_id)	// FOR THE MASTER NODE
+	            {
+	                progressMeter.Display(trialIndex+1);
+	            }
             }
             //  Mpi gather before sorting
             MPI_Status status;
@@ -337,7 +346,7 @@ int main(int argc, char *argv[])
             refinedNzWeightsProp.resize(params.nbrBestOutcomes);
         }
         mpi.DivideTasks(mpi.m_id, params.nbrBestOutcomes, mpi.m_nbrProcs, &mpi.m_firstTask, 
-                        &mpi.m_lastTask, true);
+                        &mpi.m_lastTask, false);
         {
             int nbrTasks = mpi.m_lastTask - mpi.m_firstTask + 1;
             dvec nodeLosses(nbrTasks);
@@ -347,6 +356,12 @@ int main(int argc, char *argv[])
             MPI_Status status;
             mpi.Scatter(topSeeds.data(), params.nbrBestOutcomes, nodeSeeds.data(), nbrTasks, 0, 
                         mpi.m_comm, status);
+            utilities::LoadBar progressMeter;
+            if(0 == mpi.m_id)	// FOR THE MASTER NODE
+	        {
+	            utilities::cout.AdditionalInfo() << "\n\tRefining pass:" << std::endl;
+	            progressMeter.Initialize(nbrTasks);
+	        }
             for(int bestIndex=0; bestIndex<nbrTasks; ++bestIndex)
             {
                 //  Reconstruct weights from first sweep optimization
@@ -358,6 +373,10 @@ int main(int argc, char *argv[])
                     = slp.EvaluateSquaredLoss(trainOutputs, trainFeatures);
                 nodeNzWeightsProp[bestIndex]
                     = (double)slp.nnzAlpha()/slp.countAlphaWeights();
+                if(0 == mpi.m_id)	// FOR THE MASTER NODE
+	            {
+	                progressMeter.Display(bestIndex+1);
+	            }
             }
             //  Mpi gather before sorting
             mpi.Gather(nodeLosses.data(), nodeLosses.size(), refinedLosses.data(), 
@@ -392,13 +411,14 @@ int main(int argc, char *argv[])
             }
             getchar();
             #endif
+            utilities::cout.MainOutput() << std::endl;
         }
-        MPI_Barrier(mpi.m_comm);
+        MPI_Barrier(mpi.m_comm); 
     }
     if(0 == mpi.m_id)	// FOR THE MASTER NODE
 	{  
-        lossLog.Plot(true, "hidden_nodes_vs_loss", "Nbr hidden nodes", "log loss function ", Hvalues);
-        nzWeightsPropLog.Plot(false, "hidden_nodes_vs_nz_alphas", "Nbr hidden nodes", "proportion nz alphas ", Hvalues);
+        lossLog.Plot(true, "hidden_nodes_vs_loss", "nbr hidden nodes", "log loss function ", Hvalues);
+        nzWeightsPropLog.Plot(false, "hidden_nodes_vs_nz_alphas", "nbr hidden nodes", "proportion nz alphas ", Hvalues);
     }
     return EXIT_SUCCESS;
 }
