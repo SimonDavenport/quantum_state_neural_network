@@ -32,6 +32,7 @@
 #include <iostream>
 #include "../data_structures/fixed_size_queue.hpp"
 #include "../general/dvec_def.hpp"
+#include "../general/cout_tools.hpp"
 #include "../linear_algebra/dense_vector.hpp"
 #include "line_search.hpp"
 #if _DEBUG_

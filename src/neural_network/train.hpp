@@ -3,7 +3,8 @@
 //!                         \author Simon C. Davenport 
 //!
 //!  \file
-//!		This file contains some wrappers for generic network training
+//!		This file contains some wrappers and utilities for neural network 
+//!     training
 //!     
 //!                    Copyright (C) Simon C Davenport
 //!                                                                             
@@ -32,6 +33,27 @@
 
 namespace ann
 {
+    //!
+    //! Divide features and outputs into training and testing sets
+    //!
+    template <typename T>
+    void GetTrainTestDivision(
+        utilities::matrix<T>& features,
+        utilities::matrix<T>& trainFeatures,
+        utilities::matrix<T>& testFeatures,
+        std::vector<T>& outputs, 
+        std::vector<T>& trainOutputs,
+        std::vector<T>& testOutputs)
+    {
+        utilities::ToSubMatrix(trainFeatures, features, 0, 0);
+        utilities::ToSubVector(trainOutputs, outputs, 0);
+        if(testOutputs.size())
+        {
+            utilities::ToSubMatrix(testFeatures, features, 0, trainOutputs.size());
+            utilities::ToSubVector(testOutputs, outputs, trainOutputs.size());
+        }
+    }
+
     //!
     //! Evaluate squared loss given a vector of non-zero
     //! network weights

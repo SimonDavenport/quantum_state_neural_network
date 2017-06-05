@@ -28,6 +28,7 @@
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include "../general/dvec_def.hpp"
+#include "../wrappers/mpi_wrapper.hpp"
 #include <random>
 #include "blas.hpp"
 #if _DEBUG_
@@ -37,6 +38,7 @@
 namespace utilities
 {
     void CopyVector(double* out, const double* in, const int N);
+    void MpiSyncVector(dvec& vector, int syncNode, utilities::MpiWrapper& mpi);
     void ToSubVector(dvec& sub, const dvec& input, const unsigned int offset, 
                      const std::vector<unsigned int>& zeros);
     void ToSubVector(dvec& sub, const dvec& input, const unsigned int offset);

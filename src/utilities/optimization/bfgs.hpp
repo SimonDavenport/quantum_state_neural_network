@@ -31,6 +31,7 @@
 #include <functional>
 #include <iostream>
 #include "../general/dvec_def.hpp"
+#include "../general/cout_tools.hpp"
 #include "../linear_algebra/dense_matrix.hpp"
 #include "../linear_algebra/dense_vector.hpp"
 #include "line_search.hpp"

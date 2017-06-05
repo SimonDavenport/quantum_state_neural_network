@@ -106,8 +106,9 @@ namespace utilities
             if(!success)
             {
                 alpha = alpha1;
-                std::cerr << "\tWARNING: Line search algorithm failed to converge after ";
-                std::cerr << maxIter << " iterations " << std::endl;
+                utilities::cout.DebuggingInfo() << "\tWARNING: Line search algorithm "
+                                                  << "failed to converge after ";
+                utilities::cout.DebuggingInfo() << maxIter << " iterations " << std::endl;
             }
             return success;
         }

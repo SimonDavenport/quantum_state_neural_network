@@ -1,6 +1,7 @@
-features/site_labels.o: features/site_labels.cpp \
- /usr/include/stdc-predef.h features/site_labels.hpp \
- /usr/include/c++/4.8/unordered_map /usr/include/c++/4.8/utility \
+neural_network/loss_log.o: neural_network/loss_log.cpp \
+ /usr/include/stdc-predef.h neural_network/loss_log.hpp \
+ neural_network/../utilities/general/run_script.hpp \
+ /usr/include/c++/4.8/string \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
@@ -8,24 +9,18 @@ features/site_labels.o: features/site_labels.cpp \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/cpu_defines.h \
- /usr/include/c++/4.8/bits/stl_relops.h \
- /usr/include/c++/4.8/bits/stl_pair.h /usr/include/c++/4.8/bits/move.h \
- /usr/include/c++/4.8/bits/concept_check.h \
- /usr/include/c++/4.8/type_traits /usr/include/c++/4.8/initializer_list \
- /usr/include/c++/4.8/tuple /usr/include/c++/4.8/array \
- /usr/include/c++/4.8/stdexcept /usr/include/c++/4.8/exception \
- /usr/include/c++/4.8/bits/atomic_lockfree_defines.h \
- /usr/include/c++/4.8/bits/exception_ptr.h \
- /usr/include/c++/4.8/bits/exception_defines.h \
- /usr/include/c++/4.8/bits/nested_exception.h /usr/include/c++/4.8/string \
  /usr/include/c++/4.8/bits/stringfwd.h \
  /usr/include/c++/4.8/bits/memoryfwd.h \
  /usr/include/c++/4.8/bits/char_traits.h \
  /usr/include/c++/4.8/bits/stl_algobase.h \
  /usr/include/c++/4.8/bits/functexcept.h \
+ /usr/include/c++/4.8/bits/exception_defines.h \
  /usr/include/c++/4.8/bits/cpp_type_traits.h \
  /usr/include/c++/4.8/ext/type_traits.h \
  /usr/include/c++/4.8/ext/numeric_traits.h \
+ /usr/include/c++/4.8/bits/stl_pair.h /usr/include/c++/4.8/bits/move.h \
+ /usr/include/c++/4.8/bits/concept_check.h \
+ /usr/include/c++/4.8/type_traits \
  /usr/include/c++/4.8/bits/stl_iterator_base_types.h \
  /usr/include/c++/4.8/bits/stl_iterator_base_funcs.h \
  /usr/include/c++/4.8/debug/debug.h \
@@ -41,6 +36,10 @@ features/site_labels.o: features/site_labels.cpp \
  /usr/include/c++/4.8/bits/allocator.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++allocator.h \
  /usr/include/c++/4.8/ext/new_allocator.h /usr/include/c++/4.8/new \
+ /usr/include/c++/4.8/exception \
+ /usr/include/c++/4.8/bits/atomic_lockfree_defines.h \
+ /usr/include/c++/4.8/bits/exception_ptr.h \
+ /usr/include/c++/4.8/bits/nested_exception.h \
  /usr/include/c++/4.8/bits/localefwd.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++locale.h \
  /usr/include/c++/4.8/clocale /usr/include/locale.h \
@@ -67,6 +66,7 @@ features/site_labels.o: features/site_labels.cpp \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/atomic_word.h \
+ /usr/include/c++/4.8/initializer_list \
  /usr/include/c++/4.8/ext/string_conversions.h \
  /usr/include/c++/4.8/cstdlib /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
@@ -90,30 +90,8 @@ features/site_labels.o: features/site_labels.cpp \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/c++/4.8/bits/functional_hash.h \
  /usr/include/c++/4.8/bits/hash_bytes.h \
- /usr/include/c++/4.8/bits/basic_string.tcc \
- /usr/include/c++/4.8/bits/uses_allocator.h \
- /usr/include/c++/4.8/bits/alloc_traits.h \
- /usr/include/c++/4.8/bits/ptr_traits.h \
- /usr/include/c++/4.8/bits/hashtable.h \
- /usr/include/c++/4.8/bits/hashtable_policy.h \
- /usr/include/c++/4.8/bits/unordered_map.h \
- features/../utilities/general/dvec_def.hpp /usr/include/c++/4.8/vector \
- /usr/include/c++/4.8/bits/stl_construct.h \
- /usr/include/c++/4.8/ext/alloc_traits.h \
- /usr/include/c++/4.8/bits/stl_uninitialized.h \
- /usr/include/c++/4.8/bits/stl_vector.h \
- /usr/include/c++/4.8/bits/stl_bvector.h \
- /usr/include/c++/4.8/bits/vector.tcc \
- features/../utilities/linear_algebra/dense_matrix.hpp \
- features/../utilities/linear_algebra/../general/dvec_def.hpp \
- features/../utilities/linear_algebra/../general/cout_tools.hpp \
- /usr/lib/openmpi/include/mpi.h \
- /usr/lib/openmpi/include/mpi_portable_platform.h \
- /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/mpicxx.h \
- /usr/include/c++/4.8/map /usr/include/c++/4.8/bits/stl_tree.h \
- /usr/include/c++/4.8/bits/stl_map.h \
- /usr/include/c++/4.8/bits/stl_multimap.h /usr/include/c++/4.8/iostream \
- /usr/include/c++/4.8/ostream /usr/include/c++/4.8/ios \
+ /usr/include/c++/4.8/bits/basic_string.tcc /usr/include/c++/4.8/fstream \
+ /usr/include/c++/4.8/istream /usr/include/c++/4.8/ios \
  /usr/include/c++/4.8/bits/ios_base.h \
  /usr/include/c++/4.8/bits/locale_classes.h \
  /usr/include/c++/4.8/bits/locale_classes.tcc \
@@ -125,9 +103,34 @@ features/site_labels.o: features/site_labels.cpp \
  /usr/include/c++/4.8/bits/streambuf_iterator.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/ctype_inline.h \
  /usr/include/c++/4.8/bits/locale_facets.tcc \
- /usr/include/c++/4.8/bits/basic_ios.tcc \
- /usr/include/c++/4.8/bits/ostream.tcc /usr/include/c++/4.8/istream \
+ /usr/include/c++/4.8/bits/basic_ios.tcc /usr/include/c++/4.8/ostream \
+ /usr/include/c++/4.8/bits/ostream.tcc \
  /usr/include/c++/4.8/bits/istream.tcc \
+ /usr/include/c++/4.8/bits/codecvt.h \
+ /usr/include/x86_64-linux-gnu/c++/4.8/bits/basic_file.h \
+ /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++io.h \
+ /usr/include/c++/4.8/bits/fstream.tcc /usr/include/c++/4.8/sstream \
+ /usr/include/c++/4.8/bits/sstream.tcc /usr/include/c++/4.8/ctime \
+ /usr/include/c++/4.8/iostream \
+ neural_network/../utilities/general/dvec_def.hpp \
+ /usr/include/c++/4.8/vector /usr/include/c++/4.8/bits/stl_construct.h \
+ /usr/include/c++/4.8/ext/alloc_traits.h \
+ /usr/include/c++/4.8/bits/alloc_traits.h \
+ /usr/include/c++/4.8/bits/ptr_traits.h \
+ /usr/include/c++/4.8/bits/stl_uninitialized.h \
+ /usr/include/c++/4.8/bits/stl_vector.h \
+ /usr/include/c++/4.8/bits/stl_bvector.h \
+ /usr/include/c++/4.8/bits/vector.tcc \
+ neural_network/../utilities/general/cout_tools.hpp \
+ /usr/lib/openmpi/include/mpi.h \
+ /usr/lib/openmpi/include/mpi_portable_platform.h \
+ /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/mpicxx.h \
+ /usr/include/c++/4.8/map /usr/include/c++/4.8/bits/stl_tree.h \
+ /usr/include/c++/4.8/bits/stl_map.h /usr/include/c++/4.8/tuple \
+ /usr/include/c++/4.8/utility /usr/include/c++/4.8/bits/stl_relops.h \
+ /usr/include/c++/4.8/array /usr/include/c++/4.8/stdexcept \
+ /usr/include/c++/4.8/bits/uses_allocator.h \
+ /usr/include/c++/4.8/bits/stl_multimap.h \
  /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/constants.h \
  /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/functions.h \
  /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/datatype.h \
@@ -158,61 +161,15 @@ features/site_labels.o: features/site_labels.cpp \
  /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/status_inln.h \
  /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/info_inln.h \
  /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/win_inln.h \
- /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/file_inln.h \
- /usr/include/c++/4.8/fstream /usr/include/c++/4.8/bits/codecvt.h \
- /usr/include/x86_64-linux-gnu/c++/4.8/bits/basic_file.h \
- /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++io.h \
- /usr/include/c++/4.8/bits/fstream.tcc \
- features/../utilities/linear_algebra/../wrappers/mpi_wrapper.hpp \
- features/../utilities/linear_algebra/../wrappers/../general/dcmplx_type_def.hpp \
- /usr/include/c++/4.8/complex /usr/include/c++/4.8/cmath \
- /usr/include/math.h /usr/include/x86_64-linux-gnu/bits/huge_val.h \
- /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
- /usr/include/x86_64-linux-gnu/bits/huge_vall.h \
- /usr/include/x86_64-linux-gnu/bits/inf.h \
- /usr/include/x86_64-linux-gnu/bits/nan.h \
- /usr/include/x86_64-linux-gnu/bits/mathdef.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/c++/4.8/sstream /usr/include/c++/4.8/bits/sstream.tcc \
- features/../utilities/linear_algebra/../wrappers/../general/cout_tools.hpp \
- features/../utilities/linear_algebra/../wrappers/../general/template_tools.hpp \
- /usr/include/c++/4.8/iomanip /usr/include/c++/4.8/locale \
- /usr/include/c++/4.8/bits/locale_facets_nonio.h \
- /usr/include/c++/4.8/ctime \
- /usr/include/x86_64-linux-gnu/c++/4.8/bits/time_members.h \
- /usr/include/x86_64-linux-gnu/c++/4.8/bits/messages_members.h \
- /usr/include/libintl.h /usr/include/c++/4.8/bits/locale_facets_nonio.tcc \
- /usr/include/c++/4.8/chrono /usr/include/c++/4.8/ratio \
- /usr/include/c++/4.8/limits \
- features/../utilities/linear_algebra/dense_vector.hpp \
- /usr/include/c++/4.8/random /usr/include/c++/4.8/bits/random.h \
- /usr/include/x86_64-linux-gnu/c++/4.8/bits/opt_random.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/x86intrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/ia32intrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/mmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/xmmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/mm_malloc.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/emmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/immintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/fxsrintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/adxintrin.h \
- /usr/include/c++/4.8/bits/random.tcc /usr/include/c++/4.8/numeric \
- /usr/include/c++/4.8/bits/stl_numeric.h \
- features/../utilities/linear_algebra/blas.hpp \
- features/../utilities/algorithms/quick_sort.hpp \
- features/../utilities/algorithms/../general/dcmplx_type_def.hpp \
- features/../utilities/wrappers/io_wrapper.hpp \
- features/../utilities/wrappers/../general/template_tools.hpp \
- features/../utilities/wrappers/../general/dcmplx_type_def.hpp
+ /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/file_inln.h
 
 /usr/include/stdc-predef.h:
 
-features/site_labels.hpp:
+neural_network/loss_log.hpp:
 
-/usr/include/c++/4.8/unordered_map:
+neural_network/../utilities/general/run_script.hpp:
 
-/usr/include/c++/4.8/utility:
+/usr/include/c++/4.8/string:
 
 /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h:
 
@@ -230,36 +187,6 @@ features/site_labels.hpp:
 
 /usr/include/x86_64-linux-gnu/c++/4.8/bits/cpu_defines.h:
 
-/usr/include/c++/4.8/bits/stl_relops.h:
-
-/usr/include/c++/4.8/bits/stl_pair.h:
-
-/usr/include/c++/4.8/bits/move.h:
-
-/usr/include/c++/4.8/bits/concept_check.h:
-
-/usr/include/c++/4.8/type_traits:
-
-/usr/include/c++/4.8/initializer_list:
-
-/usr/include/c++/4.8/tuple:
-
-/usr/include/c++/4.8/array:
-
-/usr/include/c++/4.8/stdexcept:
-
-/usr/include/c++/4.8/exception:
-
-/usr/include/c++/4.8/bits/atomic_lockfree_defines.h:
-
-/usr/include/c++/4.8/bits/exception_ptr.h:
-
-/usr/include/c++/4.8/bits/exception_defines.h:
-
-/usr/include/c++/4.8/bits/nested_exception.h:
-
-/usr/include/c++/4.8/string:
-
 /usr/include/c++/4.8/bits/stringfwd.h:
 
 /usr/include/c++/4.8/bits/memoryfwd.h:
@@ -270,11 +197,21 @@ features/site_labels.hpp:
 
 /usr/include/c++/4.8/bits/functexcept.h:
 
+/usr/include/c++/4.8/bits/exception_defines.h:
+
 /usr/include/c++/4.8/bits/cpp_type_traits.h:
 
 /usr/include/c++/4.8/ext/type_traits.h:
 
 /usr/include/c++/4.8/ext/numeric_traits.h:
+
+/usr/include/c++/4.8/bits/stl_pair.h:
+
+/usr/include/c++/4.8/bits/move.h:
+
+/usr/include/c++/4.8/bits/concept_check.h:
+
+/usr/include/c++/4.8/type_traits:
 
 /usr/include/c++/4.8/bits/stl_iterator_base_types.h:
 
@@ -315,6 +252,14 @@ features/site_labels.hpp:
 /usr/include/c++/4.8/ext/new_allocator.h:
 
 /usr/include/c++/4.8/new:
+
+/usr/include/c++/4.8/exception:
+
+/usr/include/c++/4.8/bits/atomic_lockfree_defines.h:
+
+/usr/include/c++/4.8/bits/exception_ptr.h:
+
+/usr/include/c++/4.8/bits/nested_exception.h:
 
 /usr/include/c++/4.8/bits/localefwd.h:
 
@@ -380,6 +325,8 @@ features/site_labels.hpp:
 
 /usr/include/x86_64-linux-gnu/c++/4.8/bits/atomic_word.h:
 
+/usr/include/c++/4.8/initializer_list:
+
 /usr/include/c++/4.8/ext/string_conversions.h:
 
 /usr/include/c++/4.8/cstdlib:
@@ -444,57 +391,9 @@ features/site_labels.hpp:
 
 /usr/include/c++/4.8/bits/basic_string.tcc:
 
-/usr/include/c++/4.8/bits/uses_allocator.h:
+/usr/include/c++/4.8/fstream:
 
-/usr/include/c++/4.8/bits/alloc_traits.h:
-
-/usr/include/c++/4.8/bits/ptr_traits.h:
-
-/usr/include/c++/4.8/bits/hashtable.h:
-
-/usr/include/c++/4.8/bits/hashtable_policy.h:
-
-/usr/include/c++/4.8/bits/unordered_map.h:
-
-features/../utilities/general/dvec_def.hpp:
-
-/usr/include/c++/4.8/vector:
-
-/usr/include/c++/4.8/bits/stl_construct.h:
-
-/usr/include/c++/4.8/ext/alloc_traits.h:
-
-/usr/include/c++/4.8/bits/stl_uninitialized.h:
-
-/usr/include/c++/4.8/bits/stl_vector.h:
-
-/usr/include/c++/4.8/bits/stl_bvector.h:
-
-/usr/include/c++/4.8/bits/vector.tcc:
-
-features/../utilities/linear_algebra/dense_matrix.hpp:
-
-features/../utilities/linear_algebra/../general/dvec_def.hpp:
-
-features/../utilities/linear_algebra/../general/cout_tools.hpp:
-
-/usr/lib/openmpi/include/mpi.h:
-
-/usr/lib/openmpi/include/mpi_portable_platform.h:
-
-/usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/mpicxx.h:
-
-/usr/include/c++/4.8/map:
-
-/usr/include/c++/4.8/bits/stl_tree.h:
-
-/usr/include/c++/4.8/bits/stl_map.h:
-
-/usr/include/c++/4.8/bits/stl_multimap.h:
-
-/usr/include/c++/4.8/iostream:
-
-/usr/include/c++/4.8/ostream:
+/usr/include/c++/4.8/istream:
 
 /usr/include/c++/4.8/ios:
 
@@ -526,11 +425,75 @@ features/../utilities/linear_algebra/../general/cout_tools.hpp:
 
 /usr/include/c++/4.8/bits/basic_ios.tcc:
 
+/usr/include/c++/4.8/ostream:
+
 /usr/include/c++/4.8/bits/ostream.tcc:
 
-/usr/include/c++/4.8/istream:
-
 /usr/include/c++/4.8/bits/istream.tcc:
+
+/usr/include/c++/4.8/bits/codecvt.h:
+
+/usr/include/x86_64-linux-gnu/c++/4.8/bits/basic_file.h:
+
+/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++io.h:
+
+/usr/include/c++/4.8/bits/fstream.tcc:
+
+/usr/include/c++/4.8/sstream:
+
+/usr/include/c++/4.8/bits/sstream.tcc:
+
+/usr/include/c++/4.8/ctime:
+
+/usr/include/c++/4.8/iostream:
+
+neural_network/../utilities/general/dvec_def.hpp:
+
+/usr/include/c++/4.8/vector:
+
+/usr/include/c++/4.8/bits/stl_construct.h:
+
+/usr/include/c++/4.8/ext/alloc_traits.h:
+
+/usr/include/c++/4.8/bits/alloc_traits.h:
+
+/usr/include/c++/4.8/bits/ptr_traits.h:
+
+/usr/include/c++/4.8/bits/stl_uninitialized.h:
+
+/usr/include/c++/4.8/bits/stl_vector.h:
+
+/usr/include/c++/4.8/bits/stl_bvector.h:
+
+/usr/include/c++/4.8/bits/vector.tcc:
+
+neural_network/../utilities/general/cout_tools.hpp:
+
+/usr/lib/openmpi/include/mpi.h:
+
+/usr/lib/openmpi/include/mpi_portable_platform.h:
+
+/usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/mpicxx.h:
+
+/usr/include/c++/4.8/map:
+
+/usr/include/c++/4.8/bits/stl_tree.h:
+
+/usr/include/c++/4.8/bits/stl_map.h:
+
+/usr/include/c++/4.8/tuple:
+
+/usr/include/c++/4.8/utility:
+
+/usr/include/c++/4.8/bits/stl_relops.h:
+
+/usr/include/c++/4.8/array:
+
+/usr/include/c++/4.8/stdexcept:
+
+/usr/include/c++/4.8/bits/uses_allocator.h:
+
+/usr/include/c++/4.8/bits/stl_multimap.h:
 
 /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/constants.h:
 
@@ -595,113 +558,3 @@ features/../utilities/linear_algebra/../general/cout_tools.hpp:
 /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/win_inln.h:
 
 /usr/lib/openmpi/include/openmpi/ompi/mpi/cxx/file_inln.h:
-
-/usr/include/c++/4.8/fstream:
-
-/usr/include/c++/4.8/bits/codecvt.h:
-
-/usr/include/x86_64-linux-gnu/c++/4.8/bits/basic_file.h:
-
-/usr/include/x86_64-linux-gnu/c++/4.8/bits/c++io.h:
-
-/usr/include/c++/4.8/bits/fstream.tcc:
-
-features/../utilities/linear_algebra/../wrappers/mpi_wrapper.hpp:
-
-features/../utilities/linear_algebra/../wrappers/../general/dcmplx_type_def.hpp:
-
-/usr/include/c++/4.8/complex:
-
-/usr/include/c++/4.8/cmath:
-
-/usr/include/math.h:
-
-/usr/include/x86_64-linux-gnu/bits/huge_val.h:
-
-/usr/include/x86_64-linux-gnu/bits/huge_valf.h:
-
-/usr/include/x86_64-linux-gnu/bits/huge_vall.h:
-
-/usr/include/x86_64-linux-gnu/bits/inf.h:
-
-/usr/include/x86_64-linux-gnu/bits/nan.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathdef.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathinline.h:
-
-/usr/include/c++/4.8/sstream:
-
-/usr/include/c++/4.8/bits/sstream.tcc:
-
-features/../utilities/linear_algebra/../wrappers/../general/cout_tools.hpp:
-
-features/../utilities/linear_algebra/../wrappers/../general/template_tools.hpp:
-
-/usr/include/c++/4.8/iomanip:
-
-/usr/include/c++/4.8/locale:
-
-/usr/include/c++/4.8/bits/locale_facets_nonio.h:
-
-/usr/include/c++/4.8/ctime:
-
-/usr/include/x86_64-linux-gnu/c++/4.8/bits/time_members.h:
-
-/usr/include/x86_64-linux-gnu/c++/4.8/bits/messages_members.h:
-
-/usr/include/libintl.h:
-
-/usr/include/c++/4.8/bits/locale_facets_nonio.tcc:
-
-/usr/include/c++/4.8/chrono:
-
-/usr/include/c++/4.8/ratio:
-
-/usr/include/c++/4.8/limits:
-
-features/../utilities/linear_algebra/dense_vector.hpp:
-
-/usr/include/c++/4.8/random:
-
-/usr/include/c++/4.8/bits/random.h:
-
-/usr/include/x86_64-linux-gnu/c++/4.8/bits/opt_random.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/x86intrin.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/ia32intrin.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/mmintrin.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/xmmintrin.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/mm_malloc.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/emmintrin.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/immintrin.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/fxsrintrin.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/adxintrin.h:
-
-/usr/include/c++/4.8/bits/random.tcc:
-
-/usr/include/c++/4.8/numeric:
-
-/usr/include/c++/4.8/bits/stl_numeric.h:
-
-features/../utilities/linear_algebra/blas.hpp:
-
-features/../utilities/algorithms/quick_sort.hpp:
-
-features/../utilities/algorithms/../general/dcmplx_type_def.hpp:
-
-features/../utilities/wrappers/io_wrapper.hpp:
-
-features/../utilities/wrappers/../general/template_tools.hpp:
-
-features/../utilities/wrappers/../general/dcmplx_type_def.hpp:

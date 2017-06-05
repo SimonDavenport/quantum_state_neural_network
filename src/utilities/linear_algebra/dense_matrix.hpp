@@ -28,6 +28,8 @@
 
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include "../general/dvec_def.hpp"
+#include "../general/cout_tools.hpp"
+#include "../wrappers/mpi_wrapper.hpp"
 #include "dense_vector.hpp"
 #include "blas.hpp"
 #include <iostream>
@@ -62,6 +64,18 @@ namespace utilities
         matrix(const unsigned int dLeading, const unsigned int dSecond)
         {
             this->resize(dLeading, dSecond);
+        }
+        
+        //!
+        //! Mpi sync the container
+        //!
+        void MpiSync(
+            int syncNode,
+            utilities::MpiWrapper& mpi)
+        {
+            mpi.Sync(&m_dLeading, 1, syncNode);
+            mpi.Sync(&m_dSecond, 1, syncNode);
+            utilities::MpiSyncVector(m_data, syncNode, mpi);
         }
         
         //!
@@ -125,11 +139,9 @@ namespace utilities
             {
                 for(unsigned int col=0; col<m_dSecond; ++col)
                 {
-                    //std::cout << "matrix["<< row << "," << col << "]";
-                    //std::cout << " = " << m_data[row*m_dSecond+col] << std::endl;
-                    std::cout <<  m_data[row*m_dSecond+col] << " ";
+                    utilities::cout.SecondaryOutput() <<  m_data[row*m_dSecond+col] << " ";
                 }
-                std::cout << std::endl;
+                utilities::cout.SecondaryOutput() << std::endl;
             }
         }
     };

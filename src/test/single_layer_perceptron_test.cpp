@@ -31,9 +31,13 @@
 #include "../utilities/wrappers/io_wrapper.hpp"
 #include "../utilities/optimization/bfgs.hpp"
 #include "../utilities/optimization/lbfgs.hpp"
+#include "../utilities/general/cout_tools.hpp"
 #if _DEBUG_
 #include "../utilities/general/debug.hpp"
 #endif
+
+///////     GLOBAL DATA STRUCTURES      ////////////////////////////////////////
+utilities::Cout utilities::cout;
 
 int main(int argc, char *argv[])
 {   

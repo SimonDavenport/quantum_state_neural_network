@@ -26,6 +26,10 @@
 ///////     LIBRARY INCLUSIONS     /////////////////////////////////////////////
 #include "../features/site_labels.hpp"
 #include "../utilities/linear_algebra/dense_matrix.hpp"
+#include "../utilities/general/cout_tools.hpp"
+
+///////     GLOBAL DATA STRUCTURES      ////////////////////////////////////////
+utilities::Cout utilities::cout;
 
 int main(int argc, char *argv[])
 {

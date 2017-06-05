@@ -55,17 +55,20 @@ features/site_labels.cpp \
 utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp 
 
-fit_hamiltonian_terms_LINK = $(FC) $(LDFLAGS) -o fit_hamiltonian_terms
+site_labels_test_LINK = $(FC) $(LDFLAGS) -o site_labels_test
 
 ## fit_hamiltonian_terms
 fit_hamiltonian_terms_SOURCES = \
 hamiltonians/fit_hamiltonian_terms.cpp \
+hamiltonians/hamiltonian_read_in.cpp \
 features/site_labels.cpp \
 neural_network/single_layer_perceptron.cpp \
 neural_network/loss_function_data.cpp \
+neural_network/optimization_log.cpp \
 neural_network/network_functions.cpp \
 utilities/optimization/lbfgs.cpp \
 utilities/optimization/line_search.cpp \
+utilities/wrappers/mpi_wrapper.cpp \
 utilities/linear_algebra/dense_vector.cpp \
 utilities/linear_algebra/dense_matrix.cpp 
 

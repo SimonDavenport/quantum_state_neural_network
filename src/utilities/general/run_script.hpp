@@ -34,6 +34,7 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
+#include <iostream>
 
 namespace utilities
 {
@@ -65,7 +66,7 @@ namespace utilities
         inline void RunSystemCommand(const std::string command) const
         {
             int sysReturn = system(command.c_str()); 
-            if(0==sysReturn)
+            if(0!=sysReturn)
             {
                 std::cerr << sysReturn << std::endl;
             }
