@@ -1,2 +1,20 @@
 # quantum_state_neural_network
-Some tools to construct mappings between many-body quantum states and compact neutral network representations of those states (work in progress)
+
+Topological quantum states are particular difficult to work with numerically. This property arises firstly because they tend to have high participation ratios, meaning that to represent such states on a computer requires that one specifies the amplitudes of an combinatorically large number of different many-body quantum basis states. Furthermore, the most prominent known topological phases (such as the "Laughlin" state and things related) occur 2-dimensions; meaning that for technical reasons to do with quantum entanglement scaling, methods that work well for 1D quantum states (such as the matrix product states or MPS approach) do not work as well and scale poorly. 
+
+The MPS approach and its derivatives (such as the PEPES) are nevertheless the most promising tools available right now. One added challenge for these methods is that they require a compact representation of the quantum Hamiltonian as a so-called matrix-product operator; Hamiltonians giving rise to topolgical phases are often challenging to represent in these terms.  
+
+The motivation for attempting to use neural-network type data-structures to represent topological quantum states is to have a representation that is naturally capable of dealing with non-local and non-linear relationships between inputs and outputs, while at the same time being simple and computationally efficient to optimize. 
+
+The goals of this project are two-fold:
+
+1. To investigate the viability of representing quantum states (particularly topological quantum states) and their associated quantum Hamiltonians in terms of neutral networks. This process involves selecting appropriate features and an appropriate neural network that allow us to map an occupation basis to an associated quantum amplitude. This part of the project involves taking quantum states and Hamiltonians for which exact numerical results are known (for instance by using the hamiltonian_diagonalization code) and assessing how well those results can be represented in terms of neural networks.
+
+2. Once a viable neural network architecture has been determined, the next step is to investingate how such a network could be optimized from scratch to yield, say, the ground state of a given quantum Hamiltonian. The ultimate aim is to come up with an approach that performs much better than the brute-force hamiltonian-diagonalization method, and can be applied to much larger systems. 
+
+
+Status update (June 2017):
+
+The initial aim has been slightly extended. I observed that there is a mapping from a single-layer neural network with an exponential activation function and the matrix product operator forumlation of the quantum Hamiltonian (and by extension, there is a similar mapping to matrix product states). This mapping relates the quantum labels of a quartic quantum Hamiltonian term to the associated coefficient of that term. This connection may be useful in and of itself: since there are myriad techniques available to optimize neutral networks, there is a possibility of being able to use the mapping to be able to generate a compact matrix product operator formulation of a topological quantum Hamiltonian. This hypothesis is tested out in the program fit_hamiltonian_terms. The program is able to read in coefficient data for terms in many-body Hamiltonians (produced by my hamiltonian_diagonalization code, for example) and fit these coefficients to a single layer neural network, using a variety of optimization schedules/ activation functions / bias terms / network weight sparsity patterns etc.. One of the main issues is to allow for exact quantum number conservation and the associated zero coefficients in a generic way. 
+
+On the quantum states side, progress is slow. It's simple enough to read in and fit an existing quantum state, but the main issue is comming up with a way to easily obtain the energy of a trial state when written in neural network form. If that were possible the networks could be optimized via a reinforcement-learning approach. 
